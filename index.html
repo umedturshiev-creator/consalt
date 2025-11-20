@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Форма Клиента</title><link rel="stylesheet" href="style.css" /></head>
+<body>
+<div class="container">
+  <h2 class="title">Форма клиента</h2>
+  <form id="clientForm">
+    <label>ИНН</label><input type="text" id="inn" maxlength="9" inputmode="numeric" required />
+    <label>ФИО</label><input type="text" id="fio" required />
+    <label>Номер телефона</label><input type="text" id="phone" maxlength="9" inputmode="numeric" required />
+    <label>Доход за месяц</label><input type="text" id="income" inputmode="numeric" required />
+    <label>Количество сотрудников</label><input type="text" id="staff" inputmode="numeric" required />
+    <label>Месяц</label>
+    <select id="month" required>
+      <option value="" disabled selected>Выберите месяц</option>
+      <option>Январь</option><option>Февраль</option><option>Март</option>
+      <option>Апрель</option><option>Май</option><option>Июнь</option>
+      <option>Июль</option><option>Август</option><option>Сентябрь</option>
+      <option>Октябрь</option><option>Ноябрь</option><option>Декабрь</option>
+    </select>
+    <button type="submit" class="btn">Отправить данные</button>
+    <p id="success" class="success">Данные успешно отправлены!</p>
+  </form>
+</div>
+<script src="main.js"></script>
+</body></html>
