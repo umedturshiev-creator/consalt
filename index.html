@@ -1,29 +1,160 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Форма отправки</title>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Форма клиента</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f2f2f2;
+    padding: 20px;
+  }
+
+  .container {
+    max-width: 420px;
+    margin: auto;
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(0,0,0,0.1);
+  }
+
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .input-box {
+    margin-bottom: 18px;
+  }
+
+  input, select {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    outline: none;
+    transition: 0.3s;
+  }
+
+  input:focus, select:focus {
+    border-color: #0066ff;
+    box-shadow: 0 0 5px rgba(0,102,255,0.4);
+    transform: scale(1.02);
+  }
+
+  button {
+    width: 100%;
+    padding: 14px;
+    font-size: 18px;
+    border: none;
+    border-radius: 10px;
+    background: #0066ff;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  button:hover {
+    background: #004fcc;
+  }
+
+  .success {
+    text-align: center;
+    margin-top: 15px;
+    font-weight: bold;
+    color: green;
+    opacity: 0;
+    transition: 0.3s;
+  }
+
+  .success.show {
+    opacity: 1;
+  }
+</style>
 </head>
+
 <body>
-  <h2>Форма отправки данных</h2>
+<div class="container">
+  <h2>Форма ввода данных</h2>
 
-  <form id="myForm">
-    <label>Имя:</label>
-    <input type="text" name="name" required><br><br>
+  <div class="input-box">
+    <input type="number" id="inn" placeholder="ИНН (макс. 9 цифр)" maxlength="9" oninput="this.value=this.value.slice(0,9)">
+  </div>
 
-    <label>Телефон:</label>
-    <input type="text" name="phone" required><br><br>
+  <div class="input-box">
+    <input type="text" id="fio" placeholder="ФИО">
+  </div>
 
-    <label>Комментарий:</label>
-    <textarea name="comment" required></textarea><br><br>
+  <div class="input-box">
+    <input type="number" id="phone" placeholder="Телефон (9 цифр)" maxlength="9" oninput="this.value=this.value.slice(0,9)">
+  </div>
 
-    <button type="submit">Отправить</button>
-  </form>
+  <div class="input-box">
+    <input type="number" id="income" placeholder="Доход за месяц">
+  </div>
 
-  <p id="result"></p>
+  <div class="input-box">
+    <input type="number" id="employees" placeholder="Количество сотрудников">
+  </div>
 
-  <script src="main.js"></script>
+  <div class="input-box">
+    <select id="month">
+      <option value="" selected disabled>Выберите месяц</option>
+      <option>Январь</option>
+      <option>Февраль</option>
+      <option>Март</option>
+      <option>Апрель</option>
+      <option>Май</option>
+      <option>Июнь</option>
+      <option>Июль</option>
+      <option>Август</option>
+      <option>Сентябрь</option>
+      <option>Октябрь</option>
+      <option>Ноябрь</option>
+      <option>Декабрь</option>
+    </select>
+  </div>
+
+  <button onclick="sendData()">Отправить данные</button>
+
+  <div class="success" id="successMessage">Данные успешно отправлены!</div>
+</div>
+
+<script>
+function sendData() {
+  const inn = document.getElementById("inn").value;
+  const fio = document.getElementById("fio").value;
+  const phone = document.getElementById("phone").value;
+  const income = document.getElementById("income").value;
+  const employees = document.getElementById("employees").value;
+  const month = document.getElementById("month").value;
+
+  fetch("https://script.google.com/macros/s/AKfycbzKMbvmwKkZeQWjfEShXohJHCwFkzcbvUEQv6k2ViGlQrGDXuhsRXn1ZBtmKY9EDpzB/exec", {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ inn, fio, phone, income, employees, month })
+  });
+
+  document.getElementById("inn").value = "";
+  document.getElementById("fio").value = "";
+  document.getElementById("phone").value = "";
+  document.getElementById("income").value = "";
+  document.getElementById("employees").value = "";
+  document.getElementById("month").value = "";
+
+  const msg = document.getElementById("successMessage");
+  msg.classList.add("show");
+
+  setTimeout(() => {
+    msg.classList.remove("show");
+  }, 3000);
+}
+</script>
+
 </body>
 </html>
