@@ -1,57 +1,7 @@
-body {
-    background: #f1f5ff;
-    font-family: Arial, sans-serif;
-}
-
-.container {
-    max-width: 520px;
-    background: white;
-    margin: 40px auto;
-    padding: 30px;
-    border-radius: 14px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    text-align: center;
-}
-
-h2 {
-    margin-bottom: 25px;
-    font-weight: bold;
-}
-
-.input {
-    width: 100%;
-    padding: 14px;
-    margin: 10px 0;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-}
-
-.input:focus {
-    border-color: #2979ff;
-    outline: none;
-}
-
-.btn {
-    width: 100%;
-    padding: 16px;
-    background: #007bff;
-    border: none;
-    border-radius: 10px;
-    color: white;
-    font-size: 18px;
-    cursor: pointer;
-    margin-top: 10px;
-}
-
-.btn:hover {
-    background: #0066d1;
-}
-
-.status {
-    margin-top: 15px;
-    font-size: 16px;
-    font-weight: bold;
-    color: #333;
-    min-height: 22px;
-}
+:root{--bg:#eef5ff;--card:#fff;--accent:#0a84ff}
+body{font-family:Arial,Helvetica,sans-serif;background:var(--bg);display:flex;align-items:center;justify-content:center;height:100vh;margin:0}
+.card{width:520px;background:var(--card);padding:36px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.08);text-align:center}
+h1{margin:0 0 18px;font-size:28px}
+input,select{width:100%;padding:14px 16px;border:1px solid #e0e6ef;border-radius:8px;margin:10px 0;font-size:16px}
+button{width:100%;padding:14px;border-radius:10px;border:0;background:var(--accent);color:#fff;font-size:20px;margin-top:10px;cursor:pointer}
+.status{margin-top:14px;color:#111;font-weight:700}
