@@ -1,43 +1,31 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Форма подачи заявки</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Форма подачи заявки</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div class="card">
+    <h1>Форма подачи заявки</h1>
 
-<div class="container">
-    <h2>Форма подачи заявки</h2>
-
-    <input id="inn" class="input" type="number" placeholder="ИНН" />
-
-    <input id="fio" class="input" type="text" placeholder="ФИО (заполняется автоматически)" readonly />
-
-    <input id="income" class="input" type="number" placeholder="Выручка за период" />
-
-    <select id="month" class="input">
-        <option value="">Выберите месяц</option>
-        <option>Январь</option>
-        <option>Февраль</option>
-        <option>Март</option>
-        <option>Апрель</option>
-        <option>Май</option>
-        <option>Июнь</option>
-        <option>Июль</option>
-        <option>Август</option>
-        <option>Сентябрь</option>
-        <option>Октябрь</option>
-        <option>Ноябрь</option>
-        <option>Декабрь</option>
+    <input id="inn" placeholder="ИНН" />
+    <input id="fio" placeholder="ФИО (заполняется автоматически)" />
+    <input id="income" placeholder="Выручка за период" />
+    <select id="month">
+      <option value="">Выберите месяц</option>
+      <option>Январь</option><option>Февраль</option><option>Март</option>
+      <option>Апрель</option><option>Май</option><option>Июнь</option>
+      <option>Июль</option><option>Август</option><option>Сентябрь</option>
+      <option>Октябрь</option><option>Ноябрь</option><option>Декабрь</option>
     </select>
 
-    <button id="sendBtn" class="btn">Отправить</button>
+    <button id="sendBtn">Отправить</button>
 
     <div id="status" class="status"></div>
-</div>
+  </div>
 
-<script src="main.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>
