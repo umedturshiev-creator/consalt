@@ -1,45 +1,36 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Заявка клиента</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Форма подачи заявки</title>
+    <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+
 <div class="container">
-  <h2>Форма подачи заявки</h2>
+    <h2>Форма подачи заявки</h2>
 
-  <form id="form">
+    <input type="number" id="inn" placeholder="ИНН" />
 
-    <div class="input-box">
-      <input name="inn" id="inn" type="number" placeholder="ИНН (до 9 цифр)" required>
-    </div>
+    <input type="text" id="fio" placeholder="ФИО" disabled />
 
-    <div class="input-box">
-      <input id="fio" type="text" placeholder="ФИО (авто)" disabled>
-    </div>
+    <input type="number" id="income" placeholder="Выручка за период" />
 
-    <div class="input-box">
-      <input name="income" type="number" placeholder="Выручка за период" required>
-    </div>
-
-    <div class="input-box">
-      <select name="month" required>
-        <option value="" disabled selected>Выберите месяц</option>
+    <select id="month">
+        <option value="" selected disabled>Выберите месяц</option>
         <option>Январь</option><option>Февраль</option><option>Март</option>
         <option>Апрель</option><option>Май</option><option>Июнь</option>
         <option>Июль</option><option>Август</option><option>Сентябрь</option>
         <option>Октябрь</option><option>Ноябрь</option><option>Декабрь</option>
-      </select>
-    </div>
+    </select>
 
-    <button type="submit">Отправить</button>
-  </form>
+    <button id="sendBtn">Отправить</button>
 
-  <div id="status"></div>
+    <div id="status"></div>
 </div>
 
 <script src="main.js"></script>
+
 </body>
 </html>
