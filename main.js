@@ -1,4 +1,3 @@
-
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbYiBMywch-hFgYrd_46PzIZYkjzO5xwKZnk_Hwx6j7NQFkSU55BzVFHp257QNnKEkG/exec";
 
 document.getElementById("form").addEventListener("submit", async (e) => {
