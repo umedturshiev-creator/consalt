@@ -55,11 +55,12 @@ sendBtn.addEventListener("click", async () => {
     };
 
     try {
-        const res = await fetch(API_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-        });
+const res = await fetch(API_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+});
 
         const text = await res.text();
         console.log("Ответ POST:", text);
