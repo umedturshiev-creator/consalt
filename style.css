@@ -55,15 +55,9 @@ button:hover {
   background: #004fcc;
 }
 
-.success {
+#status {
+  margin-top: 10px;
   text-align: center;
-  margin-top: 15px;
+  font-size: 14px;
   font-weight: bold;
-  color: green;
-  opacity: 0;
-  transition: 0.3s;
-}
-
-.success.show {
-  opacity: 1;
 }

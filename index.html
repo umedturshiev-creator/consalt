@@ -11,47 +11,41 @@
 <div class="container">
   <h2>Форма ввода данных</h2>
 
-  <div class="input-box">
-    <input type="number" id="inn" placeholder="ИНН (макс. 9 цифр)" maxlength="9" oninput="this.value=this.value.slice(0,9)">
-  </div>
+  <form id="form">
+    <div class="input-box">
+      <input type="number" name="inn" placeholder="ИНН (до 9 цифр)" maxlength="9" required oninput="this.value=this.value.slice(0,9)">
+    </div>
 
-  <div class="input-box">
-    <input type="text" id="fio" placeholder="ФИО">
-  </div>
+    <div class="input-box">
+      <input type="text" name="fio" placeholder="ФИО полностью" required>
+    </div>
 
-  <div class="input-box">
-    <input type="number" id="phone" placeholder="Телефон (9 цифр)" maxlength="9" oninput="this.value=this.value.slice(0,9)">
-  </div>
+    <div class="input-box">
+      <input type="number" name="phone" placeholder="Телефон (9 цифр)" maxlength="9" required oninput="this.value=this.value.slice(0,9)">
+    </div>
 
-  <div class="input-box">
-    <input type="number" id="income" placeholder="Доход за месяц">
-  </div>
+    <div class="input-box">
+      <input type="number" name="income" placeholder="Доход за месяц" required>
+    </div>
 
-  <div class="input-box">
-    <input type="number" id="employees" placeholder="Количество сотрудников">
-  </div>
+    <div class="input-box">
+      <input type="number" name="employees" placeholder="Количество сотрудников" required>
+    </div>
 
-  <div class="input-box">
-    <select id="month">
-      <option value="" selected disabled>Выберите месяц</option>
-      <option>Январь</option>
-      <option>Февраль</option>
-      <option>Март</option>
-      <option>Апрель</option>
-      <option>Май</option>
-      <option>Июнь</option>
-      <option>Июль</option>
-      <option>Август</option>
-      <option>Сентябрь</option>
-      <option>Октябрь</option>
-      <option>Ноябрь</option>
-      <option>Декабрь</option>
-    </select>
-  </div>
+    <div class="input-box">
+      <select name="month" required>
+        <option value="" disabled selected>Выберите месяц</option>
+        <option>Январь</option><option>Февраль</option><option>Март</option>
+        <option>Апрель</option><option>Май</option><option>Июнь</option>
+        <option>Июль</option><option>Август</option><option>Сентябрь</option>
+        <option>Октябрь</option><option>Ноябрь</option><option>Декабрь</option>
+      </select>
+    </div>
 
-  <button onclick="sendData()">Отправить данные</button>
+    <button type="submit">Отправить данные</button>
+  </form>
 
-  <div class="success" id="successMessage">Данные успешно отправлены!</div>
+  <p id="status"></p>
 </div>
 
 <script src="main.js"></script>

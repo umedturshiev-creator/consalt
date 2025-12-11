@@ -1,30 +1,32 @@
 
-function sendData() {
-  const inn = document.getElementById("inn").value;
-  const fio = document.getElementById("fio").value;
-  const phone = document.getElementById("phone").value;
-  const income = document.getElementById("income").value;
-  const employees = document.getElementById("employees").value;
-  const month = document.getElementById("month").value;
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwEvKW4sVTrserlxjx9GIDBc1xzLxtdanFCZf-fETgkHqYHOeyT4Hy2kBnLD5WORZVy/exec";
 
-  fetch("https://script.google.com/macros/s/AKfycbzKMbvmwKkZeQWjfEShXohJHCwFkzcbvUEQv6k2ViGlQrGDXuhsRXn1ZBtmKY9EDpzB/exec", {
-    method: "POST",
-    mode: "no-cors",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ inn, fio, phone, income, employees, month })
-  });
+document.getElementById("form").addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-  document.getElementById("inn").value = "";
-  document.getElementById("fio").value = "";
-  document.getElementById("phone").value = "";
-  document.getElementById("income").value = "";
-  document.getElementById("employees").value = "";
-  document.getElementById("month").value = "";
+  const form = e.target;
+  const data = {
+    inn: form.inn.value,
+    fio: form.fio.value,
+    phone: form.phone.value,
+    income: form.income.value,
+    employees: form.employees.value,
+    month: form.month.value
+  };
 
-  const msg = document.getElementById("successMessage");
-  msg.classList.add("show");
+  document.getElementById("status").innerText = "Отправка...";
 
-  setTimeout(() => {
-    msg.classList.remove("show");
-  }, 3000);
-}
+  try {
+    await fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json;charset=utf-8" },
+      body: JSON.stringify(data)
+    });
+
+    document.getElementById("status").innerText = "Успешно отправлено!";
+    form.reset();
+
+  } catch (err) {
+    document.getElementById("status").innerText = "Ошибка отправки!";
+  }
+});
