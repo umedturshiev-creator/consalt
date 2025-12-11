@@ -1,6 +1,6 @@
 // ====== URL твоего Apps Script WebApp ======
 const API_URL =
-"https://script.google.com/macros/s/AKfycbzV_wsqT2xmvvMPltUYwJr2NLjXl3xCbRvhcbfab8-F2iiGcimP6ZIlIjBrNxEG-iXyfQ/exec";
+"https://script.google.com/macros/s/AKfycbyYqiwIibXarxstq0ZspYqVGkTDgSI6Ay2qSTkYsRAq892AFgnc_RQc3tUOn327P9hpDg/exec";
 
 // ====== ЭЛЕМЕНТЫ ФОРМЫ ======
 const innInput = document.getElementById("inn");
