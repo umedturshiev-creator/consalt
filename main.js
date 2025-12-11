@@ -17,13 +17,12 @@ innInput.addEventListener("input", async () => {
         if (data.success) {
             fioInput.value = data.fio;
         } else {
-            fioInput.value = "Ошибка запроса";
+            fioInput.value = "Не найдено";
         }
     } catch (e) {
         fioInput.value = "Ошибка";
     }
 });
-
 
 document.getElementById("sendBtn").addEventListener("click", async () => {
     statusBox.innerText = "Отправка...";
@@ -44,7 +43,7 @@ document.getElementById("sendBtn").addEventListener("click", async () => {
         const data = await res.json();
 
         if (data.status === "ok") {
-            statusBox.innerText = "Заявка отправлена!";
+            statusBox.innerText = "Заявка успешно отправлена!";
         } else {
             statusBox.innerText = "Ошибка: " + data.message;
         }
