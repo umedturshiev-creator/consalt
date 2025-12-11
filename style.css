@@ -1,1 +1,10 @@
-body{background:#fff;}
+
+body {font-family: Arial, sans-serif; background: #f2f2f2; padding: 20px;}
+.container {max-width: 420px; margin: auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 0 12px rgba(0,0,0,0.1);}
+h2 {text-align: center; margin-bottom: 20px;}
+.input-box {margin-bottom: 18px;}
+input, select {width: 100%; padding: 12px; font-size: 16px; border-radius: 10px; border: 1px solid #ccc; outline: none; transition: 0.3s;}
+input:focus, select:focus {border-color: #0066ff; box-shadow: 0 0 5px rgba(0,102,255,0.4); transform: scale(1.02);}
+button {width: 100%; padding: 14px; font-size: 18px; border: none; border-radius: 10px; background: #0066ff; color: #fff; cursor: pointer; transition: 0.3s;}
+button:hover {background: #004fcc;}
+#status {margin-top: 10px; text-align: center; font-size: 14px; font-weight: bold;}
