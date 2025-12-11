@@ -9,9 +9,15 @@
 <body>
 <div class="container">
   <h2>Форма подачи заявки</h2>
+
   <form id="form">
+
     <div class="input-box">
-      <input name="inn" type="number" placeholder="ИНН (до 9 цифр)" required>
+      <input name="inn" id="inn" type="number" placeholder="ИНН (до 9 цифр)" required>
+    </div>
+
+    <div class="input-box">
+      <input id="fio" type="text" placeholder="ФИО (авто)" disabled>
     </div>
 
     <div class="input-box">
@@ -21,18 +27,10 @@
     <div class="input-box">
       <select name="month" required>
         <option value="" disabled selected>Выберите месяц</option>
-        <option>Январь</option>
-        <option>Февраль</option>
-        <option>Март</option>
-        <option>Апрель</option>
-        <option>Май</option>
-        <option>Июнь</option>
-        <option>Июль</option>
-        <option>Август</option>
-        <option>Сентябрь</option>
-        <option>Октябрь</option>
-        <option>Ноябрь</option>
-        <option>Декабрь</option>
+        <option>Январь</option><option>Февраль</option><option>Март</option>
+        <option>Апрель</option><option>Май</option><option>Июнь</option>
+        <option>Июль</option><option>Август</option><option>Сентябрь</option>
+        <option>Октябрь</option><option>Ноябрь</option><option>Декабрь</option>
       </select>
     </div>
 
