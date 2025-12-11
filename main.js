@@ -1,5 +1,5 @@
 // ====== URL твоего Apps Script WebApp ======
-const API_URL = "https://script.google.com/macros/s/AKfycbw57_6uKs2-I6rh1S4a560b9YS3P4ufULgx4Mcu8USIPguNxCk6nVUALwWkIdhr5JMWgw/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzV_wsqT2xmwvMPltUYwJr2NLjXl3xCbRvhcbfab8-F2iiGcimP6ZIIjlBrNxEG-iXyfQ/exec";
 
 
 // ====== ЭЛЕМЕНТЫ ФОРМЫ ======
