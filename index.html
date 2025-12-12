@@ -72,7 +72,7 @@
         background: #0d47a1;
     }
 
-    /* СПИННЕР */
+    /* SPINNER */
     .spinner {
         display: none;
         width: 20px;
@@ -149,11 +149,12 @@
 </div>
 
 
-
 <script>
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwUUcRsGyZpHGqVOvKp3qiQ7p_D9sBgwFcuf7ksqX3gkwtUlnRIW1ArbXtnw4L4bIdPXQ/exec";
+// ПРАВИЛЬНЫЙ URL
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwUUcRsGyZpHGqVOVkP3qiQ7p_D9sBgwFcfu7KsqX3gkwtUlnRlW1ArbXtnw44LbIDPXQ/exec";
 
-// --- Проверка ИНН ---
+
+// === Проверка ИНН ===
 async function checkINN() {
     const inn = document.getElementById("inn").value;
     const fio = document.getElementById("fio");
@@ -175,7 +176,7 @@ async function checkINN() {
 }
 
 
-// --- Отправка заявки ---
+// === Отправка заявки ===
 async function sendForm() {
     const inn = document.getElementById("inn").value;
     const fio = document.getElementById("fio").value;
@@ -185,27 +186,12 @@ async function sendForm() {
     const spinner = document.getElementById("spinner");
     const sendBtn = document.getElementById("sendBtn");
 
-    if (inn.length !== 8) {
-        result.innerText = "Введите корректный ИНН!";
-        return;
-    }
+    if (inn.length !== 8) return result.innerText = "Введите корректный ИНН!";
+    if (fio === "Ваш ИНН не зарегистрирован") return result.innerText = "Ваш ИНН не зарегистрирован!";
+    if (!income) return result.innerText = "Введите сумму выручки!";
+    if (!month) return result.innerText = "Выберите месяц!";
 
-    if (fio === "Ваш ИНН не зарегистрирован") {
-        result.innerText = "Ваш ИНН не зарегистрирован!";
-        return;
-    }
-
-    if (!income) {
-        result.innerText = "Введите сумму выручки!";
-        return;
-    }
-
-    if (!month) {
-        result.innerText = "Выберите месяц!";
-        return;
-    }
-
-    // Показываем спиннер
+    // показываем спиннер
     spinner.style.display = "block";
     sendBtn.disabled = true;
 
@@ -223,7 +209,7 @@ async function sendForm() {
         if (data.status === "ok") {
             result.innerText = "Заявка успешно отправлена!";
 
-            // автоочистка формы
+            // автоочистка
             document.getElementById("inn").value = "";
             document.getElementById("fio").value = "";
             document.getElementById("income").value = "";
@@ -235,7 +221,6 @@ async function sendForm() {
         result.innerText = "Ошибка соединения!";
     }
 
-    // Скрываем спиннер
     spinner.style.display = "none";
     sendBtn.disabled = false;
 }
