@@ -4,14 +4,29 @@ const innInput = document.getElementById("inn");
 const fioInput = document.getElementById("fio");
 const incomeInput = document.getElementById("income");
 const monthInput = document.getElementById("month");
-const statusBox = document.getElementById("status");
 const sendBtn = document.getElementById("sendBtn");
 const loader = document.getElementById("loader");
 const checkIcon = document.getElementById("checkIcon");
 const incomeCheck = document.getElementById("incomeCheck");
+const toastContainer = document.getElementById("toastContainer");
 
 let innTimer = null;
 
+/* ===== Toast helper ===== */
+function showToast(message, type = "success") {
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.innerText = message;
+
+  toastContainer.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.animation = "toast-out .3s forwards";
+    setTimeout(() => toast.remove(), 300);
+  }, 2500);
+}
+
+/* ===== Inputs ===== */
 innInput.addEventListener("input", () => {
   innInput.value = innInput.value.replace(/\D/g, "").slice(0, 8);
   clearTimeout(innTimer);
@@ -31,13 +46,13 @@ incomeInput.addEventListener("blur", () => {
   }
 });
 
+/* ===== FIO search ===== */
 async function findFioByInn() {
   const inn = innInput.value.trim();
 
   fioInput.value = "";
   fioInput.classList.remove("success","error");
   sendBtn.disabled = true;
-  statusBox.innerText = "";
   checkIcon.classList.remove("show");
   checkIcon.classList.add("hidden");
 
@@ -59,17 +74,17 @@ async function findFioByInn() {
     } else {
       fioInput.value = "Не найдено";
       fioInput.classList.add("error");
+      showToast("ИНН не найден", "error");
     }
   } catch {
-    statusBox.innerText = "Ошибка сети";
+    showToast("Ошибка сети", "error");
   } finally {
     loader.classList.add("hidden");
   }
 }
 
+/* ===== Submit ===== */
 sendBtn.addEventListener("click", async () => {
-  statusBox.innerText = "Отправка...";
-
   const body = new URLSearchParams({
     inn: innInput.value,
     fio: fioInput.value,
@@ -85,8 +100,17 @@ sendBtn.addEventListener("click", async () => {
     });
 
     const data = JSON.parse(await res.text());
-    statusBox.innerText = data.status === "ok" ? "Заявка отправлена!" : "Ошибка";
+
+    if (data.status === "ok") {
+      showToast("Заявка успешно отправлена");
+      incomeInput.value = "";
+      monthInput.value = "";
+      incomeCheck.classList.remove("show");
+      incomeCheck.classList.add("hidden");
+    } else {
+      showToast("Ошибка отправки", "error");
+    }
   } catch {
-    statusBox.innerText = "Ошибка сети";
+    showToast("Ошибка сети", "error");
   }
 });
