@@ -11,8 +11,19 @@
     <h1>Форма подачи заявки</h1>
 
     <input id="inn" placeholder="ИНН" />
-    <input id="fio" placeholder="ФИО (заполняется автоматически)" />
+
+    <div class="fio-wrapper">
+      <input id="fio" placeholder="ФИО (заполняется автоматически)" disabled />
+      <span id="checkIcon" class="check hidden">
+        ✔
+        <span class="tooltip">Данные подтверждены</span>
+      </span>
+    </div>
+
+    <div id="loader" class="loader hidden"></div>
+
     <input id="income" placeholder="Выручка за период" />
+
     <select id="month">
       <option value="">Выберите месяц</option>
       <option>Январь</option><option>Февраль</option><option>Март</option>
@@ -21,8 +32,7 @@
       <option>Октябрь</option><option>Ноябрь</option><option>Декабрь</option>
     </select>
 
-    <button id="sendBtn">Отправить</button>
-
+    <button id="sendBtn" disabled>Отправить</button>
     <div id="status" class="status"></div>
   </div>
 

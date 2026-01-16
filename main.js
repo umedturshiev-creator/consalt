@@ -1,4 +1,3 @@
-// <-- ВСТАВЬ СЮДА ТВОЙ URL ВЕБ-APP -->
 const API_URL = "https://script.google.com/macros/s/AKfycbwUUcRsGyZpHGqVOvKp3qiQ7p_D9sBgwFcuf7ksqX3gkwtUlnRIW1ArbXtnw4L4bIdPXQ/exec";
 
 const innInput = document.getElementById("inn");
@@ -7,64 +6,72 @@ const incomeInput = document.getElementById("income");
 const monthInput = document.getElementById("month");
 const statusBox = document.getElementById("status");
 const sendBtn = document.getElementById("sendBtn");
+const loader = document.getElementById("loader");
+const checkIcon = document.getElementById("checkIcon");
 
-// Автоподтягивание (GET)
+innInput.addEventListener("input", () => {
+  innInput.value = innInput.value.replace(/\D/g, "");
+});
+
+incomeInput.addEventListener("input", () => {
+  incomeInput.value = incomeInput.value.replace(/\D/g, "");
+});
+
 innInput.addEventListener("input", async () => {
-  statusBox.innerText = "";
   const inn = innInput.value.trim();
-  if (inn.length < 6) { fioInput.value = ""; return; }
+
+  fioInput.value = "";
+  fioInput.classList.remove("success","error");
+  sendBtn.disabled = true;
+  statusBox.innerText = "";
+  checkIcon.classList.remove("show");
+  checkIcon.classList.add("hidden");
+
+  if (inn.length < 6) return;
+
+  loader.classList.remove("hidden");
 
   try {
     const res = await fetch(`${API_URL}?inn=${encodeURIComponent(inn)}`);
-    const text = await res.text();
-    let data;
-    try { data = JSON.parse(text); }
-    catch { statusBox.innerText = "Ошибка ответа сервера: " + text; return; }
+    const data = await res.json();
 
-    if (data.success) {
-      fioInput.value = data.fio || "";
+    if (data.success && data.fio) {
+      fioInput.value = data.fio;
+      fioInput.classList.add("success");
+      checkIcon.classList.remove("hidden");
+      setTimeout(()=>checkIcon.classList.add("show"),50);
+      sendBtn.disabled = false;
     } else {
       fioInput.value = "Не найдено";
+      fioInput.classList.add("error");
     }
-  } catch (err) {
-    statusBox.innerText = "Ошибка сети (GET): " + err.message;
+  } catch (e) {
+    statusBox.innerText = "Ошибка сети";
+  } finally {
+    loader.classList.add("hidden");
   }
 });
 
-// Отправка (POST) — используем URLSearchParams чтобы избежать preflight
 sendBtn.addEventListener("click", async () => {
   statusBox.innerText = "Отправка...";
-  const payload = {
-    inn: innInput.value.trim(),
-    fio: fioInput.value.trim(),
-    income: incomeInput.value.trim(),
-    month: monthInput.value.trim()
-  };
+
+  const body = new URLSearchParams({
+    inn: innInput.value,
+    fio: fioInput.value,
+    income: incomeInput.value,
+    month: monthInput.value
+  });
 
   try {
-    const body = new URLSearchParams(payload);
-
     const res = await fetch(API_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
-      body: body.toString()
+      headers: {"Content-Type":"application/x-www-form-urlencoded"},
+      body
     });
 
-    const text = await res.text();
-    let data;
-    try { data = JSON.parse(text); }
-    catch { statusBox.innerText = "Сервер вернул не JSON: " + text; return; }
-
-    if (data.status === "ok") {
-      statusBox.innerText = "Заявка успешно отправлена!";
-      // очистить поля частично:
-      incomeInput.value = "";
-      monthInput.value = "";
-    } else {
-      statusBox.innerText = "Ошибка: " + (data.message || JSON.stringify(data));
-    }
-
-  } catch (err) {
-    statusBox.innerText = "Ошибка сети (POST): " + err.message;
+    const data = await res.json();
+    statusBox.innerText = data.status === "ok" ? "Заявка отправлена!" : "Ошибка";
+  } catch {
+    statusBox.innerText = "Ошибка сети";
   }
 });
