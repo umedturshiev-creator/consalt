@@ -8,6 +8,7 @@ const statusBox = document.getElementById("status");
 const sendBtn = document.getElementById("sendBtn");
 const loader = document.getElementById("loader");
 const checkIcon = document.getElementById("checkIcon");
+const incomeCheck = document.getElementById("incomeCheck");
 
 let innTimer = null;
 
@@ -19,6 +20,15 @@ innInput.addEventListener("input", () => {
 
 incomeInput.addEventListener("input", () => {
   incomeInput.value = incomeInput.value.replace(/\D/g, "");
+  incomeCheck.classList.remove("show");
+  incomeCheck.classList.add("hidden");
+});
+
+incomeInput.addEventListener("blur", () => {
+  if (Number(incomeInput.value) > 0) {
+    incomeCheck.classList.remove("hidden");
+    setTimeout(()=>incomeCheck.classList.add("show"),50);
+  }
 });
 
 async function findFioByInn() {
@@ -58,11 +68,6 @@ async function findFioByInn() {
 }
 
 sendBtn.addEventListener("click", async () => {
-  if (innInput.value.length !== 8) {
-    statusBox.innerText = "ИНН должен состоять из 8 цифр";
-    return;
-  }
-
   statusBox.innerText = "Отправка...";
 
   const body = new URLSearchParams({

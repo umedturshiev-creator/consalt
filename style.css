@@ -10,7 +10,7 @@ button:disabled{background:#bfc7d5;cursor:not-allowed}
 input.success{border:2px solid #2ecc71}
 input.error{border:2px solid #e74c3c;color:#e74c3c}
 
-.fio-wrapper{position:relative}
+.fio-wrapper,.income-wrapper{position:relative}
 
 .check{
   position:absolute;
