@@ -10,14 +10,15 @@
 <div class="card">
 <h2>Отправка отчёта</h2>
 
-<input id="inn" type="text" maxlength="10" placeholder="Введите ИНН"
-oninput="this.value=this.value.replace(/[^0-9]/g,''); checkINN();">
+<input id="inn" type="text" maxlength="10" inputmode="numeric"
+oninput="this.value=this.value.replace(/[^0-9]/g,''); checkINN();"
+placeholder="ИНН (8–10 цифр)">
 
 <input id="fio" type="text" placeholder="ФИО" readonly>
-<div id="innStatus"></div>
 
-<input id="income" type="text" placeholder="Выручка"
-oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+<input id="income" type="text" inputmode="numeric"
+oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+placeholder="Выручка за период">
 
 <select id="month">
 <option value="">Выберите месяц</option>
@@ -27,10 +28,13 @@ oninput="this.value=this.value.replace(/[^0-9]/g,'')">
 <option>Октябрь</option><option>Ноябрь</option><option>Декабрь</option>
 </select>
 
-<button onclick="sendForm()">Отправить</button>
+<button id="sendBtn" onclick="sendForm()">
+Отправить
+<div id="spinner" class="spinner"></div>
+</button>
+
 <div id="result"></div>
 </div>
-
 <script src="main.js"></script>
 </body>
 </html>
