@@ -8,6 +8,7 @@ const monthInput = document.getElementById("month");
 const statusBox = document.getElementById("status");
 const sendBtn = document.getElementById("sendBtn");
 
+// Автоподтягивание (GET)
 innInput.addEventListener("input", async () => {
   statusBox.innerText = "";
   const inn = innInput.value.trim();
@@ -30,6 +31,7 @@ innInput.addEventListener("input", async () => {
   }
 });
 
+// Отправка (POST) — используем URLSearchParams чтобы избежать preflight
 sendBtn.addEventListener("click", async () => {
   statusBox.innerText = "Отправка...";
   const payload = {
@@ -55,6 +57,7 @@ sendBtn.addEventListener("click", async () => {
 
     if (data.status === "ok") {
       statusBox.innerText = "Заявка успешно отправлена!";
+      // очистить поля частично:
       incomeInput.value = "";
       monthInput.value = "";
     } else {
