@@ -15,7 +15,7 @@ const spinner = document.getElementById("spinner");
 
 // ====== INN INPUT ======
 innInput.addEventListener("input", () => {
-  innInput.value = innInput.value.replace(/\D/g, "").slice(0, 10);
+  innInput.value = innInput.value.replace(/\D/g, "").slice(0, 8);
 
   innVerified = false;
   sendBtn.disabled = true;
