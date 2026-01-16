@@ -1,0 +1,7 @@
+:root{--bg:#eef5ff;--card:#fff;--accent:#0a84ff}
+body{font-family:Arial,Helvetica,sans-serif;background:var(--bg);display:flex;align-items:center;justify-content:center;height:100vh;margin:0}
+.card{width:520px;background:var(--card);padding:36px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.08);text-align:center}
+h1{margin:0 0 18px;font-size:28px}
+input,select{width:100%;padding:14px 16px;border:1px solid #e0e6ef;border-radius:8px;margin:10px 0;font-size:16px}
+button{width:100%;padding:14px;border-radius:10px;border:0;background:var(--accent);color:#fff;font-size:20px;margin-top:10px;cursor:pointer}
+.status{margin-top:14px;color:#111;font-weight:700}
