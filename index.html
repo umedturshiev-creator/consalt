@@ -3,32 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Форма клиента</title>
+<title>Отправка отчёта</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="card">
-  <h2>Отправка отчёта</h2>
+<h2>Отправка отчёта</h2>
 
-  <input id="inn" type="text" maxlength="10" inputmode="numeric" pattern="[0-9]*"
-    placeholder="Введите ИНН (до 10 цифр)" required>
+<input id="inn" type="text" maxlength="10" placeholder="Введите ИНН"
+oninput="this.value=this.value.replace(/[^0-9]/g,''); checkINN();">
 
-  <input id="fio" type="text" placeholder="ФИО" readonly>
-  <div id="innStatus">✅ ИНН подтверждён</div>
+<input id="fio" type="text" placeholder="ФИО" readonly>
+<div id="innStatus"></div>
 
-  <input id="income" type="text" inputmode="numeric" pattern="[0-9]*"
-    placeholder="Выручка за период" required>
+<input id="income" type="text" placeholder="Выручка"
+oninput="this.value=this.value.replace(/[^0-9]/g,'')">
 
-  <select id="month">
-    <option value="">Выберите месяц</option>
-    <option>Январь</option><option>Февраль</option><option>Март</option>
-    <option>Апрель</option><option>Май</option><option>Июнь</option>
-    <option>Июль</option><option>Август</option><option>Сентябрь</option>
-    <option>Октябрь</option><option>Ноябрь</option><option>Декабрь</option>
-  </select>
+<select id="month">
+<option value="">Выберите месяц</option>
+<option>Январь</option><option>Февраль</option><option>Март</option>
+<option>Апрель</option><option>Май</option><option>Июнь</option>
+<option>Июль</option><option>Август</option><option>Сентябрь</option>
+<option>Октябрь</option><option>Ноябрь</option><option>Декабрь</option>
+</select>
 
-  <button id="sendBtn">Отправить <span id="spinner"></span></button>
-  <div id="result"></div>
+<button onclick="sendForm()">Отправить</button>
+<div id="result"></div>
 </div>
 
 <script src="main.js"></script>
