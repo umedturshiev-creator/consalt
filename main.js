@@ -11,13 +11,12 @@ const incomeCheck = document.getElementById("incomeCheck");
 const toastContainer = document.getElementById("toastContainer");
 
 let innTimer = null;
+let isSubmitting = false;
 
-/* ===== Toast helper ===== */
 function showToast(message, type = "success") {
   const toast = document.createElement("div");
   toast.className = `toast ${type}`;
   toast.innerText = message;
-
   toastContainer.appendChild(toast);
 
   setTimeout(() => {
@@ -26,7 +25,12 @@ function showToast(message, type = "success") {
   }, 2500);
 }
 
-/* ===== Inputs ===== */
+function setSubmitting(state) {
+  isSubmitting = state;
+  sendBtn.disabled = state;
+  sendBtn.innerText = state ? "Отправляется…" : "Отправить";
+}
+
 innInput.addEventListener("input", () => {
   innInput.value = innInput.value.replace(/\D/g, "").slice(0, 8);
   clearTimeout(innTimer);
@@ -46,7 +50,6 @@ incomeInput.addEventListener("blur", () => {
   }
 });
 
-/* ===== FIO search ===== */
 async function findFioByInn() {
   const inn = innInput.value.trim();
 
@@ -62,8 +65,7 @@ async function findFioByInn() {
 
   try {
     const res = await fetch(`${API_URL}?inn=${encodeURIComponent(inn)}`);
-    const text = await res.text();
-    const data = JSON.parse(text);
+    const data = JSON.parse(await res.text());
 
     if (data.success && data.fio) {
       fioInput.value = data.fio;
@@ -83,8 +85,11 @@ async function findFioByInn() {
   }
 }
 
-/* ===== Submit ===== */
 sendBtn.addEventListener("click", async () => {
+  if (isSubmitting) return;
+
+  setSubmitting(true);
+
   const body = new URLSearchParams({
     inn: innInput.value,
     fio: fioInput.value,
@@ -112,5 +117,7 @@ sendBtn.addEventListener("click", async () => {
     }
   } catch {
     showToast("Ошибка сети", "error");
+  } finally {
+    setSubmitting(false);
   }
 });
