@@ -1,70 +1,45 @@
-// <-- ВСТАВЬ СЮДА ТВОЙ URL ВЕБ-APP -->
-const API_URL = "https://script.google.com/macros/s/AKfycbwUUcRsGyZpHGqVOvKp3qiQ7p_D9sBgwFcuf7ksqX3gkwtUlnRIW1ArbXtnw4L4bIdPXQ/exec";
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwUUcRsGyZpHGqVOVkP3qiQ7p_D9sBgwFcfu7KsqX3gkwtUlnRlW1ArbXtnw44LbIDPXQ/exec";
+const inn = document.getElementById("inn");
+const fio = document.getElementById("fio");
+const income = document.getElementById("income");
+const month = document.getElementById("month");
+const result = document.getElementById("result");
+const status = document.getElementById("innStatus");
+const btn = document.getElementById("sendBtn");
 
-const innInput = document.getElementById("inn");
-const fioInput = document.getElementById("fio");
-const incomeInput = document.getElementById("income");
-const monthInput = document.getElementById("month");
-const statusBox = document.getElementById("status");
-const sendBtn = document.getElementById("sendBtn");
+let timer=null, cache={};
 
-// Автоподтягивание (GET)
-innInput.addEventListener("input", async () => {
-  statusBox.innerText = "";
-  const inn = innInput.value.trim();
-  if (inn.length < 6) { fioInput.value = ""; return; }
-
-  try {
-    const res = await fetch(`${API_URL}?inn=${encodeURIComponent(inn)}`);
-    const text = await res.text();
-    let data;
-    try { data = JSON.parse(text); }
-    catch { statusBox.innerText = "Ошибка ответа сервера: " + text; return; }
-
-    if (data.success) {
-      fioInput.value = data.fio || "";
-    } else {
-      fioInput.value = "Не найдено";
-    }
-  } catch (err) {
-    statusBox.innerText = "Ошибка сети (GET): " + err.message;
-  }
+inn.addEventListener("input",()=>{
+ inn.value=inn.value.replace(/\D/g,"").slice(0,10);
+ fio.value=""; fio.className=""; status.style.display="none";
+ clearTimeout(timer);
+ if(inn.value.length<8) return;
+ timer=setTimeout(()=>checkInn(inn.value),500);
 });
 
-// Отправка (POST) — используем URLSearchParams чтобы избежать preflight
-sendBtn.addEventListener("click", async () => {
-  statusBox.innerText = "Отправка...";
-  const payload = {
-    inn: innInput.value.trim(),
-    fio: fioInput.value.trim(),
-    income: incomeInput.value.trim(),
-    month: monthInput.value.trim()
-  };
+async function checkInn(v){
+ fio.value="Проверка...";
+ if(cache[v]) return apply(cache[v]);
+ try{
+  const r=await fetch(`${WEB_APP_URL}?inn=${v}`);
+  const d=await r.json();
+  cache[v]=d; apply(d);
+ }catch{fio.value="Ошибка"; fio.className="fio-error";}
+}
 
-  try {
-    const body = new URLSearchParams(payload);
+function apply(d){
+ fio.className="";
+ if(d.success&&d.fio){fio.value=d.fio; fio.className="fio-success"; status.style.display="block";}
+ else{fio.value="Ваш ИНН не зарегистрирован"; fio.className="fio-error";}
+}
 
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
-      body: body.toString()
-    });
-
-    const text = await res.text();
-    let data;
-    try { data = JSON.parse(text); }
-    catch { statusBox.innerText = "Сервер вернул не JSON: " + text; return; }
-
-    if (data.status === "ok") {
-      statusBox.innerText = "Заявка успешно отправлена!";
-      // очистить поля частично:
-      incomeInput.value = "";
-      monthInput.value = "";
-    } else {
-      statusBox.innerText = "Ошибка: " + (data.message || JSON.stringify(data));
-    }
-
-  } catch (err) {
-    statusBox.innerText = "Ошибка сети (POST): " + err.message;
-  }
-});
+btn.onclick=async()=>{
+ if(!fio.classList.contains("fio-success")){result.innerText="ИНН не подтверждён"; return;}
+ try{
+  const r=await fetch(WEB_APP_URL,{method:"POST",headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({inn:inn.value,fio:fio.value,income:income.value,month:month.value})});
+  const d=await r.json();
+  result.innerText=d.status==="ok"?"Отправлено":"Ошибка";
+  if(d.status==="ok"){inn.value=fio.value=income.value=month.value=""; status.style.display="none";}
+ }catch{result.innerText="Ошибка соединения";}
+};
