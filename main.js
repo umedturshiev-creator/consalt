@@ -1,5 +1,7 @@
-const tg = window.Telegram && window.Telegram.WebApp;
-if (tg) {
+const tg = window.Telegram?.WebApp || null;
+const isTelegram = !!tg;
+
+if (isTelegram) {
   tg.ready();
   tg.expand();
 }
@@ -14,6 +16,8 @@ const loader = document.getElementById("loader");
 const checkIcon = document.getElementById("checkIcon");
 const incomeCheck = document.getElementById("incomeCheck");
 const toastContainer = document.getElementById("toastContainer");
+const sendBtn = document.getElementById("sendBtn");
+const webHint = document.getElementById("webHint");
 
 let innTimer = null;
 let isSubmitting = false;
@@ -23,16 +27,18 @@ function showToast(message, type = "success") {
   toast.className = `toast ${type}`;
   toast.innerText = message;
   toastContainer.appendChild(toast);
-
   setTimeout(() => {
     toast.style.animation = "toast-out .3s forwards";
     setTimeout(() => toast.remove(), 300);
   }, 2500);
 }
 
-if (tg) {
+if (isTelegram) {
   tg.MainButton.setText("Отправить");
   tg.MainButton.hide();
+} else {
+  sendBtn.classList.remove("hidden");
+  webHint.classList.remove("hidden");
 }
 
 innInput.addEventListener("input", () => {
@@ -56,27 +62,24 @@ incomeInput.addEventListener("blur", () => {
 
 async function findFioByInn() {
   const inn = innInput.value.trim();
-
   fioInput.value = "";
   fioInput.classList.remove("success","error");
   checkIcon.classList.remove("show");
   checkIcon.classList.add("hidden");
-
-  if (tg) tg.MainButton.hide();
+  if (isTelegram) tg.MainButton.hide();
+  sendBtn.disabled = true;
   if (inn.length !== 8) return;
-
   loader.classList.remove("hidden");
-
   try {
     const res = await fetch(`${API_URL}?inn=${encodeURIComponent(inn)}`);
     const data = JSON.parse(await res.text());
-
     if (data.success && data.fio) {
       fioInput.value = data.fio;
       fioInput.classList.add("success");
       checkIcon.classList.remove("hidden");
       setTimeout(()=>checkIcon.classList.add("show"),50);
-      if (tg) tg.MainButton.show();
+      if (isTelegram) tg.MainButton.show();
+      else sendBtn.disabled = false;
     } else {
       fioInput.value = "Не найдено";
       fioInput.classList.add("error");
@@ -89,43 +92,41 @@ async function findFioByInn() {
   }
 }
 
-if (tg) {
-  tg.MainButton.onClick(async () => {
-    if (isSubmitting) return;
-    isSubmitting = true;
-
-    tg.MainButton.showProgress();
-
-    const payload = {
-      inn: innInput.value,
-      fio: fioInput.value,
-      income: incomeInput.value,
-      month: monthInput.value
-    };
-
-    try {
-      const res = await fetch(API_URL, {
-        method: "POST",
-        headers: {"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},
-        body: new URLSearchParams(payload).toString()
-      });
-
-      const data = JSON.parse(await res.text());
-
-      if (data.status === "ok") {
-        showToast("Заявка отправлена");
-        tg.HapticFeedback && tg.HapticFeedback.impactOccurred("light");
+async function submitForm() {
+  if (isSubmitting) return;
+  isSubmitting = true;
+  if (isTelegram) tg.MainButton.showProgress();
+  sendBtn.disabled = true;
+  const payload = {
+    inn: innInput.value,
+    fio: fioInput.value,
+    income: incomeInput.value,
+    month: monthInput.value
+  };
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: {"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},
+      body: new URLSearchParams(payload).toString()
+    });
+    const data = JSON.parse(await res.text());
+    if (data.status === "ok") {
+      showToast("Заявка отправлена");
+      if (isTelegram) {
+        tg.HapticFeedback?.impactOccurred("light");
         setTimeout(() => tg.close(), 1500);
-      } else {
-        showToast("Ошибка отправки", "error");
-        tg.HapticFeedback && tg.HapticFeedback.notificationOccurred("error");
       }
-    } catch {
-      showToast("Ошибка сети", "error");
-      tg.HapticFeedback && tg.HapticFeedback.notificationOccurred("error");
-    } finally {
-      tg.MainButton.hideProgress();
-      isSubmitting = false;
+    } else {
+      showToast("Ошибка отправки", "error");
     }
-  });
+  } catch {
+    showToast("Ошибка сети", "error");
+  } finally {
+    if (isTelegram) tg.MainButton.hideProgress();
+    isSubmitting = false;
+    sendBtn.disabled = false;
+  }
 }
+
+if (isTelegram) tg.MainButton.onClick(submitForm);
+else sendBtn.addEventListener("click", submitForm);
