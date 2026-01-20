@@ -1,10 +1,15 @@
+const tg = window.Telegram && window.Telegram.WebApp;
+if (tg) {
+  tg.ready();
+  tg.expand();
+}
+
 const API_URL = "https://script.google.com/macros/s/AKfycbwUUcRsGyZpHGqVOvKp3qiQ7p_D9sBgwFcuf7ksqX3gkwtUlnRIW1ArbXtnw4L4bIdPXQ/exec";
 
 const innInput = document.getElementById("inn");
 const fioInput = document.getElementById("fio");
 const incomeInput = document.getElementById("income");
 const monthInput = document.getElementById("month");
-const sendBtn = document.getElementById("sendBtn");
 const loader = document.getElementById("loader");
 const checkIcon = document.getElementById("checkIcon");
 const incomeCheck = document.getElementById("incomeCheck");
@@ -25,10 +30,9 @@ function showToast(message, type = "success") {
   }, 2500);
 }
 
-function setSubmitting(state) {
-  isSubmitting = state;
-  sendBtn.disabled = state;
-  sendBtn.innerText = state ? "Отправляется…" : "Отправить";
+if (tg) {
+  tg.MainButton.setText("Отправить");
+  tg.MainButton.hide();
 }
 
 innInput.addEventListener("input", () => {
@@ -55,10 +59,10 @@ async function findFioByInn() {
 
   fioInput.value = "";
   fioInput.classList.remove("success","error");
-  sendBtn.disabled = true;
   checkIcon.classList.remove("show");
   checkIcon.classList.add("hidden");
 
+  if (tg) tg.MainButton.hide();
   if (inn.length !== 8) return;
 
   loader.classList.remove("hidden");
@@ -72,7 +76,7 @@ async function findFioByInn() {
       fioInput.classList.add("success");
       checkIcon.classList.remove("hidden");
       setTimeout(()=>checkIcon.classList.add("show"),50);
-      sendBtn.disabled = false;
+      if (tg) tg.MainButton.show();
     } else {
       fioInput.value = "Не найдено";
       fioInput.classList.add("error");
@@ -85,39 +89,43 @@ async function findFioByInn() {
   }
 }
 
-sendBtn.addEventListener("click", async () => {
-  if (isSubmitting) return;
+if (tg) {
+  tg.MainButton.onClick(async () => {
+    if (isSubmitting) return;
+    isSubmitting = true;
 
-  setSubmitting(true);
+    tg.MainButton.showProgress();
 
-  const body = new URLSearchParams({
-    inn: innInput.value,
-    fio: fioInput.value,
-    income: incomeInput.value,
-    month: monthInput.value
-  });
+    const payload = {
+      inn: innInput.value,
+      fio: fioInput.value,
+      income: incomeInput.value,
+      month: monthInput.value
+    };
 
-  try {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: {"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},
-      body: body.toString()
-    });
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: {"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},
+        body: new URLSearchParams(payload).toString()
+      });
 
-    const data = JSON.parse(await res.text());
+      const data = JSON.parse(await res.text());
 
-    if (data.status === "ok") {
-      showToast("Заявка успешно отправлена");
-      incomeInput.value = "";
-      monthInput.value = "";
-      incomeCheck.classList.remove("show");
-      incomeCheck.classList.add("hidden");
-    } else {
-      showToast("Ошибка отправки", "error");
+      if (data.status === "ok") {
+        showToast("Заявка отправлена");
+        tg.HapticFeedback && tg.HapticFeedback.impactOccurred("light");
+        setTimeout(() => tg.close(), 1500);
+      } else {
+        showToast("Ошибка отправки", "error");
+        tg.HapticFeedback && tg.HapticFeedback.notificationOccurred("error");
+      }
+    } catch {
+      showToast("Ошибка сети", "error");
+      tg.HapticFeedback && tg.HapticFeedback.notificationOccurred("error");
+    } finally {
+      tg.MainButton.hideProgress();
+      isSubmitting = false;
     }
-  } catch {
-    showToast("Ошибка сети", "error");
-  } finally {
-    setSubmitting(false);
-  }
-});
+  });
+}
