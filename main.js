@@ -1,5 +1,5 @@
 const tg = window.Telegram?.WebApp || null;
-const isTelegram = !!tg;
+const isTelegram = tg && tg.initData && tg.initData.length > 0;
 
 if (isTelegram) {
   tg.ready();
