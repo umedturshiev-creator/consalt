@@ -59,7 +59,7 @@ async function findFioByInn() {
   checkIcon.classList.remove("show");
   checkIcon.classList.add("hidden");
 
-  if (inn.length !== 8) return;
+  if (inn.length !== 9) return;
 
   loader.classList.remove("hidden");
 
