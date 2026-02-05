@@ -32,7 +32,7 @@ function setSubmitting(state) {
 }
 
 innInput.addEventListener("input", () => {
-  innInput.value = innInput.value.replace(/\D/g, "").slice(0, 8);
+  innInput.value = innInput.value.replace(/\D/g, "").slice(0, 9);
   clearTimeout(innTimer);
   innTimer = setTimeout(findFioByInn, 500);
 });
