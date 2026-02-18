@@ -1,4 +1,4 @@
-const CACHE_NAME = "ua-consulting-v1";
+const CACHE_NAME = "ua-v1";
 
 const urlsToCache = [
   "/",
@@ -6,27 +6,14 @@ const urlsToCache = [
   "/style.css",
   "/main.js",
   "/logo.png",
-  "/manifest.json"
+  "/icon-192.png",
+  "/icon-512.png"
 ];
 
 self.addEventListener("install", event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(urlsToCache))
-  );
-});
-
-self.addEventListener("activate", event => {
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cache => {
-          if (cache !== CACHE_NAME) {
-            return caches.delete(cache);
-          }
-        })
-      );
-    })
   );
 });
 
