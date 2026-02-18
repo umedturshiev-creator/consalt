@@ -11,8 +11,7 @@ const fioStatus=document.getElementById("fioStatus");
 const addressStatus=document.getElementById("addressStatus");
 const incomeCheck=document.getElementById("incomeCheck");
 const innError=document.getElementById("innError");
-const skeleton=document.getElementById("skeleton");
-const formContainer=document.getElementById("formContainer");
+const skeleton=document.getElementById("skeletonOverlay");
 
 let timer;
 
@@ -37,28 +36,28 @@ function reset(){
   innInput.classList.remove("error-input");
 }
 
-innInput.addEventListener("input",()=>{
-  innInput.value=innInput.value.replace(/\D/g,"").slice(0,9);
-  clearTimeout(timer);
-  reset();
-  if(innInput.value.length!==9){
-    hideSkeleton();
-    return;
-  }
-  timer=setTimeout(fetchInn,500);
-});
-
 function showSkeleton(){
   skeleton.classList.remove("hidden");
   setTimeout(()=>skeleton.classList.add("show"),10);
-  formContainer.classList.add("blur");
 }
 
 function hideSkeleton(){
   skeleton.classList.remove("show");
   setTimeout(()=>skeleton.classList.add("hidden"),300);
-  formContainer.classList.remove("blur");
 }
+
+innInput.addEventListener("input",()=>{
+  innInput.value=innInput.value.replace(/\D/g,"").slice(0,9);
+  clearTimeout(timer);
+  reset();
+
+  if(innInput.value.length!==9){
+    hideSkeleton();
+    return;
+  }
+
+  timer=setTimeout(fetchInn,500);
+});
 
 async function fetchInn(){
 
