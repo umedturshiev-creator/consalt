@@ -12,8 +12,22 @@ const addressStatus=document.getElementById("addressStatus");
 const incomeCheck=document.getElementById("incomeCheck");
 const innError=document.getElementById("innError");
 const skeleton=document.getElementById("skeletonOverlay");
+const skeletonText=document.getElementById("skeletonText");
 
 let timer;
+
+/* ===== TYPE EFFECT ===== */
+
+function typeText(text){
+  if(!skeletonText) return;
+  skeletonText.innerHTML="";
+  let i=0;
+  const interval=setInterval(()=>{
+    skeletonText.innerHTML+=text[i];
+    i++;
+    if(i>=text.length) clearInterval(interval);
+  },25);
+}
 
 /* ===== SKELETON ===== */
 
@@ -21,6 +35,11 @@ function showSkeleton(){
   if(!skeleton) return;
   skeleton.classList.remove("hidden");
   setTimeout(()=>skeleton.classList.add("show"),10);
+  typeText("Идёт поиск данных...");
+
+  if(navigator.vibrate){
+    navigator.vibrate(50);
+  }
 }
 
 function hideSkeleton(){
@@ -56,10 +75,8 @@ function reset(){
 /* ===== INN INPUT ===== */
 
 innInput.addEventListener("input",()=>{
-
   innInput.value=innInput.value.replace(/\D/g,"").slice(0,9);
   clearTimeout(timer);
-
   innError?.classList.remove("show");
   reset();
 
@@ -74,7 +91,6 @@ innInput.addEventListener("input",()=>{
 /* ===== FETCH ===== */
 
 async function fetchInn(){
-
   showSkeleton();
 
   try{
@@ -84,17 +100,12 @@ async function fetchInn(){
     hideSkeleton();
 
     if(data && (data.fio || data.address)){
-
       fioInput.value=data.fio||"";
       addressInput.value=data.address||"";
-
       fioStatus?.classList.add("show");
       addressStatus?.classList.add("show");
-
       incomeInput.focus();
-
     }else{
-
       innInput.classList.add("error-input");
       innError?.classList.add("show");
 
@@ -133,7 +144,7 @@ incomeInput.addEventListener("input",()=>{
 
 monthInput.addEventListener("change",updateBtn);
 
-sendBtn.addEventListener("click",async()=>{
+sendBtn.addEventListener("click",()=>{
   if(!validate()) return;
   alert("Заявка отправлена");
 });
