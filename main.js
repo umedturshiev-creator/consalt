@@ -1,11 +1,9 @@
-// Google Script для отправки формы (НЕ трогаем)
+// Google Script URL (оставь свой)
 const API_URL = "https://script.google.com/macros/s/AKfycbwUUcRsGyZpHGqVOvKp3qiQ7p_D9sBgwFcuf7ksqX3gkwtUlnRIW1ArbXtnw4L4bIdPXQ/exec";
-
-// SmartPay API
-const SMARTPAY_API = "https://smartpay.tj/subapi/payler/tin/";
 
 const innInput = document.getElementById("inn");
 const fioInput = document.getElementById("fio");
+const addressInput = document.getElementById("address");
 const incomeInput = document.getElementById("income");
 const monthInput = document.getElementById("month");
 const sendBtn = document.getElementById("sendBtn");
@@ -42,7 +40,7 @@ function setSubmitting(state) {
 innInput.addEventListener("input", () => {
   innInput.value = innInput.value.replace(/\D/g, "").slice(0, 9);
   clearTimeout(innTimer);
-  innTimer = setTimeout(findFioByInn, 500);
+  innTimer = setTimeout(findDataByInn, 500);
 });
 
 // проверка дохода
@@ -61,12 +59,13 @@ incomeInput.addEventListener("blur", () => {
 
 
 // ==========================
-// 🔥 ПОЛУЧАЕМ ТОЛЬКО ФИО
+// 🔥 ПОЛУЧЕНИЕ ФИО + АДРЕС
 // ==========================
-async function findFioByInn() {
+async function findDataByInn() {
   const inn = innInput.value.trim();
 
   fioInput.value = "";
+  addressInput.value = "";
   fioInput.classList.remove("success","error");
   sendBtn.disabled = true;
   checkIcon.classList.remove("show");
@@ -77,12 +76,13 @@ async function findFioByInn() {
   loader.classList.remove("hidden");
 
   try {
-    const res = await fetch(`${SMARTPAY_API}${inn}`);
-    const data = await res.json();
+    const res = await fetch(`${API_URL}?inn=${encodeURIComponent(inn)}`);
+    const data = JSON.parse(await res.text());
 
-    // только ФИО из SmartPay
-    if (data.errorCode === 0 && data.FullName) {
-      fioInput.value = data.FullName;
+    if (data.success) {
+      fioInput.value = data.fio || "";
+      addressInput.value = data.address || "";
+
       fioInput.classList.add("success");
 
       checkIcon.classList.remove("hidden");
@@ -92,12 +92,12 @@ async function findFioByInn() {
 
     } else {
       fioInput.value = "Не найдено";
+      addressInput.value = "";
       fioInput.classList.add("error");
       showToast("ИНН не найден", "error");
     }
 
-  } catch (err) {
-    console.error(err);
+  } catch {
     showToast("Ошибка сети", "error");
   } finally {
     loader.classList.add("hidden");
@@ -105,7 +105,7 @@ async function findFioByInn() {
 }
 
 
-// отправка формы — без изменений
+// отправка формы (как было)
 sendBtn.addEventListener("click", async () => {
   if (isSubmitting) return;
 
@@ -114,6 +114,7 @@ sendBtn.addEventListener("click", async () => {
   const body = new URLSearchParams({
     inn: innInput.value,
     fio: fioInput.value,
+    address: addressInput.value,
     income: incomeInput.value,
     month: monthInput.value
   });
