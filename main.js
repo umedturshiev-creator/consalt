@@ -14,7 +14,6 @@ const innError=document.getElementById("innError");
 const skeleton=document.getElementById("skeletonOverlay");
 
 let timer;
-let searched = false; // ← ВАЖНО
 
 /* ===== SKELETON ===== */
 
@@ -49,8 +48,8 @@ function updateBtn(){
 function reset(){
   fioInput.value="";
   addressInput.value="";
-  fioStatus?.classList.add("hidden");
-  addressStatus?.classList.add("hidden");
+  fioStatus?.classList.remove("show");
+  addressStatus?.classList.remove("show");
   innInput.classList.remove("error-input");
 }
 
@@ -58,15 +57,11 @@ function reset(){
 
 innInput.addEventListener("input",()=>{
 
-  // Ограничение 9 цифр
   innInput.value=innInput.value.replace(/\D/g,"").slice(0,9);
-
   clearTimeout(timer);
-  reset();
 
-  // Скрываем ошибку при любом изменении
-  innError?.classList.add("hidden");
-  searched = false;
+  innError?.classList.remove("show");
+  reset();
 
   if(innInput.value.length!==9){
     hideSkeleton();
@@ -80,7 +75,6 @@ innInput.addEventListener("input",()=>{
 
 async function fetchInn(){
 
-  searched = true;
   showSkeleton();
 
   try{
@@ -94,21 +88,15 @@ async function fetchInn(){
       fioInput.value=data.fio||"";
       addressInput.value=data.address||"";
 
-      fioStatus?.classList.remove("hidden");
-      addressStatus?.classList.remove("hidden");
-
-      setTimeout(()=>{
-        fioStatus?.classList.add("show");
-        addressStatus?.classList.add("show");
-      },50);
+      fioStatus?.classList.add("show");
+      addressStatus?.classList.add("show");
 
       incomeInput.focus();
 
-    }else if(searched){
+    }else{
 
-      // Ошибка только после реального запроса
       innInput.classList.add("error-input");
-      innError?.classList.remove("hidden");
+      innError?.classList.add("show");
 
       if(navigator.vibrate){
         navigator.vibrate([200,100,200]);
@@ -122,7 +110,6 @@ async function fetchInn(){
 
   }catch(e){
     hideSkeleton();
-    console.error("Ошибка API:",e);
   }
 
   updateBtn();
@@ -136,10 +123,8 @@ incomeInput.addEventListener("input",()=>{
   incomeInput.value=val;
 
   if(Number(val)>0){
-    incomeCheck?.classList.remove("hidden");
-    setTimeout(()=>incomeCheck?.classList.add("show"),50);
+    incomeCheck?.classList.add("show");
   }else{
-    incomeCheck?.classList.add("hidden");
     incomeCheck?.classList.remove("show");
   }
 
@@ -147,8 +132,6 @@ incomeInput.addEventListener("input",()=>{
 });
 
 monthInput.addEventListener("change",updateBtn);
-
-/* ===== SEND ===== */
 
 sendBtn.addEventListener("click",async()=>{
   if(!validate()) return;
