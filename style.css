@@ -11,7 +11,11 @@ body{
   background:var(--bg);
 }
 
-.app{max-width:500px;margin:auto;}
+.app{
+  max-width:500px;
+  margin:auto;
+  position:relative;
+}
 
 .header{
   background:var(--primary);
@@ -28,12 +32,6 @@ body{
 
 .form{
   padding:20px;
-  transition:0.3s ease;
-}
-
-.form.blur{
-  filter:blur(4px);
-  opacity:0.6;
 }
 
 input,select{
@@ -83,16 +81,28 @@ input,select{
   box-shadow:0 0 0 2px var(--error) !important;
 }
 
-/* ===== PREMIUM SKELETON ===== */
+/* ===== SKELETON OVERLAY ===== */
 
-.skeleton{
+.skeleton-overlay{
+  position:absolute;
+  top:130px;
+  left:0;
+  right:0;
+  padding:20px;
+  z-index:10;
   opacity:0;
   transition:0.3s ease;
-  margin-bottom:15px;
 }
 
-.skeleton.show{
+.skeleton-overlay.show{
   opacity:1;
+}
+
+.skeleton-card{
+  background:#fff;
+  padding:20px;
+  border-radius:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.05);
 }
 
 .skeleton-field{
