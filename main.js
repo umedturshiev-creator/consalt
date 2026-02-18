@@ -10,14 +10,7 @@ const sendBtn=document.getElementById("sendBtn");
 const fioStatus=document.getElementById("fioStatus");
 const addressStatus=document.getElementById("addressStatus");
 const incomeCheck=document.getElementById("incomeCheck");
-
 const innError=document.getElementById("innError");
-const skeleton=document.getElementById("skeleton");
-const offlineMessage=document.getElementById("offlineMessage");
-
-const step1=document.getElementById("step1");
-const step2=document.getElementById("step2");
-const step3=document.getElementById("step3");
 
 let timer;
 
@@ -35,6 +28,17 @@ function updateBtn(){
   sendBtn.disabled=!validate();
 }
 
+/* ===== RESET ===== */
+
+function reset(){
+  fioInput.value="";
+  addressInput.value="";
+  fioStatus?.classList.add("hidden");
+  addressStatus?.classList.add("hidden");
+  innError?.classList.add("hidden");
+  innInput.classList.remove("error-input");
+}
+
 /* ===== INN INPUT ===== */
 
 innInput.addEventListener("input",()=>{
@@ -45,63 +49,38 @@ innInput.addEventListener("input",()=>{
   timer=setTimeout(fetchInn,500);
 });
 
-function reset(){
-  fioInput.value="";
-  addressInput.value="";
-  fioStatus.classList.add("hidden");
-  addressStatus.classList.add("hidden");
-  skeleton.classList.add("hidden");
-  innError.classList.add("hidden");
-  innInput.classList.remove("error-input");
-}
-
 /* ===== FETCH ===== */
 
 async function fetchInn(){
 
-  if(!navigator.onLine){
-    offlineMessage.classList.remove("hidden");
-    return;
-  }
-  offlineMessage.classList.add("hidden");
-
-  skeleton.classList.remove("hidden");
-
   try{
     const res=await fetch(`${API_URL}?inn=${innInput.value}`);
     const data=await res.json();
-
-    skeleton.classList.add("hidden");
 
     if(data.success){
 
       fioInput.value=data.fio||"";
       addressInput.value=data.address||"";
 
-      fioStatus.classList.remove("hidden");
-      addressStatus.classList.remove("hidden");
+      fioStatus?.classList.remove("hidden");
+      addressStatus?.classList.remove("hidden");
 
       setTimeout(()=>{
-        fioStatus.classList.add("show");
-        addressStatus.classList.add("show");
+        fioStatus?.classList.add("show");
+        addressStatus?.classList.add("show");
       },50);
-
-      step1.classList.remove("active");
-      step2.classList.add("active");
 
       incomeInput.focus();
 
     }else{
 
       innInput.classList.add("error-input");
-      innInput.classList.add("shake");
-      innError.classList.remove("hidden");
+      innError?.classList.remove("hidden");
 
       if(navigator.vibrate){
         navigator.vibrate([200,100,200]);
       }
 
-      setTimeout(()=>innInput.classList.remove("shake"),400);
       setTimeout(()=>{
         innInput.value="";
         reset();
@@ -109,7 +88,7 @@ async function fetchInn(){
     }
 
   }catch(e){
-    skeleton.classList.add("hidden");
+    console.log("Ошибка API",e);
   }
 
   updateBtn();
@@ -123,13 +102,11 @@ incomeInput.addEventListener("input",()=>{
   incomeInput.value=val;
 
   if(Number(val)>0){
-    incomeCheck.classList.remove("hidden");
-    setTimeout(()=>incomeCheck.classList.add("show"),50);
-    step2.classList.remove("active");
-    step3.classList.add("active");
+    incomeCheck?.classList.remove("hidden");
+    setTimeout(()=>incomeCheck?.classList.add("show"),50);
   }else{
-    incomeCheck.classList.add("hidden");
-    incomeCheck.classList.remove("show");
+    incomeCheck?.classList.add("hidden");
+    incomeCheck?.classList.remove("show");
   }
 
   updateBtn();
