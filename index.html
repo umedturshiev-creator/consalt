@@ -1,83 +1,89 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="theme-color" content="#1e3a8a"/>
-  <title>UA Consulting v4.0</title>
-
-  <link rel="stylesheet" href="style.css?v=40">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="theme-color" content="#1e3a8a"/>
+<title>UA Consulting v4.1</title>
+<link rel="stylesheet" href="style.css?v=41">
 </head>
 <body>
 
 <div class="app">
 
-  <div class="header">
-    <img src="logo.png" class="logo" alt="UA Consulting">
-    <div class="title">Подача заявки</div>
-    <div class="version-top">v4.0</div>
-  </div>
-
-  <!-- SUCCESS OVERLAY -->
-  <div id="successOverlay" class="success-overlay hidden">
-    <div class="success-box">
-      <svg class="checkmark" viewBox="0 0 52 52">
-        <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
-        <path class="checkmark-check" fill="none"
-              d="M14 27 L22 35 L38 18"/>
-      </svg>
-      <div class="success-text">Заявка успешно отправлена</div>
-    </div>
-  </div>
-
-  <!-- ERROR TOAST -->
-  <div id="errorToast" class="toast hidden">
-    ИНН не найден
-  </div>
-
-  <div class="form">
-
-    <input id="inn" placeholder="Введите ИНН (9 цифр)" type="tel" inputmode="numeric"/>
-
-    <div class="input-wrapper">
-      <input id="fio" placeholder="ФИО" disabled/>
-      <span id="fioStatus" class="status">✔</span>
-    </div>
-
-    <div class="input-wrapper">
-      <input id="address" placeholder="Адрес" disabled/>
-      <span id="addressStatus" class="status">✔</span>
-    </div>
-
-    <div class="input-wrapper">
-      <input id="income" placeholder="Выручка" type="tel" inputmode="numeric"/>
-      <span id="incomeCheck" class="status">✔</span>
-    </div>
-
-    <select id="month">
-      <option value="">Выберите месяц</option>
-      <option>Январь</option>
-      <option>Февраль</option>
-      <option>Март</option>
-      <option>Апрель</option>
-      <option>Май</option>
-      <option>Июнь</option>
-      <option>Июль</option>
-      <option>Август</option>
-      <option>Сентябрь</option>
-      <option>Октябрь</option>
-      <option>Ноябрь</option>
-      <option>Декабрь</option>
-    </select>
-
-    <button id="sendBtn" type="button" class="main-btn">
-      Отправить
-    </button>
-
-  </div>
-
+<div class="header">
+<img src="logo.png" class="logo" alt="UA Consulting">
+<div class="title">Подача заявки</div>
+<div class="version-top">v4.1</div>
 </div>
 
-<script src="main.js?v=40"></script>
+<!-- SKELETON -->
+<div id="skeletonOverlay" class="skeleton-overlay hidden">
+  <div class="skeleton-card">
+    <div class="skeleton-title">Идёт поиск данных...</div>
+    <div class="skeleton-field"></div>
+    <div class="skeleton-field short"></div>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div id="successOverlay" class="success-overlay hidden">
+  <div class="success-box">
+    <svg class="checkmark" viewBox="0 0 52 52">
+      <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+      <path class="checkmark-check" fill="none" d="M14 27 L22 35 L38 18"/>
+    </svg>
+    <div class="success-text">Заявка успешно отправлена</div>
+  </div>
+</div>
+
+<!-- ERROR TOAST -->
+<div id="errorToast" class="toast hidden">
+  ИНН не найден
+</div>
+
+<div class="form">
+
+<input id="inn" placeholder="Введите ИНН (9 цифр)" type="tel" inputmode="numeric"/>
+
+<div class="input-wrapper">
+<input id="fio" placeholder="ФИО" disabled/>
+<span id="fioStatus" class="status">✔</span>
+</div>
+
+<div class="input-wrapper">
+<input id="address" placeholder="Адрес" disabled/>
+<span id="addressStatus" class="status">✔</span>
+</div>
+
+<div class="input-wrapper">
+<input id="income" placeholder="Выручка" type="tel" inputmode="numeric"/>
+<span id="incomeCheck" class="status">✔</span>
+</div>
+
+<select id="month">
+<option value="">Выберите месяц</option>
+<option>Январь</option>
+<option>Февраль</option>
+<option>Март</option>
+<option>Апрель</option>
+<option>Май</option>
+<option>Июнь</option>
+<option>Июль</option>
+<option>Август</option>
+<option>Сентябрь</option>
+<option>Октябрь</option>
+<option>Ноябрь</option>
+<option>Декабрь</option>
+</select>
+
+<button id="sendBtn" type="button" class="main-btn">
+Отправить
+</button>
+
+</div>
+</div>
+
+<script src="main.js?v=41"></script>
 </body>
 </html>
