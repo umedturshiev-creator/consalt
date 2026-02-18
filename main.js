@@ -24,21 +24,20 @@ function showToast(message, type="success"){
 }
 
 function validateForm(){
-  const innValid = innInput.value.length === 9;
-  const fioValid = fioInput.value.trim() !== "" && fioInput.value !== "Не найдено";
-  const addressValid = addressInput.value.trim() !== "";
-  const incomeValid = Number(incomeInput.value.replace(/\s/g,"")) > 0;
-  const monthValid = monthInput.value !== "";
-  return innValid && fioValid && addressValid && incomeValid && monthValid;
+  return (
+    innInput.value.length === 9 &&
+    fioInput.value.trim() !== "" &&
+    addressInput.value.trim() !== "" &&
+    Number(incomeInput.value.replace(/\s/g,"")) > 0 &&
+    monthInput.value !== ""
+  );
 }
 
 function updateButtonState(){
   sendBtn.disabled = !validateForm();
 }
 
-// =====================
-// Поиск по ИНН
-// =====================
+/* Поиск по ИНН */
 innInput.addEventListener("input",()=>{
   innInput.value = innInput.value.replace(/\D/g,"").slice(0,9);
   clearTimeout(innTimer);
@@ -52,7 +51,6 @@ async function findDataByInn(){
   addressInput.value = "";
   fioStatus.classList.add("hidden");
   addressStatus.classList.add("hidden");
-  sendBtn.disabled = true;
 
   if(inn.length !== 9) return;
 
@@ -68,7 +66,6 @@ async function findDataByInn(){
       fioStatus.classList.remove("hidden");
       addressStatus.classList.remove("hidden");
     } else {
-      fioInput.value = "Не найдено";
       showToast("ИНН не найден","error");
     }
   } catch{
@@ -79,9 +76,7 @@ async function findDataByInn(){
   updateButtonState();
 }
 
-// =====================
-// Маска дохода
-// =====================
+/* Маска дохода */
 incomeInput.addEventListener("input",()=>{
   let value = incomeInput.value.replace(/\D/g,"");
   value = value.replace(/\B(?=(\d{3})+(?!\d))/g," ");
@@ -98,9 +93,7 @@ incomeInput.addEventListener("input",()=>{
 
 monthInput.addEventListener("change",updateButtonState);
 
-// =====================
-// Отправка формы
-// =====================
+/* Отправка */
 sendBtn.addEventListener("click",async()=>{
   if(isSubmitting || !validateForm()) return;
 
