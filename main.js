@@ -7,9 +7,10 @@ const incomeInput = document.getElementById("income");
 const monthInput = document.getElementById("month");
 const sendBtn = document.getElementById("sendBtn");
 const loader = document.getElementById("loader");
-const checkIcon = document.getElementById("checkIcon");
 const incomeCheck = document.getElementById("incomeCheck");
 const toastContainer = document.getElementById("toastContainer");
+const fioStatus = document.getElementById("fioStatus");
+const addressStatus = document.getElementById("addressStatus");
 
 let innTimer = null;
 let isSubmitting = false;
@@ -28,7 +29,6 @@ function validateForm(){
   const addressValid = addressInput.value.trim() !== "";
   const incomeValid = Number(incomeInput.value.replace(/\s/g,"")) > 0;
   const monthValid = monthInput.value !== "";
-
   return innValid && fioValid && addressValid && incomeValid && monthValid;
 }
 
@@ -36,7 +36,9 @@ function updateButtonState(){
   sendBtn.disabled = !validateForm();
 }
 
-// 🔥 Поиск по ИНН
+// =====================
+// Поиск по ИНН
+// =====================
 innInput.addEventListener("input",()=>{
   innInput.value = innInput.value.replace(/\D/g,"").slice(0,9);
   clearTimeout(innTimer);
@@ -48,7 +50,8 @@ async function findDataByInn(){
 
   fioInput.value = "";
   addressInput.value = "";
-  checkIcon.classList.add("hidden");
+  fioStatus.classList.add("hidden");
+  addressStatus.classList.add("hidden");
   sendBtn.disabled = true;
 
   if(inn.length !== 9) return;
@@ -62,7 +65,8 @@ async function findDataByInn(){
     if(data.success){
       fioInput.value = data.fio || "";
       addressInput.value = data.address || "";
-      checkIcon.classList.remove("hidden");
+      fioStatus.classList.remove("hidden");
+      addressStatus.classList.remove("hidden");
     } else {
       fioInput.value = "Не найдено";
       showToast("ИНН не найден","error");
@@ -75,7 +79,9 @@ async function findDataByInn(){
   updateButtonState();
 }
 
+// =====================
 // Маска дохода
+// =====================
 incomeInput.addEventListener("input",()=>{
   let value = incomeInput.value.replace(/\D/g,"");
   value = value.replace(/\B(?=(\d{3})+(?!\d))/g," ");
@@ -92,7 +98,9 @@ incomeInput.addEventListener("input",()=>{
 
 monthInput.addEventListener("change",updateButtonState);
 
-// Отправка
+// =====================
+// Отправка формы
+// =====================
 sendBtn.addEventListener("click",async()=>{
   if(isSubmitting || !validateForm()) return;
 
