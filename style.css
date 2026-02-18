@@ -5,9 +5,7 @@
   --bg:#f2f4f8;
 }
 
-*{
-  box-sizing:border-box;
-}
+*{box-sizing:border-box;}
 
 body{
   margin:0;
@@ -32,21 +30,9 @@ body{
   border-bottom-right-radius:30px;
 }
 
-.logo{
-  width:55px;
-  margin-bottom:10px;
-}
-
-.title{
-  font-size:20px;
-  font-weight:600;
-}
-
-.version-top{
-  font-size:12px;
-  opacity:0.7;
-  margin-top:4px;
-}
+.logo{width:55px;margin-bottom:10px;}
+.title{font-size:20px;font-weight:600;}
+.version-top{font-size:12px;opacity:0.7;margin-top:4px;}
 
 /* ===== FORM ===== */
 
@@ -110,24 +96,32 @@ input:focus,select:focus{
   transition:.25s ease;
 }
 
-.status.show{
-  opacity:1;
-}
+.status.show{opacity:1;}
 
-/* ===== ERROR ===== */
+/* ===== ERROR ANIMATION ===== */
 
 .error-message{
   color:var(--error);
   font-size:13px;
   margin-top:-8px;
   margin-bottom:10px;
+
+  opacity:0;
+  transform:translateY(-6px);
+  transition:all .25s ease;
+  pointer-events:none;
+}
+
+.error-message.show{
+  opacity:1;
+  transform:translateY(0);
 }
 
 .error-input{
   box-shadow:0 0 0 2px var(--error) !important;
 }
 
-/* ===== PREMIUM SKELETON 2.0 ===== */
+/* ===== PREMIUM SKELETON ===== */
 
 .skeleton-overlay{
   position:absolute;
@@ -154,10 +148,8 @@ input:focus,select:focus{
   border-radius:22px;
   padding:24px;
   box-shadow:0 15px 40px rgba(0,0,0,0.08);
-  backdrop-filter:blur(6px);
 }
 
-/* base shape */
 .skeleton-field{
   height:56px;
   border-radius:18px;
@@ -167,7 +159,6 @@ input:focus,select:focus{
   background:#eceff3;
 }
 
-/* shimmer animation */
 .skeleton-field::after{
   content:"";
   position:absolute;
@@ -190,15 +181,5 @@ input:focus,select:focus{
 }
 
 @keyframes shimmer{
-  100%{
-    left:150%;
-  }
-}
-
-/* ===== RESPONSIVE ===== */
-
-@media (max-width:480px){
-  .form{
-    padding:20px 15px 35px 15px;
-  }
+  100%{ left:150%; }
 }
