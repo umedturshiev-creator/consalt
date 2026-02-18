@@ -18,20 +18,29 @@
 
     <input id="inn" placeholder="ИНН (9 цифр)" />
 
-    <div class="fio-wrapper">
+    <!-- ФИО -->
+    <div class="input-wrapper">
       <input id="fio" placeholder="ФИО" disabled />
-      <span id="checkIcon" class="check hidden">✔</span>
+      <span id="fioStatus" class="status hidden">
+        ✔ <span class="status-text">Данные подтверждены</span>
+      </span>
     </div>
 
-    <input id="address" placeholder="Адрес" disabled />
+    <!-- Адрес -->
+    <div class="input-wrapper">
+      <input id="address" placeholder="Адрес" disabled />
+      <span id="addressStatus" class="status hidden">✔</span>
+    </div>
 
     <div id="loader" class="loader hidden"></div>
 
+    <!-- Доход -->
     <div class="income-wrapper">
       <input id="income" placeholder="Выручка за период" />
       <span id="incomeCheck" class="check hidden">✔</span>
     </div>
 
+    <!-- Месяц -->
     <select id="month">
       <option value="">Выберите месяц</option>
       <option>Январь</option>
@@ -49,6 +58,7 @@
     </select>
 
     <button id="sendBtn" disabled>Отправить</button>
+
   </div>
 
   <script src="main.js"></script>
