@@ -72,7 +72,7 @@ function reset(){
   innInput.classList.remove("error-input");
 }
 
-/* ================= INН INPUT ================= */
+/* ================= INN INPUT ================= */
 
 innInput.addEventListener("input",()=>{
   innInput.value=innInput.value.replace(/\D/g,"").slice(0,9);
@@ -126,14 +126,22 @@ async function fetchInn(){
   updateBtn();
 }
 
-/* ================= INCOME MASK ================= */
+/* ================= INCOME MASK (FIXED) ================= */
 
 incomeInput.addEventListener("input",()=>{
-  let val=incomeInput.value.replace(/\D/g,"");
-  val=val.replace(/\B(?=(\d{3})+(?!\d))/g," ");
-  incomeInput.value=val;
 
-  if(Number(val)>0){
+  // 1️⃣ Берём только цифры
+  let raw = incomeInput.value.replace(/\D/g,"");
+
+  // 2️⃣ Проверяем число ДО форматирования
+  const numberValue = Number(raw);
+
+  // 3️⃣ Форматируем с пробелами
+  let formatted = raw.replace(/\B(?=(\d{3})+(?!\d))/g," ");
+  incomeInput.value = formatted;
+
+  // 4️⃣ Галочка показывается если число > 0
+  if(numberValue > 0){
     incomeCheck?.classList.add("show");
   }else{
     incomeCheck?.classList.remove("show");
