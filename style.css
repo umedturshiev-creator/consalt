@@ -14,6 +14,8 @@ body{
   background:var(--bg);
 }
 
+/* ===== APP CONTAINER ===== */
+
 .app{
   max-width:500px;
   margin:auto;
@@ -22,9 +24,11 @@ body{
   flex-direction:column;
 }
 
+/* ===== HEADER ===== */
+
 .header{
   background:var(--primary);
-  padding:25px 20px 40px;
+  padding:25px 20px 35px;
   text-align:center;
   color:#fff;
   border-bottom-left-radius:30px;
@@ -41,6 +45,14 @@ body{
   font-weight:600;
 }
 
+.version-top{
+  font-size:12px;
+  opacity:0.7;
+  margin-top:6px;
+}
+
+/* ===== FORM ===== */
+
 .form{
   padding:20px;
   flex:1;
@@ -54,6 +66,7 @@ input,select{
   font-size:16px;
   margin-bottom:15px;
   box-shadow:0 2px 10px rgba(0,0,0,0.05);
+  background:#fff;
 }
 
 input:focus,select:focus{
@@ -61,9 +74,13 @@ input:focus,select:focus{
   box-shadow:0 0 0 2px var(--primary);
 }
 
+/* ===== INPUT WRAPPER ===== */
+
 .input-wrapper{
   position:relative;
 }
+
+/* ===== STATUS ICONS ===== */
 
 .status{
   position:absolute;
@@ -74,6 +91,8 @@ input:focus,select:focus{
   font-size:13px;
   font-weight:600;
 }
+
+/* ===== LOADER ===== */
 
 .loader{
   margin:10px auto;
@@ -89,27 +108,48 @@ input:focus,select:focus{
   100%{transform:rotate(360deg);}
 }
 
+/* ===== BUTTON ===== */
+
 .main-btn{
-  margin:15px;
+  width:100%;
   padding:18px;
   font-size:18px;
   border:none;
   border-radius:18px;
   background:var(--primary);
   color:#fff;
-  transition:0.2s;
+  transition:0.2s ease;
+  margin-top:10px;
 }
 
 .main-btn:disabled{
   background:#aaa;
 }
 
-.version{
-  text-align:center;
-  font-size:12px;
-  color:#888;
-  margin-bottom:15px;
+/* ===== HIDDEN CLASS ===== */
+
+.hidden{
+  display:none !important;
 }
-.hidden {
-  display: none !important;
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width:480px){
+  .header{
+    padding:20px 15px 30px;
+  }
+
+  .title{
+    font-size:18px;
+  }
+
+  input,select{
+    font-size:15px;
+    padding:14px;
+  }
+
+  .main-btn{
+    font-size:17px;
+    padding:16px;
+  }
 }
