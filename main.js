@@ -15,49 +15,65 @@ const skeleton=document.getElementById("skeletonOverlay");
 
 let timer;
 
+/* ===== SAFE SKELETON ===== */
+
+function showSkeleton(){
+  if(!skeleton) return;
+  skeleton.classList.remove("hidden");
+  setTimeout(()=>skeleton.classList.add("show"),10);
+}
+
+function hideSkeleton(){
+  if(!skeleton) return;
+  skeleton.classList.remove("show");
+  setTimeout(()=>skeleton.classList.add("hidden"),300);
+}
+
+/* ===== VALIDATION ===== */
+
 function validate(){
   return innInput.value.length===9 &&
-         fioInput.value!=="" &&
-         addressInput.value!=="" &&
+         fioInput.value.trim()!=="" &&
+         addressInput.value.trim()!=="" &&
          Number(incomeInput.value.replace(/\s/g,""))>0 &&
          monthInput.value!=="";
 }
 
 function updateBtn(){
-  sendBtn.disabled=!validate();
+  if(sendBtn){
+    sendBtn.disabled=!validate();
+  }
 }
 
+/* ===== RESET ===== */
+
 function reset(){
-  fioInput.value="";
-  addressInput.value="";
+  if(fioInput) fioInput.value="";
+  if(addressInput) addressInput.value="";
   fioStatus?.classList.add("hidden");
   addressStatus?.classList.add("hidden");
   innError?.classList.add("hidden");
   innInput.classList.remove("error-input");
 }
 
-function showSkeleton(){
-  skeleton.classList.remove("hidden");
-  setTimeout(()=>skeleton.classList.add("show"),10);
+/* ===== INN INPUT ===== */
+
+if(innInput){
+  innInput.addEventListener("input",()=>{
+    innInput.value=innInput.value.replace(/\D/g,"").slice(0,9);
+    clearTimeout(timer);
+    reset();
+
+    if(innInput.value.length!==9){
+      hideSkeleton();
+      return;
+    }
+
+    timer=setTimeout(fetchInn,500);
+  });
 }
 
-function hideSkeleton(){
-  skeleton.classList.remove("show");
-  setTimeout(()=>skeleton.classList.add("hidden"),300);
-}
-
-innInput.addEventListener("input",()=>{
-  innInput.value=innInput.value.replace(/\D/g,"").slice(0,9);
-  clearTimeout(timer);
-  reset();
-
-  if(innInput.value.length!==9){
-    hideSkeleton();
-    return;
-  }
-
-  timer=setTimeout(fetchInn,500);
-});
+/* ===== FETCH ===== */
 
 async function fetchInn(){
 
@@ -69,7 +85,8 @@ async function fetchInn(){
 
     hideSkeleton();
 
-    if(data.success){
+    // Проверяем наличие данных (без success)
+    if(data && (data.fio || data.address)){
 
       fioInput.value=data.fio||"";
       addressInput.value=data.address||"";
@@ -82,7 +99,7 @@ async function fetchInn(){
         addressStatus?.classList.add("show");
       },50);
 
-      incomeInput.focus();
+      incomeInput?.focus();
 
     }else{
 
@@ -101,30 +118,40 @@ async function fetchInn(){
 
   }catch(e){
     hideSkeleton();
+    console.error("Ошибка API:",e);
   }
 
   updateBtn();
 }
 
-incomeInput.addEventListener("input",()=>{
-  let val=incomeInput.value.replace(/\D/g,"");
-  val=val.replace(/\B(?=(\d{3})+(?!\d))/g," ");
-  incomeInput.value=val;
+/* ===== INCOME MASK ===== */
 
-  if(Number(val)>0){
-    incomeCheck?.classList.remove("hidden");
-    setTimeout(()=>incomeCheck?.classList.add("show"),50);
-  }else{
-    incomeCheck?.classList.add("hidden");
-    incomeCheck?.classList.remove("show");
-  }
+if(incomeInput){
+  incomeInput.addEventListener("input",()=>{
+    let val=incomeInput.value.replace(/\D/g,"");
+    val=val.replace(/\B(?=(\d{3})+(?!\d))/g," ");
+    incomeInput.value=val;
 
-  updateBtn();
-});
+    if(Number(val)>0){
+      incomeCheck?.classList.remove("hidden");
+      setTimeout(()=>incomeCheck?.classList.add("show"),50);
+    }else{
+      incomeCheck?.classList.add("hidden");
+      incomeCheck?.classList.remove("show");
+    }
 
-monthInput.addEventListener("change",updateBtn);
+    updateBtn();
+  });
+}
 
-sendBtn.addEventListener("click",async()=>{
+/* ===== MONTH ===== */
+
+monthInput?.addEventListener("change",updateBtn);
+
+/* ===== SEND ===== */
+
+sendBtn?.addEventListener("click",async()=>{
   if(!validate()) return;
+
   alert("Заявка отправлена");
 });
