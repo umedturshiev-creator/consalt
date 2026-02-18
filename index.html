@@ -4,9 +4,9 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="theme-color" content="#1e3a8a"/>
-  <title>UA Consulting v3.0</title>
+  <title>UA Consulting v3.1</title>
 
-  <link rel="stylesheet" href="style.css?v=300">
+  <link rel="stylesheet" href="style.css?v=31">
 </head>
 <body>
 
@@ -15,12 +15,19 @@
   <div class="header">
     <img src="logo.png" class="logo">
     <div class="title">Подача заявки</div>
-    <div class="version-top">v3.0</div>
+    <div class="version-top">v3.1</div>
   </div>
 
-  <div class="form" id="formContainer">
+  <!-- SKELETON OVERLAY -->
+  <div id="skeletonOverlay" class="skeleton-overlay hidden">
+    <div class="skeleton-card">
+      <div class="skeleton-field"></div>
+      <div class="skeleton-field short"></div>
+    </div>
+  </div>
 
-    <!-- ИНН -->
+  <div class="form">
+
     <input id="inn"
            placeholder="ИНН (9 цифр)"
            type="tel"
@@ -31,25 +38,16 @@
       ИНН не найден
     </div>
 
-    <!-- SKELETON -->
-    <div id="skeleton" class="skeleton hidden">
-      <div class="skeleton-field"></div>
-      <div class="skeleton-field short"></div>
-    </div>
-
-    <!-- ФИО -->
     <div class="input-wrapper">
       <input id="fio" placeholder="ФИО" disabled/>
       <span id="fioStatus" class="status hidden">✔</span>
     </div>
 
-    <!-- Адрес -->
     <div class="input-wrapper">
       <input id="address" placeholder="Адрес" disabled/>
       <span id="addressStatus" class="status hidden">✔</span>
     </div>
 
-    <!-- Доход -->
     <div class="input-wrapper">
       <input id="income"
              placeholder="Выручка"
@@ -58,7 +56,6 @@
       <span id="incomeCheck" class="status hidden">✔</span>
     </div>
 
-    <!-- Месяц -->
     <select id="month">
       <option value="">Выберите месяц</option>
       <option>Январь</option>
@@ -71,18 +68,4 @@
       <option>Август</option>
       <option>Сентябрь</option>
       <option>Октябрь</option>
-      <option>Ноябрь</option>
-      <option>Декабрь</option>
-    </select>
-
-    <button id="sendBtn" class="main-btn">
-      Отправить
-    </button>
-
-  </div>
-
-</div>
-
-<script src="main.js?v=300"></script>
-</body>
-</html>
+      <option>Ноябрь</op
