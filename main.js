@@ -8,20 +8,11 @@ const monthInput = document.getElementById("month");
 const sendBtn = document.getElementById("sendBtn");
 const loader = document.getElementById("loader");
 const incomeCheck = document.getElementById("incomeCheck");
-const toastContainer = document.getElementById("toastContainer");
 const fioStatus = document.getElementById("fioStatus");
 const addressStatus = document.getElementById("addressStatus");
 
 let innTimer = null;
 let isSubmitting = false;
-
-function showToast(message, type="success"){
-  const toast = document.createElement("div");
-  toast.className = `toast ${type}`;
-  toast.innerText = message;
-  toastContainer.appendChild(toast);
-  setTimeout(()=>toast.remove(),2500);
-}
 
 function validateForm(){
   return (
@@ -37,21 +28,34 @@ function updateButtonState(){
   sendBtn.disabled = !validateForm();
 }
 
-/* Поиск по ИНН */
-innInput.addEventListener("input",()=>{
+/* ======================
+   Поиск по ИНН
+====================== */
+
+innInput.addEventListener("input", () => {
+
   innInput.value = innInput.value.replace(/\D/g,"").slice(0,9);
+
   clearTimeout(innTimer);
-  innTimer = setTimeout(findDataByInn,500);
-});
 
-async function findDataByInn(){
-  const inn = innInput.value.trim();
-
+  // Сброс
   fioInput.value = "";
   addressInput.value = "";
   fioStatus.classList.add("hidden");
   addressStatus.classList.add("hidden");
+  loader.classList.add("hidden");
 
+  if(innInput.value.length !== 9){
+    updateButtonState();
+    return;
+  }
+
+  innTimer = setTimeout(findDataByInn, 500);
+});
+
+async function findDataByInn(){
+
+  const inn = innInput.value.trim();
   if(inn.length !== 9) return;
 
   loader.classList.remove("hidden");
@@ -60,24 +64,40 @@ async function findDataByInn(){
     const res = await fetch(`${API_URL}?inn=${encodeURIComponent(inn)}`);
     const data = await res.json();
 
+    loader.classList.add("hidden");
+
     if(data.success){
+
       fioInput.value = data.fio || "";
       addressInput.value = data.address || "";
-      fioStatus.classList.remove("hidden");
-      addressStatus.classList.remove("hidden");
+
+      if(data.fio){
+        fioStatus.classList.remove("hidden");
+      }
+
+      if(data.address){
+        addressStatus.classList.remove("hidden");
+      }
+
     } else {
-      showToast("ИНН не найден","error");
+      fioInput.value = "";
+      addressInput.value = "";
     }
-  } catch{
-    showToast("Ошибка сети","error");
+
+  } catch(e){
+    loader.classList.add("hidden");
+    console.log("Ошибка сети");
   }
 
-  loader.classList.add("hidden");
   updateButtonState();
 }
 
-/* Маска дохода */
+/* ======================
+   Маска дохода
+====================== */
+
 incomeInput.addEventListener("input",()=>{
+
   let value = incomeInput.value.replace(/\D/g,"");
   value = value.replace(/\B(?=(\d{3})+(?!\d))/g," ");
   incomeInput.value = value;
@@ -93,8 +113,12 @@ incomeInput.addEventListener("input",()=>{
 
 monthInput.addEventListener("change",updateButtonState);
 
-/* Отправка */
-sendBtn.addEventListener("click",async()=>{
+/* ======================
+   Отправка
+====================== */
+
+sendBtn.addEventListener("click", async()=>{
+
   if(isSubmitting || !validateForm()) return;
 
   isSubmitting = true;
@@ -118,15 +142,14 @@ sendBtn.addEventListener("click",async()=>{
     const data = await res.json();
 
     if(data.status==="ok"){
-      showToast("Заявка отправлена");
+      alert("Заявка отправлена");
       incomeInput.value="";
       monthInput.value="";
       incomeCheck.classList.add("hidden");
-    } else {
-      showToast("Ошибка отправки","error");
     }
-  } catch{
-    showToast("Ошибка сети","error");
+
+  } catch(e){
+    alert("Ошибка сети");
   }
 
   sendBtn.innerText="Отправить";
