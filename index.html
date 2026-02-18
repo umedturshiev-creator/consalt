@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#1e3a8a"/>
-  <title>UA Consulting v1.0.8</title>
+  <title>UA Consulting v1.0.9</title>
 
   <link rel="stylesheet" href="style.css?v=107">
 </head>
@@ -16,7 +16,7 @@
   <div class="header">
     <img src="logo.png" class="logo" alt="UA Consulting">
     <div class="title">Подача заявки</div>
-    <div class="version-top">v1.0.8</div>
+    <div class="version-top">v1.0.9</div>
   </div>
 
   <!-- FORM -->
@@ -25,6 +25,9 @@
     <!-- ИНН -->
     <input 
       id="inn"
+      <div id="innError" class="error-message hidden">
+  ИНН не найден
+</div>
       placeholder="ИНН (9 цифр)"
       type="tel"
       inputmode="numeric"
