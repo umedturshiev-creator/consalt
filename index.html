@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Форма подачи заявки</title>
+  <title>UA Consulting — Подача заявки</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,39 +11,41 @@
   <div id="toastContainer" class="toast-container"></div>
 
   <div class="card">
+
+    <img src="logo.png" class="logo" alt="UA Consulting">
+
     <h1>Форма подачи заявки</h1>
 
-    <!-- ИНН -->
     <input id="inn" placeholder="ИНН (9 цифр)" />
 
-    <!-- ФИО -->
     <div class="fio-wrapper">
-      <input id="fio" placeholder="ФИО (заполняется автоматически)" disabled />
-      <span id="checkIcon" class="check hidden">
-        ✔
-        <span class="tooltip">Данные подтверждены</span>
-      </span>
+      <input id="fio" placeholder="ФИО" disabled />
+      <span id="checkIcon" class="check hidden">✔</span>
     </div>
 
-    <!-- 🔥 НОВОЕ ПОЛЕ — АДРЕС -->
-    <input id="address" placeholder="Адрес (заполняется автоматически)" disabled />
+    <input id="address" placeholder="Адрес" disabled />
 
-    <!-- loader -->
     <div id="loader" class="loader hidden"></div>
 
-    <!-- выручка -->
     <div class="income-wrapper">
       <input id="income" placeholder="Выручка за период" />
       <span id="incomeCheck" class="check hidden">✔</span>
     </div>
 
-    <!-- месяц -->
     <select id="month">
       <option value="">Выберите месяц</option>
-      <option>Январь</option><option>Февраль</option><option>Март</option>
-      <option>Апрель</option><option>Май</option><option>Июнь</option>
-      <option>Июль</option><option>Август</option><option>Сентябрь</option>
-      <option>Октябрь</option><option>Ноябрь</option><option>Декабрь</option>
+      <option>Январь</option>
+      <option>Февраль</option>
+      <option>Март</option>
+      <option>Апрель</option>
+      <option>Май</option>
+      <option>Июнь</option>
+      <option>Июль</option>
+      <option>Август</option>
+      <option>Сентябрь</option>
+      <option>Октябрь</option>
+      <option>Ноябрь</option>
+      <option>Декабрь</option>
     </select>
 
     <button id="sendBtn" disabled>Отправить</button>
