@@ -11,10 +11,10 @@ const fioStatus=document.getElementById("fioStatus");
 const addressStatus=document.getElementById("addressStatus");
 const incomeCheck=document.getElementById("incomeCheck");
 const innError=document.getElementById("innError");
+const skeleton=document.getElementById("skeleton");
+const formContainer=document.getElementById("formContainer");
 
 let timer;
-
-/* ===== VALIDATION ===== */
 
 function validate(){
   return innInput.value.length===9 &&
@@ -28,8 +28,6 @@ function updateBtn(){
   sendBtn.disabled=!validate();
 }
 
-/* ===== RESET ===== */
-
 function reset(){
   fioInput.value="";
   addressInput.value="";
@@ -39,23 +37,38 @@ function reset(){
   innInput.classList.remove("error-input");
 }
 
-/* ===== INN INPUT ===== */
-
 innInput.addEventListener("input",()=>{
   innInput.value=innInput.value.replace(/\D/g,"").slice(0,9);
   clearTimeout(timer);
   reset();
-  if(innInput.value.length!==9) return;
+  if(innInput.value.length!==9){
+    hideSkeleton();
+    return;
+  }
   timer=setTimeout(fetchInn,500);
 });
 
-/* ===== FETCH ===== */
+function showSkeleton(){
+  skeleton.classList.remove("hidden");
+  setTimeout(()=>skeleton.classList.add("show"),10);
+  formContainer.classList.add("blur");
+}
+
+function hideSkeleton(){
+  skeleton.classList.remove("show");
+  setTimeout(()=>skeleton.classList.add("hidden"),300);
+  formContainer.classList.remove("blur");
+}
 
 async function fetchInn(){
+
+  showSkeleton();
 
   try{
     const res=await fetch(`${API_URL}?inn=${innInput.value}`);
     const data=await res.json();
+
+    hideSkeleton();
 
     if(data.success){
 
@@ -84,17 +97,15 @@ async function fetchInn(){
       setTimeout(()=>{
         innInput.value="";
         reset();
-      },1500);
+      },700);
     }
 
   }catch(e){
-    console.log("Ошибка API",e);
+    hideSkeleton();
   }
 
   updateBtn();
 }
-
-/* ===== INCOME ===== */
 
 incomeInput.addEventListener("input",()=>{
   let val=incomeInput.value.replace(/\D/g,"");
@@ -113,8 +124,6 @@ incomeInput.addEventListener("input",()=>{
 });
 
 monthInput.addEventListener("change",updateBtn);
-
-/* ===== SEND ===== */
 
 sendBtn.addEventListener("click",async()=>{
   if(!validate()) return;
