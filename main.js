@@ -1,4 +1,8 @@
+// Google Script для отправки формы (НЕ трогаем)
 const API_URL = "https://script.google.com/macros/s/AKfycbwUUcRsGyZpHGqVOvKp3qiQ7p_D9sBgwFcuf7ksqX3gkwtUlnRIW1ArbXtnw4L4bIdPXQ/exec";
+
+// SmartPay API
+const SMARTPAY_API = "https://smartpay.tj/subapi/payler/tin/";
 
 const innInput = document.getElementById("inn");
 const fioInput = document.getElementById("fio");
@@ -13,6 +17,8 @@ const toastContainer = document.getElementById("toastContainer");
 let innTimer = null;
 let isSubmitting = false;
 
+
+// уведомления
 function showToast(message, type = "success") {
   const toast = document.createElement("div");
   toast.className = `toast ${type}`;
@@ -25,18 +31,21 @@ function showToast(message, type = "success") {
   }, 2500);
 }
 
+// состояние кнопки
 function setSubmitting(state) {
   isSubmitting = state;
   sendBtn.disabled = state;
   sendBtn.innerText = state ? "Отправляется…" : "Отправить";
 }
 
+// только цифры в ИНН
 innInput.addEventListener("input", () => {
   innInput.value = innInput.value.replace(/\D/g, "").slice(0, 9);
   clearTimeout(innTimer);
   innTimer = setTimeout(findFioByInn, 500);
 });
 
+// проверка дохода
 incomeInput.addEventListener("input", () => {
   incomeInput.value = incomeInput.value.replace(/\D/g, "");
   incomeCheck.classList.remove("show");
@@ -50,6 +59,10 @@ incomeInput.addEventListener("blur", () => {
   }
 });
 
+
+// ==========================
+// 🔥 ПОЛУЧАЕМ ТОЛЬКО ФИО
+// ==========================
 async function findFioByInn() {
   const inn = innInput.value.trim();
 
@@ -64,27 +77,35 @@ async function findFioByInn() {
   loader.classList.remove("hidden");
 
   try {
-    const res = await fetch(`${API_URL}?inn=${encodeURIComponent(inn)}`);
-    const data = JSON.parse(await res.text());
+    const res = await fetch(`${SMARTPAY_API}${inn}`);
+    const data = await res.json();
 
-    if (data.success && data.fio) {
-      fioInput.value = data.fio;
+    // только ФИО из SmartPay
+    if (data.errorCode === 0 && data.FullName) {
+      fioInput.value = data.FullName;
       fioInput.classList.add("success");
+
       checkIcon.classList.remove("hidden");
       setTimeout(()=>checkIcon.classList.add("show"),50);
+
       sendBtn.disabled = false;
+
     } else {
       fioInput.value = "Не найдено";
       fioInput.classList.add("error");
       showToast("ИНН не найден", "error");
     }
-  } catch {
+
+  } catch (err) {
+    console.error(err);
     showToast("Ошибка сети", "error");
   } finally {
     loader.classList.add("hidden");
   }
 }
 
+
+// отправка формы — без изменений
 sendBtn.addEventListener("click", async () => {
   if (isSubmitting) return;
 
@@ -108,13 +129,16 @@ sendBtn.addEventListener("click", async () => {
 
     if (data.status === "ok") {
       showToast("Заявка успешно отправлена");
+
       incomeInput.value = "";
       monthInput.value = "";
       incomeCheck.classList.remove("show");
       incomeCheck.classList.add("hidden");
+
     } else {
       showToast("Ошибка отправки", "error");
     }
+
   } catch {
     showToast("Ошибка сети", "error");
   } finally {
