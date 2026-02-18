@@ -1,4 +1,4 @@
-const API_URL="https://script.google.com/macros/s/AKfycbwUUcRsGyZpHGqVOvKp3qiQ7p_D9sBgwFcuf7ksqX3gkwtUlnRIW1ArbXtnw4L4bIdPXQ/exec";
+const API_URL="https://script.google.com/macros/s/AKfycbzVBCAPtFkSJ2m5tVr1TVkY_hGGSc_HADJwYxcY5e0Ijh0oiMjvXH4qNrHL0XzIK3T6oQ/exec";
 
 const innInput=document.getElementById("inn");
 const fioInput=document.getElementById("fio");
