@@ -16,7 +16,7 @@ const skeletonText=document.getElementById("skeletonText");
 
 let timer;
 
-/* ===== TYPE EFFECT ===== */
+/* ================= TYPE EFFECT ================= */
 
 function typeText(text){
   if(!skeletonText) return;
@@ -29,7 +29,7 @@ function typeText(text){
   },25);
 }
 
-/* ===== SKELETON ===== */
+/* ================= SKELETON ================= */
 
 function showSkeleton(){
   if(!skeleton) return;
@@ -48,7 +48,7 @@ function hideSkeleton(){
   setTimeout(()=>skeleton.classList.add("hidden"),300);
 }
 
-/* ===== VALIDATION ===== */
+/* ================= VALIDATION ================= */
 
 function validate(){
   return innInput.value.length===9 &&
@@ -62,7 +62,7 @@ function updateBtn(){
   sendBtn.disabled=!validate();
 }
 
-/* ===== RESET ===== */
+/* ================= RESET ================= */
 
 function reset(){
   fioInput.value="";
@@ -72,7 +72,7 @@ function reset(){
   innInput.classList.remove("error-input");
 }
 
-/* ===== INN INPUT ===== */
+/* ================= INN INPUT ================= */
 
 innInput.addEventListener("input",()=>{
   innInput.value=innInput.value.replace(/\D/g,"").slice(0,9);
@@ -88,7 +88,7 @@ innInput.addEventListener("input",()=>{
   timer=setTimeout(fetchInn,500);
 });
 
-/* ===== FETCH ===== */
+/* ================= FETCH (GET) ================= */
 
 async function fetchInn(){
   showSkeleton();
@@ -126,7 +126,7 @@ async function fetchInn(){
   updateBtn();
 }
 
-/* ===== INCOME ===== */
+/* ================= INCOME MASK ================= */
 
 incomeInput.addEventListener("input",()=>{
   let val=incomeInput.value.replace(/\D/g,"");
@@ -144,7 +144,53 @@ incomeInput.addEventListener("input",()=>{
 
 monthInput.addEventListener("change",updateBtn);
 
-sendBtn.addEventListener("click",()=>{
+/* ================= SEND (POST) ================= */
+
+sendBtn.addEventListener("click", async ()=>{
+
   if(!validate()) return;
-  alert("Заявка отправлена");
+
+  sendBtn.disabled = true;
+  const originalText = sendBtn.innerText;
+  sendBtn.innerText = "Отправка...";
+
+  try{
+
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        inn: innInput.value,
+        fio: fioInput.value,
+        address: addressInput.value,
+        income: incomeInput.value.replace(/\s/g,""),
+        month: monthInput.value
+      })
+    });
+
+    const result = await response.json();
+
+    if(result.status === "ok"){
+      alert("Заявка успешно отправлена ✅");
+
+      // очистка формы
+      innInput.value="";
+      incomeInput.value="";
+      monthInput.value="";
+      reset();
+      updateBtn();
+
+    }else{
+      alert("Ошибка сервера ❌");
+    }
+
+  }catch(error){
+    alert("Ошибка соединения ❌");
+  }
+
+  sendBtn.disabled = false;
+  sendBtn.innerText = originalText;
+
 });
