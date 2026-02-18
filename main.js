@@ -4,11 +4,14 @@ const API_URL = "https://script.google.com/macros/s/AKfycbwUUcRsGyZpHGqVOvKp3qiQ
 const innInput = document.getElementById("inn");
 const fioInput = document.getElementById("fio");
 const addressInput = document.getElementById("address");
+
+const checkIcon = document.getElementById("checkIcon");
+const addressCheckIcon = document.getElementById("addressCheckIcon");
+
 const incomeInput = document.getElementById("income");
 const monthInput = document.getElementById("month");
 const sendBtn = document.getElementById("sendBtn");
 const loader = document.getElementById("loader");
-const checkIcon = document.getElementById("checkIcon");
 const incomeCheck = document.getElementById("incomeCheck");
 const toastContainer = document.getElementById("toastContainer");
 
@@ -36,7 +39,7 @@ function setSubmitting(state) {
   sendBtn.innerText = state ? "Отправляется…" : "Отправить";
 }
 
-// только цифры в ИНН
+// ввод ИНН
 innInput.addEventListener("input", () => {
   innInput.value = innInput.value.replace(/\D/g, "").slice(0, 9);
   clearTimeout(innTimer);
@@ -59,17 +62,21 @@ incomeInput.addEventListener("blur", () => {
 
 
 // ==========================
-// 🔥 ПОЛУЧЕНИЕ ФИО + АДРЕС
+// получение ФИО + адреса
 // ==========================
 async function findDataByInn() {
   const inn = innInput.value.trim();
 
   fioInput.value = "";
   addressInput.value = "";
-  fioInput.classList.remove("success","error");
-  sendBtn.disabled = true;
+
   checkIcon.classList.remove("show");
   checkIcon.classList.add("hidden");
+
+  addressCheckIcon.classList.remove("show");
+  addressCheckIcon.classList.add("hidden");
+
+  sendBtn.disabled = true;
 
   if (inn.length !== 9) return;
 
@@ -80,20 +87,22 @@ async function findDataByInn() {
     const data = JSON.parse(await res.text());
 
     if (data.success) {
+      // ФИО
       fioInput.value = data.fio || "";
-      addressInput.value = data.address || "";
-
-      fioInput.classList.add("success");
-
       checkIcon.classList.remove("hidden");
       setTimeout(()=>checkIcon.classList.add("show"),50);
+
+      // адрес
+      addressInput.value = data.address || "";
+      if (data.address) {
+        addressCheckIcon.classList.remove("hidden");
+        setTimeout(()=>addressCheckIcon.classList.add("show"),50);
+      }
 
       sendBtn.disabled = false;
 
     } else {
       fioInput.value = "Не найдено";
-      addressInput.value = "";
-      fioInput.classList.add("error");
       showToast("ИНН не найден", "error");
     }
 
@@ -105,7 +114,7 @@ async function findDataByInn() {
 }
 
 
-// отправка формы (как было)
+// отправка формы
 sendBtn.addEventListener("click", async () => {
   if (isSubmitting) return;
 
@@ -130,12 +139,8 @@ sendBtn.addEventListener("click", async () => {
 
     if (data.status === "ok") {
       showToast("Заявка успешно отправлена");
-
       incomeInput.value = "";
       monthInput.value = "";
-      incomeCheck.classList.remove("show");
-      incomeCheck.classList.add("hidden");
-
     } else {
       showToast("Ошибка отправки", "error");
     }
