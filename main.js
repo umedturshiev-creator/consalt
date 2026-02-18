@@ -14,8 +14,9 @@ const innError=document.getElementById("innError");
 const skeleton=document.getElementById("skeletonOverlay");
 
 let timer;
+let searched = false; // ← ВАЖНО
 
-/* ===== SAFE SKELETON ===== */
+/* ===== SKELETON ===== */
 
 function showSkeleton(){
   if(!skeleton) return;
@@ -40,43 +41,46 @@ function validate(){
 }
 
 function updateBtn(){
-  if(sendBtn){
-    sendBtn.disabled=!validate();
-  }
+  sendBtn.disabled=!validate();
 }
 
 /* ===== RESET ===== */
 
 function reset(){
-  if(fioInput) fioInput.value="";
-  if(addressInput) addressInput.value="";
+  fioInput.value="";
+  addressInput.value="";
   fioStatus?.classList.add("hidden");
   addressStatus?.classList.add("hidden");
-  innError?.classList.add("hidden");
   innInput.classList.remove("error-input");
 }
 
 /* ===== INN INPUT ===== */
 
-if(innInput){
-  innInput.addEventListener("input",()=>{
-    innInput.value=innInput.value.replace(/\D/g,"").slice(0,9);
-    clearTimeout(timer);
-    reset();
+innInput.addEventListener("input",()=>{
 
-    if(innInput.value.length!==9){
-      hideSkeleton();
-      return;
-    }
+  // Ограничение 9 цифр
+  innInput.value=innInput.value.replace(/\D/g,"").slice(0,9);
 
-    timer=setTimeout(fetchInn,500);
-  });
-}
+  clearTimeout(timer);
+  reset();
+
+  // Скрываем ошибку при любом изменении
+  innError?.classList.add("hidden");
+  searched = false;
+
+  if(innInput.value.length!==9){
+    hideSkeleton();
+    return;
+  }
+
+  timer=setTimeout(fetchInn,500);
+});
 
 /* ===== FETCH ===== */
 
 async function fetchInn(){
 
+  searched = true;
   showSkeleton();
 
   try{
@@ -85,7 +89,6 @@ async function fetchInn(){
 
     hideSkeleton();
 
-    // Проверяем наличие данных (без success)
     if(data && (data.fio || data.address)){
 
       fioInput.value=data.fio||"";
@@ -99,10 +102,11 @@ async function fetchInn(){
         addressStatus?.classList.add("show");
       },50);
 
-      incomeInput?.focus();
+      incomeInput.focus();
 
-    }else{
+    }else if(searched){
 
+      // Ошибка только после реального запроса
       innInput.classList.add("error-input");
       innError?.classList.remove("hidden");
 
@@ -124,34 +128,29 @@ async function fetchInn(){
   updateBtn();
 }
 
-/* ===== INCOME MASK ===== */
+/* ===== INCOME ===== */
 
-if(incomeInput){
-  incomeInput.addEventListener("input",()=>{
-    let val=incomeInput.value.replace(/\D/g,"");
-    val=val.replace(/\B(?=(\d{3})+(?!\d))/g," ");
-    incomeInput.value=val;
+incomeInput.addEventListener("input",()=>{
+  let val=incomeInput.value.replace(/\D/g,"");
+  val=val.replace(/\B(?=(\d{3})+(?!\d))/g," ");
+  incomeInput.value=val;
 
-    if(Number(val)>0){
-      incomeCheck?.classList.remove("hidden");
-      setTimeout(()=>incomeCheck?.classList.add("show"),50);
-    }else{
-      incomeCheck?.classList.add("hidden");
-      incomeCheck?.classList.remove("show");
-    }
+  if(Number(val)>0){
+    incomeCheck?.classList.remove("hidden");
+    setTimeout(()=>incomeCheck?.classList.add("show"),50);
+  }else{
+    incomeCheck?.classList.add("hidden");
+    incomeCheck?.classList.remove("show");
+  }
 
-    updateBtn();
-  });
-}
+  updateBtn();
+});
 
-/* ===== MONTH ===== */
-
-monthInput?.addEventListener("change",updateBtn);
+monthInput.addEventListener("change",updateBtn);
 
 /* ===== SEND ===== */
 
-sendBtn?.addEventListener("click",async()=>{
+sendBtn.addEventListener("click",async()=>{
   if(!validate()) return;
-
   alert("Заявка отправлена");
 });
