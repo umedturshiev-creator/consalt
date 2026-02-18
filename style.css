@@ -153,3 +153,16 @@ input:focus,select:focus{
     padding:16px;
   }
 }
+/* ===== ERROR STATE ===== */
+
+.error-input{
+  box-shadow:0 0 0 2px #e53935 !important;
+}
+
+.error-message{
+  color:#e53935;
+  font-size:13px;
+  margin-top:-10px;
+  margin-bottom:10px;
+  font-weight:500;
+}
