@@ -1,96 +1,83 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="theme-color" content="#1e3a8a"/>
-  <title>UA Consulting v1.1.1</title>
+  <title>UA Consulting v2.0</title>
 
-  <link rel="stylesheet" href="style.css?v=110">
+  <link rel="stylesheet" href="style.css?v=200">
 </head>
 <body>
 
 <div class="app">
 
-  <!-- HEADER -->
   <div class="header">
-    <img src="logo.png" class="logo" alt="UA Consulting">
+    <img src="logo.png" class="logo">
     <div class="title">Подача заявки</div>
-    <div class="version-top">v1.1.1</div>
+    <div class="version-top">v2.0</div>
   </div>
 
-  <!-- FORM -->
+  <!-- STEPS -->
+  <div class="steps">
+    <div class="step active" id="step1">1. ИНН</div>
+    <div class="step" id="step2">2. Выручка</div>
+    <div class="step" id="step3">3. Отправка</div>
+  </div>
+
   <div class="form">
 
-    <!-- ИНН -->
-    <input
-      id="inn"
-      placeholder="ИНН (9 цифр)"
-      type="tel"
-      inputmode="numeric"
-      autocomplete="off"
-    />
+    <input id="inn" placeholder="ИНН (9 цифр)"
+           type="tel" inputmode="numeric" autocomplete="off"/>
 
     <div id="innError" class="error-message hidden">
       ИНН не найден
     </div>
 
-    <!-- ФИО -->
-    <div class="input-wrapper">
-      <input id="fio" placeholder="ФИО" disabled />
-      <span id="fioStatus" class="status hidden">
-        ✔ Подтверждено
-      </span>
+    <!-- Skeleton -->
+    <div id="skeleton" class="skeleton hidden">
+      <div class="skeleton-line"></div>
+      <div class="skeleton-line short"></div>
     </div>
 
-    <!-- Адрес -->
     <div class="input-wrapper">
-      <input id="address" placeholder="Адрес" disabled />
+      <input id="fio" placeholder="ФИО" disabled/>
+      <span id="fioStatus" class="status hidden">✔</span>
+    </div>
+
+    <div class="input-wrapper">
+      <input id="address" placeholder="Адрес" disabled/>
       <span id="addressStatus" class="status hidden">✔</span>
     </div>
 
-    <!-- Loader -->
-    <div id="loader" class="loader hidden"></div>
-
-    <!-- Доход -->
     <div class="input-wrapper">
-      <input
-        id="income"
-        placeholder="Выручка"
-        type="tel"
-        inputmode="numeric"
-        autocomplete="off"
-      />
+      <input id="income" placeholder="Выручка"
+             type="tel" inputmode="numeric"/>
       <span id="incomeCheck" class="status hidden">✔</span>
     </div>
 
-    <!-- Месяц -->
     <select id="month">
       <option value="">Выберите месяц</option>
-      <option>Январь</option>
-      <option>Февраль</option>
-      <option>Март</option>
-      <option>Апрель</option>
-      <option>Май</option>
-      <option>Июнь</option>
-      <option>Июль</option>
-      <option>Август</option>
-      <option>Сентябрь</option>
-      <option>Октябрь</option>
-      <option>Ноябрь</option>
-      <option>Декабрь</option>
+      <option>Январь</option><option>Февраль</option>
+      <option>Март</option><option>Апрель</option>
+      <option>Май</option><option>Июнь</option>
+      <option>Июль</option><option>Август</option>
+      <option>Сентябрь</option><option>Октябрь</option>
+      <option>Ноябрь</option><option>Декабрь</option>
     </select>
 
-    <!-- BUTTON -->
     <button id="sendBtn" disabled class="main-btn">
       Отправить
     </button>
+
+    <div id="offlineMessage" class="offline hidden">
+      Нет подключения к сети
+    </div>
 
   </div>
 
 </div>
 
-<script src="main.js?v=110"></script>
-
+<script src="main.js?v=200"></script>
 </body>
 </html>
