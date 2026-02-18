@@ -13,8 +13,10 @@
   <div class="card">
     <h1>Форма подачи заявки</h1>
 
+    <!-- ИНН -->
     <input id="inn" placeholder="ИНН (9 цифр)" />
 
+    <!-- ФИО -->
     <div class="fio-wrapper">
       <input id="fio" placeholder="ФИО (заполняется автоматически)" disabled />
       <span id="checkIcon" class="check hidden">
@@ -23,13 +25,19 @@
       </span>
     </div>
 
+    <!-- 🔥 НОВОЕ ПОЛЕ — АДРЕС -->
+    <input id="address" placeholder="Адрес (заполняется автоматически)" disabled />
+
+    <!-- loader -->
     <div id="loader" class="loader hidden"></div>
 
+    <!-- выручка -->
     <div class="income-wrapper">
       <input id="income" placeholder="Выручка за период" />
       <span id="incomeCheck" class="check hidden">✔</span>
     </div>
 
+    <!-- месяц -->
     <select id="month">
       <option value="">Выберите месяц</option>
       <option>Январь</option><option>Февраль</option><option>Март</option>
