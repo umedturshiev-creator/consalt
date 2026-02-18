@@ -11,6 +11,7 @@ const checkIcon = document.getElementById("checkIcon");
 const incomeCheck = document.getElementById("incomeCheck");
 const toastContainer = document.getElementById("toastContainer");
 
+let innTimer = null;
 let isSubmitting = false;
 
 function showToast(message, type="success"){
@@ -35,11 +36,46 @@ function updateButtonState(){
   sendBtn.disabled = !validateForm();
 }
 
+// 🔥 Поиск по ИНН
 innInput.addEventListener("input",()=>{
   innInput.value = innInput.value.replace(/\D/g,"").slice(0,9);
-  updateButtonState();
+  clearTimeout(innTimer);
+  innTimer = setTimeout(findDataByInn,500);
 });
 
+async function findDataByInn(){
+  const inn = innInput.value.trim();
+
+  fioInput.value = "";
+  addressInput.value = "";
+  checkIcon.classList.add("hidden");
+  sendBtn.disabled = true;
+
+  if(inn.length !== 9) return;
+
+  loader.classList.remove("hidden");
+
+  try{
+    const res = await fetch(`${API_URL}?inn=${encodeURIComponent(inn)}`);
+    const data = await res.json();
+
+    if(data.success){
+      fioInput.value = data.fio || "";
+      addressInput.value = data.address || "";
+      checkIcon.classList.remove("hidden");
+    } else {
+      fioInput.value = "Не найдено";
+      showToast("ИНН не найден","error");
+    }
+  } catch{
+    showToast("Ошибка сети","error");
+  }
+
+  loader.classList.add("hidden");
+  updateButtonState();
+}
+
+// Маска дохода
 incomeInput.addEventListener("input",()=>{
   let value = incomeInput.value.replace(/\D/g,"");
   value = value.replace(/\B(?=(\d{3})+(?!\d))/g," ");
@@ -56,6 +92,7 @@ incomeInput.addEventListener("input",()=>{
 
 monthInput.addEventListener("change",updateButtonState);
 
+// Отправка
 sendBtn.addEventListener("click",async()=>{
   if(isSubmitting || !validateForm()) return;
 
@@ -87,7 +124,6 @@ sendBtn.addEventListener("click",async()=>{
     } else {
       showToast("Ошибка отправки","error");
     }
-
   } catch{
     showToast("Ошибка сети","error");
   }
