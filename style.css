@@ -5,7 +5,9 @@
   --bg:#f2f4f8;
 }
 
-*{box-sizing:border-box;}
+*{
+  box-sizing:border-box;
+}
 
 body{
   margin:0;
@@ -19,53 +21,74 @@ body{
   position:relative;
 }
 
-/* ===== HEADER ===== */
+/* ================= HEADER ================= */
 
 .header{
   background:var(--primary);
-  padding:30px 20px;
+  padding:40px 20px 35px 20px;
   text-align:center;
   color:#fff;
-  border-bottom-left-radius:30px;
-  border-bottom-right-radius:30px;
+  border-bottom-left-radius:35px;
+  border-bottom-right-radius:35px;
 }
 
-.logo{width:55px;margin-bottom:10px;}
-.title{font-size:20px;font-weight:600;}
-.version-top{font-size:12px;opacity:0.7;margin-top:4px;}
+/* ЛОГОТИП БОЛЬШЕ И С ТЕНЬЮ */
+.logo{
+  width:90px;
+  margin-bottom:15px;
+  filter: drop-shadow(0 6px 18px rgba(0,0,0,0.25));
+  transition:transform .3s ease;
+}
 
-/* ===== FORM ===== */
+.logo:hover{
+  transform:scale(1.05);
+}
+
+.title{
+  font-size:22px;
+  font-weight:600;
+  letter-spacing:0.3px;
+}
+
+.version-top{
+  font-size:13px;
+  opacity:0.75;
+  margin-top:6px;
+}
+
+/* ================= FORM ================= */
 
 .form{
-  padding:25px 20px 40px 20px;
+  padding:30px 20px 45px 20px;
 }
 
 input,select{
   width:100%;
-  padding:16px 18px;
+  padding:17px 20px;
   border:none;
-  border-radius:18px;
-  margin-bottom:16px;
+  border-radius:20px;
+  margin-bottom:18px;
   font-size:16px;
   background:#ffffff;
-  box-shadow:0 4px 12px rgba(0,0,0,0.05);
-  transition:.2s ease;
+  box-shadow:0 6px 18px rgba(0,0,0,0.06);
+  transition:.25s ease;
 }
 
 input:focus,select:focus{
   outline:none;
   box-shadow:0 0 0 2px var(--primary);
+  transform:translateY(-1px);
 }
 
 .main-btn{
   width:100%;
-  padding:18px;
+  padding:19px;
   border:none;
-  border-radius:20px;
+  border-radius:22px;
   background:var(--primary);
   color:#fff;
   font-size:16px;
-  font-weight:500;
+  font-weight:600;
   cursor:pointer;
   transition:.2s ease;
 }
@@ -76,10 +99,10 @@ input:focus,select:focus{
 }
 
 .main-btn:active{
-  transform:scale(0.98);
+  transform:scale(0.97);
 }
 
-/* ===== STATUS ICONS ===== */
+/* ================= STATUS ICONS ================= */
 
 .input-wrapper{
   position:relative;
@@ -96,15 +119,17 @@ input:focus,select:focus{
   transition:.25s ease;
 }
 
-.status.show{opacity:1;}
+.status.show{
+  opacity:1;
+}
 
-/* ===== ERROR ANIMATION ===== */
+/* ================= ERROR ================= */
 
 .error-message{
   color:var(--error);
-  font-size:13px;
-  margin-top:-8px;
-  margin-bottom:10px;
+  font-size:14px;
+  margin-top:-10px;
+  margin-bottom:14px;
 
   opacity:0;
   transform:translateY(-6px);
@@ -121,11 +146,11 @@ input:focus,select:focus{
   box-shadow:0 0 0 2px var(--error) !important;
 }
 
-/* ===== PREMIUM SKELETON ===== */
+/* ================= PREMIUM SKELETON ================= */
 
 .skeleton-overlay{
   position:absolute;
-  top:140px;
+  top:165px;
   left:0;
   right:0;
   padding:20px;
@@ -145,15 +170,15 @@ input:focus,select:focus{
   width:100%;
   max-width:460px;
   background:#ffffff;
-  border-radius:22px;
-  padding:24px;
-  box-shadow:0 15px 40px rgba(0,0,0,0.08);
+  border-radius:25px;
+  padding:28px;
+  box-shadow:0 20px 50px rgba(0,0,0,0.08);
 }
 
 .skeleton-field{
-  height:56px;
-  border-radius:18px;
-  margin-bottom:18px;
+  height:60px;
+  border-radius:20px;
+  margin-bottom:20px;
   position:relative;
   overflow:hidden;
   background:#eceff3;
@@ -177,9 +202,28 @@ input:focus,select:focus{
 
 .skeleton-field.short{
   width:65%;
-  height:48px;
+  height:50px;
 }
 
 @keyframes shimmer{
-  100%{ left:150%; }
+  100%{
+    left:150%;
+  }
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width:480px){
+
+  .logo{
+    width:75px;
+  }
+
+  .form{
+    padding:25px 15px 40px 15px;
+  }
+
+  input,select{
+    font-size:15px;
+  }
 }
