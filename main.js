@@ -10,11 +10,12 @@ const loader = document.getElementById("loader");
 const fioStatus = document.getElementById("fioStatus");
 const addressStatus = document.getElementById("addressStatus");
 const incomeCheck = document.getElementById("incomeCheck");
+const innError = document.getElementById("innError");
 
 let innTimer;
 
 /* =========================
-   Сброс состояния
+   СБРОС СОСТОЯНИЯ
 ========================= */
 
 function resetData() {
@@ -22,18 +23,17 @@ function resetData() {
   addressInput.value = "";
   fioStatus.classList.add("hidden");
   addressStatus.classList.add("hidden");
-  loader.classList.add("hidden");
 }
 
 /* =========================
-   Валидация
+   ВАЛИДАЦИЯ
 ========================= */
 
 function validateForm() {
   return (
     innInput.value.length === 9 &&
-    fioInput.value !== "" &&
-    addressInput.value !== "" &&
+    fioInput.value.trim() !== "" &&
+    addressInput.value.trim() !== "" &&
     Number(incomeInput.value.replace(/\s/g, "")) > 0 &&
     monthInput.value !== ""
   );
@@ -44,7 +44,7 @@ function updateButton() {
 }
 
 /* =========================
-   Поиск по ИНН
+   ПОИСК ПО ИНН
 ========================= */
 
 innInput.addEventListener("input", () => {
@@ -52,14 +52,18 @@ innInput.addEventListener("input", () => {
   innInput.value = innInput.value.replace(/\D/g, "").slice(0, 9);
 
   clearTimeout(innTimer);
+
   resetData();
+  loader.classList.add("hidden");
+  innInput.classList.remove("error-input");
+  innError.classList.add("hidden");
 
   if (innInput.value.length !== 9) {
     updateButton();
     return;
   }
 
-  innTimer = setTimeout(fetchInnData, 400);
+  innTimer = setTimeout(fetchInnData, 500);
 });
 
 async function fetchInnData() {
@@ -86,12 +90,24 @@ async function fetchInnData() {
       }
 
     } else {
-      resetData();
+
+      // 🔴 Ошибка ИНН
+      innInput.classList.add("error-input");
+      innError.classList.remove("hidden");
+
+      setTimeout(() => {
+        innInput.value = "";
+        innInput.classList.remove("error-input");
+        innError.classList.add("hidden");
+        resetData();
+        updateButton();
+      }, 1500);
+
+      return;
     }
 
   } catch (error) {
     loader.classList.add("hidden");
-    resetData();
     console.log("Ошибка сети", error);
   }
 
@@ -99,7 +115,7 @@ async function fetchInnData() {
 }
 
 /* =========================
-   Маска дохода
+   МАСКА ДОХОДА
 ========================= */
 
 incomeInput.addEventListener("input", () => {
@@ -120,7 +136,7 @@ incomeInput.addEventListener("input", () => {
 monthInput.addEventListener("change", updateButton);
 
 /* =========================
-   Отправка формы
+   ОТПРАВКА ФОРМЫ
 ========================= */
 
 sendBtn.addEventListener("click", async () => {
@@ -150,6 +166,10 @@ sendBtn.addEventListener("click", async () => {
 
     if (data.status === "ok") {
       alert("Заявка отправлена");
+      incomeInput.value = "";
+      monthInput.value = "";
+      incomeCheck.classList.add("hidden");
+      updateButton();
     }
 
   } catch (e) {
