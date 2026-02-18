@@ -1,5 +1,17 @@
-// Google Script URL (оставь свой)
-const API_URL = "https://script.google.com/macros/s/AKfycbwUUcRsGyZpHGqVOvKp3qiQ7p_D9sBgwFcuf7ksqX3gkwtUlnRIW1ArbXtnw4L4bIdPXQ/exec";
+// ==========================
+// API НАСТРОЙКИ
+// ==========================
+
+// SmartPay API (основной источник)
+const SMARTPAY_API_URL = "https://smartpay.tj/subapi/payler/tin/";
+
+// Google Script API (резерв)
+const GOOGLE_API_URL = "https://script.google.com/macros/s/AKfycbwUUcRsGyZpHGqVOvKp3qiQ7p_D9sBgwFcuf7ksqX3gkwtUlnRIW1ArbXtnw4L4bIdPXQ/exec";
+
+
+// ==========================
+// DOM ЭЛЕМЕНТЫ
+// ==========================
 
 const innInput = document.getElementById("inn");
 const fioInput = document.getElementById("fio");
@@ -16,7 +28,10 @@ let innTimer = null;
 let isSubmitting = false;
 
 
-// уведомления
+// ==========================
+// УВЕДОМЛЕНИЯ
+// ==========================
+
 function showToast(message, type = "success") {
   const toast = document.createElement("div");
   toast.className = `toast ${type}`;
@@ -29,21 +44,33 @@ function showToast(message, type = "success") {
   }, 2500);
 }
 
-// состояние кнопки
+
+// ==========================
+// СОСТОЯНИЕ КНОПКИ
+// ==========================
+
 function setSubmitting(state) {
   isSubmitting = state;
   sendBtn.disabled = state;
   sendBtn.innerText = state ? "Отправляется…" : "Отправить";
 }
 
-// только цифры в ИНН
+
+// ==========================
+// ТОЛЬКО ЦИФРЫ В ИНН
+// ==========================
+
 innInput.addEventListener("input", () => {
   innInput.value = innInput.value.replace(/\D/g, "").slice(0, 9);
   clearTimeout(innTimer);
   innTimer = setTimeout(findDataByInn, 500);
 });
 
-// проверка дохода
+
+// ==========================
+// ПРОВЕРКА ДОХОДА
+// ==========================
+
 incomeInput.addEventListener("input", () => {
   incomeInput.value = incomeInput.value.replace(/\D/g, "");
   incomeCheck.classList.remove("show");
@@ -59,8 +86,31 @@ incomeInput.addEventListener("blur", () => {
 
 
 // ==========================
-// 🔥 ПОЛУЧЕНИЕ ФИО + АДРЕС
+// FETCH С TIMEOUT
 // ==========================
+
+async function fetchWithTimeout(url, options = {}, timeout = 4000) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal
+    });
+    clearTimeout(id);
+    return response;
+  } catch (e) {
+    clearTimeout(id);
+    throw e;
+  }
+}
+
+
+// ==========================
+// ПОЛУЧЕНИЕ ФИО + АДРЕС
+// ==========================
+
 async function findDataByInn() {
   const inn = innInput.value.trim();
 
@@ -76,12 +126,66 @@ async function findDataByInn() {
   loader.classList.remove("hidden");
 
   try {
-    const res = await fetch(`${API_URL}?inn=${encodeURIComponent(inn)}`);
-    const data = JSON.parse(await res.text());
+    let result = null;
 
-    if (data.success) {
-      fioInput.value = data.fio || "";
-      addressInput.value = data.address || "";
+    // ======================
+    // 1️⃣ ПЫТАЕМСЯ SMARTPAY
+    // ======================
+    try {
+      const res = await fetchWithTimeout(
+        `${SMARTPAY_API_URL}${encodeURIComponent(inn)}`,
+        {},
+        4000
+      );
+
+      if (res.ok) {
+        const smartpayData = await res.json();
+
+        if (smartpayData.errorCode === 0) {
+          result = {
+            fio: smartpayData.FullName,
+            address: smartpayData.adr
+          };
+
+          console.log("Источник: SmartPay");
+        }
+      }
+    } catch (e) {
+      console.log("SmartPay недоступен → пробуем Google");
+    }
+
+    // ======================
+    // 2️⃣ FALLBACK → GOOGLE
+    // ======================
+    if (!result) {
+      try {
+        const res = await fetchWithTimeout(
+          `${GOOGLE_API_URL}?inn=${encodeURIComponent(inn)}`,
+          {},
+          4000
+        );
+
+        const googleData = JSON.parse(await res.text());
+
+        if (googleData.success) {
+          result = {
+            fio: googleData.fio,
+            address: googleData.address
+          };
+
+          console.log("Источник: Google Table");
+        }
+      } catch {
+        console.log("Google тоже недоступен");
+      }
+    }
+
+    // ======================
+    // ОБРАБОТКА РЕЗУЛЬТАТА
+    // ======================
+    if (result && result.fio) {
+      fioInput.value = result.fio || "";
+      addressInput.value = result.address || "";
 
       fioInput.classList.add("success");
 
@@ -91,21 +195,24 @@ async function findDataByInn() {
       sendBtn.disabled = false;
 
     } else {
-      fioInput.value = "Не найдено";
-      addressInput.value = "";
-      fioInput.classList.add("error");
-      showToast("ИНН не найден", "error");
+      throw new Error("not found");
     }
 
-  } catch {
-    showToast("Ошибка сети", "error");
+  } catch (e) {
+    fioInput.value = "Не найдено";
+    addressInput.value = "";
+    fioInput.classList.add("error");
+    showToast("ИНН не найден", "error");
   } finally {
     loader.classList.add("hidden");
   }
 }
 
 
-// отправка формы (как было)
+// ==========================
+// ОТПРАВКА ФОРМЫ
+// ==========================
+
 sendBtn.addEventListener("click", async () => {
   if (isSubmitting) return;
 
@@ -120,7 +227,7 @@ sendBtn.addEventListener("click", async () => {
   });
 
   try {
-    const res = await fetch(API_URL, {
+    const res = await fetch(GOOGLE_API_URL, {
       method: "POST",
       headers: {"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},
       body: body.toString()
