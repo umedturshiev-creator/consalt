@@ -6,7 +6,8 @@
   <meta name="theme-color" content="#1e3a8a"/>
   <title>UA Consulting v3.3</title>
 
-  <link rel="stylesheet" href="style.css?v=31">
+  <!-- Обновили версию -->
+  <link rel="stylesheet" href="style.css?v=33">
 </head>
 <body>
 
@@ -18,7 +19,7 @@
     <div class="version-top">v3.3</div>
   </div>
 
-  <!-- SKELETON OVERLAY -->
+  <!-- SKELETON -->
   <div id="skeletonOverlay" class="skeleton-overlay hidden">
     <div class="skeleton-card">
       <div class="skeleton-field"></div>
@@ -34,18 +35,19 @@
            inputmode="numeric"
            autocomplete="off"/>
 
-    <div id="innError" class="error-message hidden">
+    <!-- УБРАЛИ hidden -->
+    <div id="innError" class="error-message">
       ИНН не найден
     </div>
 
     <div class="input-wrapper">
       <input id="fio" placeholder="ФИО" disabled/>
-      <span id="fioStatus" class="status hidden">✔</span>
+      <span id="fioStatus" class="status">✔</span>
     </div>
 
     <div class="input-wrapper">
       <input id="address" placeholder="Адрес" disabled/>
-      <span id="addressStatus" class="status hidden">✔</span>
+      <span id="addressStatus" class="status">✔</span>
     </div>
 
     <div class="input-wrapper">
@@ -53,7 +55,7 @@
              placeholder="Выручка"
              type="tel"
              inputmode="numeric"/>
-      <span id="incomeCheck" class="status hidden">✔</span>
+      <span id="incomeCheck" class="status">✔</span>
     </div>
 
     <select id="month">
@@ -80,6 +82,8 @@
 
 </div>
 
-<script src="main.js?v=31"></script>
+<!-- Обновили версию -->
+<script src="main.js?v=33"></script>
+
 </body>
 </html>
