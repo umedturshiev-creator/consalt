@@ -78,8 +78,25 @@ button:disabled{
   cursor:not-allowed;
 }
 
-.fio-wrapper,.income-wrapper{
+.input-wrapper{
   position:relative;
+}
+
+.status{
+  position:absolute;
+  right:12px;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:14px;
+  color:#2ecc71;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-weight:600;
+}
+
+.status-text{
+  font-size:13px;
 }
 
 .check{
@@ -101,7 +118,9 @@ button:disabled{
   animation:spin 1s linear infinite;
 }
 
-.hidden{display:none}
+.hidden{
+  display:none;
+}
 
 @keyframes spin{
   100%{transform:rotate(360deg)}
@@ -121,13 +140,12 @@ button:disabled{
   padding:14px 18px;
   border-radius:10px;
   margin-bottom:10px;
-  min-width:220px;
 }
 
 .toast.success{background:#2ecc71}
 .toast.error{background:#e74c3c}
 
-/* 📱 Mobile */
+/* Mobile */
 @media (max-width:600px){
   .card{
     padding:25px;
