@@ -14,168 +14,164 @@ const innError = document.getElementById("innError");
 
 let innTimer;
 
-/* =========================
-   СБРОС СОСТОЯНИЯ
-========================= */
+/* ===== RESET ===== */
 
-function resetData() {
-  fioInput.value = "";
-  addressInput.value = "";
+function resetData(){
+  fioInput.value="";
+  addressInput.value="";
   fioStatus.classList.add("hidden");
   addressStatus.classList.add("hidden");
 }
 
-/* =========================
-   ВАЛИДАЦИЯ
-========================= */
+/* ===== VALIDATION ===== */
 
-function validateForm() {
+function validateForm(){
   return (
-    innInput.value.length === 9 &&
-    fioInput.value.trim() !== "" &&
-    addressInput.value.trim() !== "" &&
-    Number(incomeInput.value.replace(/\s/g, "")) > 0 &&
-    monthInput.value !== ""
+    innInput.value.length===9 &&
+    fioInput.value!=="" &&
+    addressInput.value!=="" &&
+    Number(incomeInput.value.replace(/\s/g,""))>0 &&
+    monthInput.value!==""
   );
 }
 
-function updateButton() {
-  sendBtn.disabled = !validateForm();
+function updateButton(){
+  sendBtn.disabled=!validateForm();
 }
 
-/* =========================
-   ПОИСК ПО ИНН
-========================= */
+/* ===== INN INPUT ===== */
 
-innInput.addEventListener("input", () => {
+innInput.addEventListener("input",()=>{
 
-  innInput.value = innInput.value.replace(/\D/g, "").slice(0, 9);
+  innInput.value=innInput.value.replace(/\D/g,"").slice(0,9);
 
   clearTimeout(innTimer);
-
   resetData();
   loader.classList.add("hidden");
   innInput.classList.remove("error-input");
   innError.classList.add("hidden");
 
-  if (innInput.value.length !== 9) {
+  if(innInput.value.length!==9){
     updateButton();
     return;
   }
 
-  innTimer = setTimeout(fetchInnData, 500);
+  innTimer=setTimeout(fetchInnData,500);
 });
 
-async function fetchInnData() {
+/* ===== FETCH INN ===== */
+
+async function fetchInnData(){
 
   loader.classList.remove("hidden");
 
-  try {
-    const response = await fetch(`${API_URL}?inn=${innInput.value}`);
-    const data = await response.json();
+  try{
+    const res=await fetch(`${API_URL}?inn=${innInput.value}`);
+    const data=await res.json();
 
     loader.classList.add("hidden");
 
-    if (data.success) {
+    if(data.success){
 
-      fioInput.value = data.fio || "";
-      addressInput.value = data.address || "";
+      fioInput.value=data.fio||"";
+      addressInput.value=data.address||"";
 
-      if (data.fio) {
-        fioStatus.classList.remove("hidden");
-      }
+      fioStatus.classList.remove("hidden");
+      addressStatus.classList.remove("hidden");
 
-      if (data.address) {
-        addressStatus.classList.remove("hidden");
-      }
+      setTimeout(()=>{
+        fioStatus.classList.add("show");
+        addressStatus.classList.add("show");
+      },50);
 
-    } else {
+    }else{
 
-      // 🔴 Ошибка ИНН
       innInput.classList.add("error-input");
+      innInput.classList.add("shake");
       innError.classList.remove("hidden");
 
-      setTimeout(() => {
-        innInput.value = "";
+      if(navigator.vibrate){
+        navigator.vibrate(200);
+      }
+
+      setTimeout(()=>{
+        innInput.classList.remove("shake");
+      },400);
+
+      setTimeout(()=>{
+        innInput.value="";
         innInput.classList.remove("error-input");
         innError.classList.add("hidden");
         resetData();
         updateButton();
-      }, 1500);
+      },1500);
 
       return;
     }
 
-  } catch (error) {
+  }catch(e){
     loader.classList.add("hidden");
-    console.log("Ошибка сети", error);
   }
 
   updateButton();
 }
 
-/* =========================
-   МАСКА ДОХОДА
-========================= */
+/* ===== INCOME MASK ===== */
 
-incomeInput.addEventListener("input", () => {
+incomeInput.addEventListener("input",()=>{
 
-  let value = incomeInput.value.replace(/\D/g, "");
-  value = value.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-  incomeInput.value = value;
+  let value=incomeInput.value.replace(/\D/g,"");
+  value=value.replace(/\B(?=(\d{3})+(?!\d))/g," ");
+  incomeInput.value=value;
 
-  if (Number(value) > 0) {
+  if(Number(value)>0){
     incomeCheck.classList.remove("hidden");
-  } else {
+    setTimeout(()=>incomeCheck.classList.add("show"),50);
+  }else{
     incomeCheck.classList.add("hidden");
+    incomeCheck.classList.remove("show");
   }
 
   updateButton();
 });
 
-monthInput.addEventListener("change", updateButton);
+monthInput.addEventListener("change",updateButton);
 
-/* =========================
-   ОТПРАВКА ФОРМЫ
-========================= */
+/* ===== SEND ===== */
 
-sendBtn.addEventListener("click", async () => {
+sendBtn.addEventListener("click",async()=>{
 
-  if (!validateForm()) return;
+  if(!validateForm()) return;
 
-  sendBtn.innerText = "Отправляется...";
-  sendBtn.disabled = true;
+  sendBtn.classList.add("btn-loading");
+  sendBtn.disabled=true;
 
-  try {
+  try{
 
-    const body = new URLSearchParams({
-      inn: innInput.value,
-      fio: fioInput.value,
-      address: addressInput.value,
-      income: incomeInput.value.replace(/\s/g, ""),
-      month: monthInput.value
+    const body=new URLSearchParams({
+      inn:innInput.value,
+      fio:fioInput.value,
+      address:addressInput.value,
+      income:incomeInput.value.replace(/\s/g,""),
+      month:monthInput.value
     });
 
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: body.toString()
+    const res=await fetch(API_URL,{
+      method:"POST",
+      headers:{"Content-Type":"application/x-www-form-urlencoded"},
+      body:body.toString()
     });
 
-    const data = await res.json();
+    const data=await res.json();
 
-    if (data.status === "ok") {
+    if(data.status==="ok"){
       alert("Заявка отправлена");
-      incomeInput.value = "";
-      monthInput.value = "";
-      incomeCheck.classList.add("hidden");
-      updateButton();
     }
 
-  } catch (e) {
+  }catch(e){
     alert("Ошибка сети");
   }
 
-  sendBtn.innerText = "Отправить";
+  sendBtn.classList.remove("btn-loading");
   updateButton();
 });
