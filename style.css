@@ -1,11 +1,9 @@
 :root{
-  --bg:#f2f4f8;
   --primary:#1e3a8a;
   --green:#00c853;
   --error:#e53935;
+  --bg:#f2f4f8;
 }
-
-*{ box-sizing:border-box; }
 
 body{
   margin:0;
@@ -13,57 +11,53 @@ body{
   background:var(--bg);
 }
 
-.app{
-  max-width:500px;
-  margin:auto;
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-}
+.app{max-width:500px;margin:auto;}
 
 .header{
   background:var(--primary);
-  padding:25px 20px 35px;
+  padding:25px;
   text-align:center;
   color:#fff;
   border-bottom-left-radius:30px;
   border-bottom-right-radius:30px;
 }
 
-.logo{ width:60px; margin-bottom:10px; }
-.title{ font-size:20px; font-weight:600; }
+.logo{width:60px;margin-bottom:10px;}
+.title{font-size:20px;font-weight:600;}
+.version-top{font-size:12px;opacity:0.7;}
 
-.version-top{
-  font-size:12px;
-  opacity:0.7;
-  margin-top:6px;
+.steps{
+  display:flex;
+  justify-content:space-around;
+  background:#fff;
+  padding:10px;
+  font-size:13px;
 }
+.step{opacity:0.4;}
+.step.active{opacity:1;color:var(--primary);}
 
-.form{
-  padding:20px;
-  flex:1;
-}
+.form{padding:20px;}
 
 input,select{
   width:100%;
   padding:16px;
-  border-radius:16px;
   border:none;
-  font-size:16px;
+  border-radius:16px;
   margin-bottom:15px;
-  box-shadow:0 2px 10px rgba(0,0,0,0.05);
-  background:#fff;
-  transition:0.2s;
+  font-size:16px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.05);
 }
 
-input:focus,select:focus{
-  outline:none;
-  box-shadow:0 0 0 2px var(--primary);
+.main-btn{
+  width:100%;
+  padding:18px;
+  border:none;
+  border-radius:18px;
+  background:var(--primary);
+  color:#fff;
 }
 
-.input-wrapper{ position:relative; }
-
-/* ===== STATUS ===== */
+.main-btn:disabled{background:#aaa;}
 
 .status{
   position:absolute;
@@ -71,94 +65,53 @@ input:focus,select:focus{
   top:50%;
   transform:translateY(-50%);
   color:var(--green);
-  font-size:13px;
-  font-weight:600;
   opacity:0;
-  transition:opacity 0.3s ease;
+  transition:0.3s;
 }
+.status.show{opacity:1;}
 
-.status.show{ opacity:1; }
+.input-wrapper{position:relative;}
 
-/* ===== LOADER ===== */
-
-.loader{
-  margin:10px auto;
-  width:26px;
-  height:26px;
-  border:4px solid #eee;
-  border-top:4px solid var(--primary);
-  border-radius:50%;
-  animation:spin 1s linear infinite;
-}
-
-@keyframes spin{
-  100%{ transform:rotate(360deg); }
-}
-
-/* ===== BUTTON ===== */
-
-.main-btn{
-  width:100%;
-  padding:18px;
-  font-size:18px;
-  border:none;
-  border-radius:18px;
-  background:var(--primary);
-  color:#fff;
-  transition:0.2s ease;
-  margin-top:10px;
-  position:relative;
-}
-
-.main-btn:disabled{ background:#aaa; }
-
-/* ===== BUTTON SPINNER ===== */
-
-.btn-loading{
-  pointer-events:none;
-}
-
-.btn-loading::after{
-  content:"";
-  position:absolute;
-  right:20px;
-  top:50%;
-  width:18px;
-  height:18px;
-  border:3px solid rgba(255,255,255,0.5);
-  border-top:3px solid #fff;
-  border-radius:50%;
-  transform:translateY(-50%);
-  animation:spin 1s linear infinite;
-}
-
-/* ===== ERROR ===== */
-
-.hidden{ display:none !important; }
-
-.error-input{
-  box-shadow:0 0 0 2px var(--error) !important;
-}
+.hidden{display:none;}
 
 .error-message{
   color:var(--error);
   font-size:13px;
   margin-top:-10px;
   margin-bottom:10px;
-  font-weight:500;
 }
 
-/* ===== SHAKE ===== */
+.error-input{
+  box-shadow:0 0 0 2px var(--error) !important;
+}
 
+.offline{
+  color:var(--error);
+  font-size:13px;
+  margin-top:10px;
+}
+
+/* SHAKE */
 @keyframes shake{
   0%{transform:translateX(0);}
-  20%{transform:translateX(-6px);}
-  40%{transform:translateX(6px);}
-  60%{transform:translateX(-6px);}
-  80%{transform:translateX(6px);}
+  25%{transform:translateX(-6px);}
+  50%{transform:translateX(6px);}
+  75%{transform:translateX(-6px);}
   100%{transform:translateX(0);}
 }
+.shake{animation:shake 0.4s ease;}
 
-.shake{
-  animation:shake 0.4s ease;
+/* SKELETON */
+.skeleton-line{
+  height:16px;
+  border-radius:8px;
+  margin-bottom:10px;
+  background:linear-gradient(90deg,#eee 25%,#f5f5f5 50%,#eee 75%);
+  background-size:200% 100%;
+  animation:skeleton 1.2s infinite;
+}
+.skeleton-line.short{width:60%;}
+@keyframes skeleton{
+  0%{background-position:200% 0;}
+  100%{background-position:-200% 0;}
 }
