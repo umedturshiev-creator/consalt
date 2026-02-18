@@ -1,4 +1,4 @@
-const API_URL="https://script.google.com/macros/s/AKfycbzVBCAPtFkSJ2m5tVr1TVkY_hGGSc_HADJwYxcY5e0Ijh0oiMjvXH4qNrHL0XzIK3T6oQ/exec";
+const API_URL="https://script.google.com/macros/s/AKfycbwUUcRsGyZpHGqVOvKp3qiQ7p_D9sBgwFcuf7ksqX3gkwtUlnRIW1ArbXtnw4L4bIdPXQ/exec";
 
 const innInput=document.getElementById("inn");
 const fioInput=document.getElementById("fio");
@@ -72,7 +72,7 @@ function reset(){
   innInput.classList.remove("error-input");
 }
 
-/* ================= INN INPUT ================= */
+/* ================= INН INPUT ================= */
 
 innInput.addEventListener("input",()=>{
   innInput.value=innInput.value.replace(/\D/g,"").slice(0,9);
@@ -144,7 +144,7 @@ incomeInput.addEventListener("input",()=>{
 
 monthInput.addEventListener("change",updateBtn);
 
-/* ================= SEND (POST) ================= */
+/* ================= SEND (POST WITHOUT CORS ISSUE) ================= */
 
 sendBtn.addEventListener("click", async ()=>{
 
@@ -156,18 +156,16 @@ sendBtn.addEventListener("click", async ()=>{
 
   try{
 
+    const params = new URLSearchParams();
+    params.append("inn", innInput.value);
+    params.append("fio", fioInput.value);
+    params.append("address", addressInput.value);
+    params.append("income", incomeInput.value.replace(/\s/g,""));
+    params.append("month", monthInput.value);
+
     const response = await fetch(API_URL, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        inn: innInput.value,
-        fio: fioInput.value,
-        address: addressInput.value,
-        income: incomeInput.value.replace(/\s/g,""),
-        month: monthInput.value
-      })
+      body: params
     });
 
     const result = await response.json();
@@ -175,7 +173,6 @@ sendBtn.addEventListener("click", async ()=>{
     if(result.status === "ok"){
       alert("Заявка успешно отправлена ✅");
 
-      // очистка формы
       innInput.value="";
       incomeInput.value="";
       monthInput.value="";
@@ -187,6 +184,7 @@ sendBtn.addEventListener("click", async ()=>{
     }
 
   }catch(error){
+    console.error(error);
     alert("Ошибка соединения ❌");
   }
 
