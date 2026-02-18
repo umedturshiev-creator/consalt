@@ -3,77 +3,110 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>UA Consulting — Подача заявки</title>
+  <meta name="theme-color" content="#1e3a8a"/>
+
+  <title>UA Consulting</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- iOS Icon -->
+  <link rel="apple-touch-icon" href="icon-180-ios.png">
+
+  <!-- Styles -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div id="toastContainer" class="toast-container"></div>
 
-<div class="card">
+<div class="app">
 
-  <img src="logo.png" class="logo" alt="UA Consulting">
-
-  <h1>Форма подачи заявки</h1>
-
-  <!-- ИНН -->
-  <input 
-    id="inn" 
-    placeholder="ИНН (9 цифр)"
-    type="tel"
-    inputmode="numeric"
-    pattern="[0-9]*"
-  />
-
-  <!-- ФИО -->
-  <div class="input-wrapper">
-    <input id="fio" placeholder="ФИО" disabled />
-    <span id="fioStatus" class="status hidden">
-      ✔ Данные подтверждены
-    </span>
+  <!-- HEADER -->
+  <div class="header">
+    <img src="logo.png" class="logo" alt="UA Consulting">
+    <div class="title">Подача заявки</div>
   </div>
 
-  <!-- Адрес -->
-  <div class="input-wrapper">
-    <input id="address" placeholder="Адрес" disabled />
-    <span id="addressStatus" class="status hidden">✔</span>
-  </div>
+  <!-- FORM -->
+  <div class="form">
 
-  <div id="loader" class="loader hidden"></div>
-
-  <!-- Доход -->
-  <div class="input-wrapper">
+    <!-- ИНН -->
     <input 
-      id="income" 
-      placeholder="Выручка за период"
+      id="inn" 
+      placeholder="ИНН (9 цифр)"
       type="tel"
       inputmode="numeric"
       pattern="[0-9]*"
+      autocomplete="off"
     />
-    <span id="incomeCheck" class="status hidden">✔</span>
+
+    <!-- ФИО -->
+    <div class="input-wrapper">
+      <input id="fio" placeholder="ФИО" disabled />
+      <span id="fioStatus" class="status hidden">
+        ✔ Подтверждено
+      </span>
+    </div>
+
+    <!-- Адрес -->
+    <div class="input-wrapper">
+      <input id="address" placeholder="Адрес" disabled />
+      <span id="addressStatus" class="status hidden">✔</span>
+    </div>
+
+    <!-- Loader -->
+    <div id="loader" class="loader hidden"></div>
+
+    <!-- Доход -->
+    <div class="input-wrapper">
+      <input 
+        id="income" 
+        placeholder="Выручка"
+        type="tel"
+        inputmode="numeric"
+        pattern="[0-9]*"
+        autocomplete="off"
+      />
+      <span id="incomeCheck" class="status hidden">✔</span>
+    </div>
+
+    <!-- Месяц -->
+    <select id="month">
+      <option value="">Выберите месяц</option>
+      <option>Январь</option>
+      <option>Февраль</option>
+      <option>Март</option>
+      <option>Апрель</option>
+      <option>Май</option>
+      <option>Июнь</option>
+      <option>Июль</option>
+      <option>Август</option>
+      <option>Сентябрь</option>
+      <option>Октябрь</option>
+      <option>Ноябрь</option>
+      <option>Декабрь</option>
+    </select>
+
   </div>
 
-  <!-- Месяц -->
-  <select id="month">
-    <option value="">Выберите месяц</option>
-    <option>Январь</option>
-    <option>Февраль</option>
-    <option>Март</option>
-    <option>Апрель</option>
-    <option>Май</option>
-    <option>Июнь</option>
-    <option>Июль</option>
-    <option>Август</option>
-    <option>Сентябрь</option>
-    <option>Октябрь</option>
-    <option>Ноябрь</option>
-    <option>Декабрь</option>
-  </select>
-
-  <button id="sendBtn" disabled>Отправить</button>
+  <!-- BUTTON -->
+  <button id="sendBtn" disabled class="main-btn">
+    Отправить
+  </button>
 
 </div>
 
+<!-- Scripts -->
 <script src="main.js"></script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('sw.js');
+  });
+}
+</script>
+
 </body>
 </html>
