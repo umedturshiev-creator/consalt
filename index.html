@@ -4,10 +4,9 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="theme-color" content="#1e3a8a"/>
-  <title>UA Consulting v3.3</title>
+  <title>UA Consulting v3.4</title>
 
-  <!-- Обновили версию -->
-  <link rel="stylesheet" href="style.css?v=33">
+  <link rel="stylesheet" href="style.css?v=34">
 </head>
 <body>
 
@@ -16,14 +15,18 @@
   <div class="header">
     <img src="logo.png" class="logo">
     <div class="title">Подача заявки</div>
-    <div class="version-top">v3.3</div>
+    <div class="version-top">v3.4</div>
   </div>
 
   <!-- SKELETON -->
   <div id="skeletonOverlay" class="skeleton-overlay hidden">
     <div class="skeleton-card">
+      <div id="skeletonText" class="skeleton-title"></div>
+
       <div class="skeleton-field"></div>
       <div class="skeleton-field short"></div>
+
+      <div class="skeleton-loader"></div>
     </div>
   </div>
 
@@ -35,7 +38,6 @@
            inputmode="numeric"
            autocomplete="off"/>
 
-    <!-- УБРАЛИ hidden -->
     <div id="innError" class="error-message">
       ИНН не найден
     </div>
@@ -82,8 +84,6 @@
 
 </div>
 
-<!-- Обновили версию -->
-<script src="main.js?v=33"></script>
-
+<script src="main.js?v=34"></script>
 </body>
 </html>
