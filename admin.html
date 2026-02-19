@@ -15,21 +15,20 @@ th { background:#2c3e50; color:white; }
 <h2>Админ панель заявок</h2>
 <table id="table"></table>
 
+<iframe id="apiFrame" style="display:none;"></iframe>
+
 <script>
 
 const API_URL = "https://script.google.com/macros/s/AKfycbyW6VEd4sEuWV-0Nfi1fdiGjc6Yvo-OLfaXLi0SBxZxWl_Qzqbxnwa4uCxR4D2z2PC8Pg/exec";
 
-// 🔥 ГЛАВНОЕ — функция должна быть глобальной
-window.handleData = function(result) {
+window.addEventListener("message", function(event) {
 
-  console.log("Данные получены:", result);
-
-  if (!result || !result.success) {
+  if (!event.data || !event.data.success) {
     document.body.innerHTML += "<p>Ошибка загрузки данных</p>";
     return;
   }
 
-  const data = result.data;
+  const data = event.data.data;
   const table = document.getElementById("table");
 
   let html = "<tr>";
@@ -55,12 +54,11 @@ window.handleData = function(result) {
   }
 
   table.innerHTML = html;
-};
+
+});
 
 function loadData() {
-  const script = document.createElement("script");
-  script.src = API_URL + "?action=getRequests&callback=handleData";
-  document.body.appendChild(script);
+  document.getElementById("apiFrame").src = API_URL + "?action=getRequests&iframe=1";
 }
 
 function updateStatus(row, status) {
