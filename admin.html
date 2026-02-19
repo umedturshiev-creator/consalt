@@ -1,6 +1,6 @@
 <script>
 
-const API_URL = "https://script.google.com/macros/s/AKfycbwUUcRsGyZpHGqVOvKp3qiQ7p_D9sBgwFcuf7ksqX3gkwtUlnRIW1ArbXtnw4L4bIdPXQ/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyW6VEd4sEuWV-0Nfi1fdiGjc6Yvo-OLfaXLi0SBxZxWl_Qzqbxnwa4uCxR4D2z2PC8Pg/exec";
 
 async function loadData() {
   try {
@@ -17,20 +17,13 @@ async function loadData() {
     const table = document.getElementById("table");
 
     let html = "<tr>";
-
-    data[0].forEach(col => {
-      html += `<th>${col}</th>`;
-    });
-
+    data[0].forEach(col => html += `<th>${col}</th>`);
     html += "<th>Изменить</th></tr>";
 
     for (let i = 1; i < data.length; i++) {
 
       html += "<tr>";
-
-      data[i].forEach(cell => {
-        html += `<td>${cell}</td>`;
-      });
+      data[i].forEach(cell => html += `<td>${cell}</td>`);
 
       html += `
       <td>
@@ -53,7 +46,6 @@ async function loadData() {
 }
 
 function updateStatus(row, status) {
-
   fetch(API_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
