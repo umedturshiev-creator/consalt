@@ -1,53 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Админ панель</title>
+<style>
+body { font-family: Arial; padding:20px; }
+table { border-collapse: collapse; width:100%; }
+th, td { border:1px solid #ddd; padding:6px; font-size:13px; }
+th { background:#2c3e50; color:white; }
+</style>
+</head>
+<body>
+
+<h2>Админ панель заявок</h2>
+<table id="table"></table>
+
 <script>
 
 const API_URL = "https://script.google.com/macros/s/AKfycbyW6VEd4sEuWV-0Nfi1fdiGjc6Yvo-OLfaXLi0SBxZxWl_Qzqbxnwa4uCxR4D2z2PC8Pg/exec";
 
-async function loadData() {
-  try {
+function loadData() {
+  const script = document.createElement("script");
+  script.src = API_URL + "?action=getRequests&callback=handleData";
+  document.body.appendChild(script);
+}
 
-    const response = await fetch(API_URL + "?action=getRequests", {
-      method: "GET",
-      redirect: "follow"
-    });
+function handleData(result) {
 
-    const text = await response.text();
-    const result = JSON.parse(text);
-
-    if (!result.success) {
-      document.body.innerHTML += "<p>Ошибка загрузки данных</p>";
-      return;
-    }
-
-    const data = result.data;
-    const table = document.getElementById("table");
-
-    let html = "<tr>";
-    data[0].forEach(col => html += `<th>${col}</th>`);
-    html += "<th>Изменить</th></tr>";
-
-    for (let i = 1; i < data.length; i++) {
-
-      html += "<tr>";
-      data[i].forEach(cell => html += `<td>${cell}</td>`);
-
-      html += `
-      <td>
-        <select onchange="updateStatus(${i+1}, this.value)">
-          <option ${data[i][6]=="Новая"?"selected":""}>Новая</option>
-          <option ${data[i][6]=="В работе"?"selected":""}>В работе</option>
-          <option ${data[i][6]=="Одобрено"?"selected":""}>Одобрено</option>
-          <option ${data[i][6]=="Отказ"?"selected":""}>Отказ</option>
-        </select>
-      </td>`;
-
-      html += "</tr>";
-    }
-
-    table.innerHTML = html;
-
-  } catch (err) {
-    document.body.innerHTML += "<p>Ошибка подключения к API</p>";
+  if (!result.success) {
+    document.body.innerHTML += "<p>Ошибка загрузки данных</p>";
+    return;
   }
+
+  const data = result.data;
+  const table = document.getElementById("table");
+
+  let html = "<tr>";
+  data[0].forEach(col => html += `<th>${col}</th>`);
+  html += "<th>Изменить</th></tr>";
+
+  for (let i = 1; i < data.length; i++) {
+
+    html += "<tr>";
+    data[i].forEach(cell => html += `<td>${cell}</td>`);
+
+    html += `
+    <td>
+      <select onchange="updateStatus(${i+1}, this.value)">
+        <option ${data[i][6]=="Новая"?"selected":""}>Новая</option>
+        <option ${data[i][6]=="В работе"?"selected":""}>В работе</option>
+        <option ${data[i][6]=="Одобрено"?"selected":""}>Одобрено</option>
+        <option ${data[i][6]=="Отказ"?"selected":""}>Отказ</option>
+      </select>
+    </td>`;
+
+    html += "</tr>";
+  }
+
+  table.innerHTML = html;
 }
 
 function updateStatus(row, status) {
@@ -62,10 +72,12 @@ function updateStatus(row, status) {
       user: "Admin"
     })
   })
-  .then(res => res.text())
   .then(() => alert("Статус обновлён"));
 }
 
 loadData();
 
 </script>
+
+</body>
+</html>
