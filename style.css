@@ -33,9 +33,11 @@ body{
 }
 
 .logo{
-  width:90px;
-  margin-bottom:15px;
-  filter:drop-shadow(0 6px 18px rgba(0,0,0,0.25));
+  width:140px;    
+  max-width:70%;      
+  height:auto;
+  margin-bottom:18px;
+  filter:drop-shadow(0 8px 25px rgba(0,0,0,0.25));
 }
 
 .title{
