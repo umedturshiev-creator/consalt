@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CRM Админ</title>
+
+<style>
+body {
+  font-family: Arial;
+  padding: 20px;
+  background: #f5f7fa;
+}
+
+h2 {
+  margin-bottom: 20px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  background: white;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 6px;
+  font-size: 13px;
+}
+
+th {
+  background: #2c3e50;
+  color: white;
+}
+
+select {
+  padding: 4px;
+}
+
+tr:hover {
+  background: #f1f1f1;
+}
+</style>
+</head>
+<body>
+
+<script>
+const password = prompt("Введите пароль администратора");
+if(password !== "admin123") {
+  document.body.innerHTML = "<h2>Доступ запрещён</h2>";
+}
+</script>
+
+<h2>Админ панель заявок</h2>
+
+<table id="table"></table>
+
+<script>
+
+const API_URL = "ВСТАВЬТЕ_ВАШ_WEB_APP_URL_СЮДА";
+
+fetch(API_URL)
+.then(res => res.json())
+.then(data => {
+
+  const table = document.getElementById("table");
+  let html = "<tr>";
+
+  data[0].forEach(col => html += `<th>${col}</th>`);
+  html += "<th>Изменить</th></tr>";
+
+  for (let i = 1; i < data.length; i++) {
+
+    html += "<tr>";
+
+    data[i].forEach(cell => {
+      html += `<td>${cell}</td>`;
+    });
+
+    html += `
+    <td>
+      <select onchange="updateStatus(${i+1}, this.value)">
+        <option ${data[i][6]=="Новая"?"selected":""}>Новая</option>
+        <option ${data[i][6]=="В работе"?"selected":""}>В работе</option>
+        <option ${data[i][6]=="Одобрено"?"selected":""}>Одобрено</option>
+        <option ${data[i][6]=="Отказ"?"selected":""}>Отказ</option>
+      </select>
+    </td>`;
+
+    html += "</tr>";
+  }
+
+  table.innerHTML = html;
+});
+
+function updateStatus(row, status) {
+
+  fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      action: "updateStatus",
+      row: row,
+      status: status,
+      user: "Admin"
+    })
+  })
+  .then(res => res.json())
+  .then(() => alert("Статус обновлён"));
+
+}
+
+</script>
+
+</body>
+</html>
