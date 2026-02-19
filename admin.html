@@ -19,15 +19,12 @@ th { background:#2c3e50; color:white; }
 
 const API_URL = "https://script.google.com/macros/s/AKfycbyW6VEd4sEuWV-0Nfi1fdiGjc6Yvo-OLfaXLi0SBxZxWl_Qzqbxnwa4uCxR4D2z2PC8Pg/exec";
 
-function loadData() {
-  const script = document.createElement("script");
-  script.src = API_URL + "?action=getRequests&callback=handleData";
-  document.body.appendChild(script);
-}
+// 🔥 ГЛАВНОЕ — функция должна быть глобальной
+window.handleData = function(result) {
 
-function handleData(result) {
+  console.log("Данные получены:", result);
 
-  if (!result.success) {
+  if (!result || !result.success) {
     document.body.innerHTML += "<p>Ошибка загрузки данных</p>";
     return;
   }
@@ -58,6 +55,12 @@ function handleData(result) {
   }
 
   table.innerHTML = html;
+};
+
+function loadData() {
+  const script = document.createElement("script");
+  script.src = API_URL + "?action=getRequests&callback=handleData";
+  document.body.appendChild(script);
 }
 
 function updateStatus(row, status) {
