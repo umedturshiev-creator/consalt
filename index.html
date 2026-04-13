@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>UZA App</title>
 
 <style>
@@ -14,18 +14,6 @@ body {
               #0f172a;
 }
 
-/* VERSION */
-#appVersion {
-  position:fixed;
-  top:8px;
-  right:12px;
-  font-size:11px;
-  opacity:0.6;
-  background:#1e293b;
-  padding:4px 8px;
-  border-radius:8px;
-}
-
 /* SPLASH */
 #splashScreen {
   position:fixed;
@@ -35,9 +23,10 @@ body {
   display:flex;
   justify-content:center;
   align-items:center;
-  z-index:99999;
+  z-index:9999;
 }
 .splash-logo {width:80px;margin-bottom:10px;}
+
 .loader {
   width:40px;height:40px;
   border:4px solid #334155;
@@ -45,6 +34,7 @@ body {
   border-radius:50%;
   animation:spin 1s linear infinite;
 }
+
 @keyframes spin {100%{transform:rotate(360deg);}}
 
 /* HEADER */
@@ -108,21 +98,22 @@ button:disabled {background:#475569}
 .progressBox {height:6px;background:#1e293b;margin:10px;}
 #progressBar {height:100%;width:0%;background:#22c55e}
 
-/* SEND */
-#sendingOverlay {
-  position:fixed;
-  top:0;left:0;
-  width:100%;height:100%;
-  background:rgba(0,0,0,0.9);
-  display:none;
-  justify-content:center;
-  align-items:center;
-  z-index:9999;
+/* LANG */
+.langSwitch {
+  display:flex;
+  background:#1e293b;
+  border-radius:20px;
+  overflow:hidden;
+  width:120px;
+  margin:10px;
 }
-
-.sendBox {text-align:center;width:80%;max-width:300px;}
-.progressLine {height:8px;background:#334155;border-radius:10px;margin-top:10px;}
-#progressFill {height:100%;width:0;background:#22c55e;}
+.langBtn {
+  flex:1;
+  text-align:center;
+  padding:8px;
+  cursor:pointer;
+}
+.langBtn.active {background:#22c55e}
 
 .container {padding:15px;}
 </style>
@@ -130,55 +121,79 @@ button:disabled {background:#475569}
 
 <body>
 
-<div id="appVersion"></div>
-
 <!-- SPLASH -->
 <div id="splashScreen">
   <div style="text-align:center">
     <img src="logo.png" class="splash-logo">
-    <h2 id="splashTitle">Добро пожаловать</h2>
-    <div id="splashSub">в Портал подачи заявок</div>
+    <h2 id="splashTitle"></h2>
+    <div id="splashSub"></div>
     <div class="loader"></div>
   </div>
 </div>
 
 <div class="container">
 
+<div class="langSwitch">
+  <div class="langBtn" data-lang="ru">RU</div>
+  <div class="langBtn" data-lang="tj">TJ</div>
+</div>
+
 <div class="progressBox"><div id="progressBar"></div></div>
 
 <div class="header">
-  <span>📝 Портал подачи заявок</span>
+  <span id="title"></span>
   <img src="logo.png" class="logo">
 </div>
 
-<input id="inn" inputmode="numeric" maxlength="9" placeholder="Введите ИНН">
+<input id="inn" inputmode="numeric" maxlength="9">
 <div id="searchStatus"></div>
 <div id="client"></div>
 
-<input id="income" inputmode="numeric" placeholder="Введите доход">
+<input id="income" inputmode="numeric">
 
-<label>📅 Выберите месяц</label>
+<label id="monthLabel"></label>
 <input type="month" id="month">
 
-<button id="submitBtn" onclick="send()" disabled>Отправить</button>
+<button id="submitBtn" onclick="send()" disabled></button>
 
-</div>
-
-<!-- SEND -->
-<div id="sendingOverlay">
-  <div class="sendBox">
-    <div id="progressText">0%</div>
-    <div class="progressLine"><div id="progressFill"></div></div>
-  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script>
-
 const API_URL="https://script.google.com/macros/s/AKfycbyajQuG9u4H-O78Ox0yHeMsXXqb9cfMNgS5Ow3q0AMcP1lifn0fwxR1_rTdMMyNN91l/exec";
 
+const translations={
+ru:{title:"📝 Портал подачи заявок",inn:"Введите ИНН",income:"Введите доход",month:"Выберите месяц",send:"🚀 Отправить",splash:"Добро пожаловать",sub:"в Портал подачи заявок"},
+tj:{title:"📝 Портали дархостҳо",inn:"РМА-ро ворид кунед",income:"Даромадро ворид кунед",month:"Моҳро интихоб кунед",send:"🚀 Ирсол",splash:"Хуш омадед",sub:"ба портал"}
+};
+
 let clientData=null;
+
+/* язык */
+function setLang(l){
+const t=translations[l];
+title.innerText=t.title;
+inn.placeholder=t.inn;
+income.placeholder=t.income;
+monthLabel.innerText="📅 "+t.month;
+submitBtn.innerText=t.send;
+splashTitle.innerText=t.splash;
+splashSub.innerText=t.sub;
+localStorage.setItem("lang",l);
+}
+
+const lang=localStorage.getItem("lang")||"ru";
+setLang(lang);
+
+document.querySelectorAll(".langBtn").forEach(btn=>{
+if(btn.dataset.lang===lang)btn.classList.add("active");
+btn.onclick=()=>{
+document.querySelectorAll(".langBtn").forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
+setLang(btn.dataset.lang);
+};
+});
 
 /* splash */
 window.onload=()=>setTimeout(()=>splashScreen.style.display="none",1500);
@@ -220,22 +235,8 @@ validate();
 }
 };
 
-/* прогресс */
-function startProgress(){
-let p=0;
-return setInterval(()=>{
-p+=10;
-if(p>90)p=90;
-progressFill.style.width=p+"%";
-progressText.innerText=p+"%";
-},300);
-}
-
-/* send */
+/* отправка */
 function send(){
-sendingOverlay.style.display="flex";
-let progress=startProgress();
-
 fetch(API_URL,{
 method:"POST",
 body:JSON.stringify({
@@ -245,14 +246,8 @@ month:month.value,
 fio:clientData.fio
 })
 }).then(()=>{
-clearInterval(progress);
-progressFill.style.width="100%";
-progressText.innerText="100%";
-
-setTimeout(()=>{
-sendingOverlay.style.display="none";
 confetti({particleCount:150,spread:90});
-},500);
+alert("Успешно!");
 });
 }
 </script>
