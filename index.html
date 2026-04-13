@@ -55,6 +55,7 @@ input {
   background:#1e293b;
   color:white;
   border:none;
+  box-sizing:border-box;
 }
 
 /* SEARCH */
@@ -74,6 +75,7 @@ input {
   border-radius:15px;
   margin-top:10px;
   animation:fadeIn 0.3s ease;
+  line-height:1.6;
 }
 @keyframes fadeIn {
   from {opacity:0; transform:translateY(10px);}
@@ -204,144 +206,224 @@ button:disabled {background:#475569}
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script>
-const API_URL="https://script.google.com/macros/s/AKfycbyajQuG9u4H-O78Ox0yHeMsXXqb9cfMNgS5Ow3q0AMcP1lifn0fwxR1_rTdMMyNN91l/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyajQuG9u4H-O78Ox0yHeMsXXqb9cfMNgS5Ow3q0AMcP1lifn0fwxR1_rTdMMyNN91l/exec";
 
-const translations={
-ru:{title:"📝 Портал подачи заявок",inn:"Введите ИНН",income:"Введите доход",month:"Выберите месяц",send:"🚀 Отправить",splash:"Добро пожаловать",sub:"в Портал подачи заявок"},
-tj:{title:"📝 Портали дархостҳо",inn:"РМА-ро ворид кунед",income:"Даромадро ворид кунед",month:"Моҳро интихоб кунед",send:"🚀 Ирсол",splash:"Хуш омадед",sub:"ба портал"}
+const translations = {
+  ru: {
+    title: "📝 Портал подачи заявок",
+    inn: "Введите ИНН",
+    income: "Введите доход",
+    month: "Выберите месяц",
+    send: "🚀 Отправить",
+    splash: "Добро пожаловать",
+    sub: "в Портал подачи заявок"
+  },
+  tj: {
+    title: "📝 Портали дархостҳо",
+    inn: "РМА-ро ворид кунед",
+    income: "Даромадро ворид кунед",
+    month: "Моҳро интихоб кунед",
+    send: "🚀 Ирсол",
+    splash: "Хуш омадед",
+    sub: "ба портал"
+  }
 };
 
-let clientData=null;
+let clientData = null;
 
 /* язык */
-function setLang(l){
-const t=translations[l];
-title.innerText=t.title;
-inn.placeholder=t.inn;
-income.placeholder=t.income;
-monthLabel.innerText="📅 "+t.month;
-submitBtn.innerText=t.send;
-splashTitle.innerText=t.splash;
-splashSub.innerText=t.sub;
-localStorage.setItem("lang",l);
+function setLang(l) {
+  const t = translations[l];
+  title.innerText = t.title;
+  inn.placeholder = t.inn;
+  income.placeholder = t.income;
+  monthLabel.innerText = "📅 " + t.month;
+  submitBtn.innerText = t.send;
+  splashTitle.innerText = t.splash;
+  splashSub.innerText = t.sub;
+  localStorage.setItem("lang", l);
 }
 
-const lang=localStorage.getItem("lang")||"ru";
+const lang = localStorage.getItem("lang") || "ru";
 setLang(lang);
 
-document.querySelectorAll(".langBtn").forEach(btn=>{
-if(btn.dataset.lang===lang)btn.classList.add("active");
-btn.onclick=()=>{
-document.querySelectorAll(".langBtn").forEach(b=>b.classList.remove("active"));
-btn.classList.add("active");
-setLang(btn.dataset.lang);
-};
+document.querySelectorAll(".langBtn").forEach(btn => {
+  if (btn.dataset.lang === lang) btn.classList.add("active");
+  btn.onclick = () => {
+    document.querySelectorAll(".langBtn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    setLang(btn.dataset.lang);
+  };
 });
 
 /* splash */
-window.onload=()=>setTimeout(()=>splashScreen.style.display="none",1500);
+window.onload = () => setTimeout(() => splashScreen.style.display = "none", 1500);
 
 /* месяц */
 const now = new Date();
 const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-
 const year = prev.getFullYear();
-const monthNum = String(prev.getMonth() + 1).padStart(2, '0');
-
+const monthNum = String(prev.getMonth() + 1).padStart(2, "0");
 month.value = `${year}-${monthNum}`;
 
+/* helpers */
+function getEmployeeFio(data) {
+  return data.employeeFio ||
+         data.employee ||
+         data.sotrudnik ||
+         data.fio_sotrudnika ||
+         data.sotrudnikFio ||
+         data.employee_name ||
+         data.manager ||
+         "";
+}
+
+function escapeHtml(value) {
+  if (value === null || value === undefined) return "";
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 /* validate */
-function validate(){
-submitBtn.disabled=!(inn.value.length===9 && income.value && month.value && clientData);
+function validate() {
+  submitBtn.disabled = !(inn.value.length === 9 && income.value && month.value && clientData);
 }
 
 /* цифры */
-income.oninput=()=>{
-income.value=income.value.replace(/\D/g,'');
-validate();
+income.oninput = () => {
+  income.value = income.value.replace(/\D/g, "");
+  validate();
 };
 
 /* поиск */
-inn.oninput=()=>{
-clientData=null;
-validate();
+inn.oninput = () => {
+  clientData = null;
+  client.innerHTML = "";
+  searchStatus.innerHTML = "";
+  validate();
 
-if(inn.value.length===9){
-searchStatus.innerHTML='<div class="searchSpinner"></div>';
+  if (inn.value.length === 9) {
+    searchStatus.innerHTML = '<div class="searchSpinner"></div>';
 
-fetch(API_URL+"?inn="+inn.value)
-.then(r=>r.json())
-.then(d=>{
-searchStatus.innerHTML="";
-if(d.found){
-  clientData=d;
+    fetch(API_URL + "?inn=" + inn.value)
+      .then(r => r.json())
+      .then(d => {
+        searchStatus.innerHTML = "";
 
-  searchStatus.innerHTML = `<div style="color:#22c55e;font-weight:bold;">
-  ✅ ИНН найден
-  </div>`;
+        if (d.found) {
+          const employeeFio = getEmployeeFio(d);
 
-  client.innerHTML=`
-  <div class="card">
-    👤 <b>${d.fio}</b><br>
-    📍 ${d.address}<br>
-    📞 ${d.phone}
-  </div>`;
-}else{
-  clientData=null;
+          clientData = {
+            ...d,
+            employeeFio: employeeFio
+          };
 
-  searchStatus.innerHTML = `<div style="color:#ef4444;font-weight:bold;">
-  ❌ ИНН не найден
-  </div>`;
+          searchStatus.innerHTML = `
+            <div style="color:#22c55e;font-weight:bold;">
+              ✅ ИНН найден
+            </div>
+          `;
 
-  client.innerHTML="";
-}
-validate();
-});
-}
+          client.innerHTML = `
+            <div class="card">
+              👤 <b>${escapeHtml(d.fio || "")}</b><br>
+              📍 ${escapeHtml(d.address || "—")}<br>
+              📞 ${escapeHtml(d.phone || "—")}
+              ${employeeFio ? `<br>🧑‍💼 Сотрудник: <b>${escapeHtml(employeeFio)}</b>` : ""}
+            </div>
+          `;
+        } else {
+          clientData = null;
+          searchStatus.innerHTML = `
+            <div style="color:#ef4444;font-weight:bold;">
+              ❌ ИНН не найден
+            </div>
+          `;
+          client.innerHTML = "";
+        }
+
+        validate();
+      })
+      .catch(() => {
+        clientData = null;
+        searchStatus.innerHTML = `
+          <div style="color:#ef4444;font-weight:bold;">
+            ❌ Ошибка поиска
+          </div>
+        `;
+        client.innerHTML = "";
+        validate();
+      });
+  }
 };
 
 /* прогресс */
-function startProgress(){
-let p=0;
-return setInterval(()=>{
-p+=10;
-if(p>90)p=90;
-progressFill.style.width=p+"%";
-progressText.innerText=p+"%";
-},300);
+function startProgress() {
+  let p = 0;
+  return setInterval(() => {
+    p += 10;
+    if (p > 90) p = 90;
+    progressFill.style.width = p + "%";
+    progressText.innerText = p + "%";
+  }, 300);
 }
 
 /* отправка */
-function send(){
-sendingOverlay.style.display="flex";
+function send() {
+  if (!clientData) return;
 
-let progress=startProgress();
+  sendingOverlay.style.display = "flex";
+  progressFill.style.width = "0%";
+  progressText.innerText = "0%";
 
-fetch(API_URL,{
-method:"POST",
-body:JSON.stringify({
-inn:inn.value,
-income:income.value,
-month:month.value,
-fio:clientData.fio
-})
-}).then(()=>{
-clearInterval(progress);
+  let progress = startProgress();
 
-progressFill.style.width="100%";
-progressText.innerText="100%";
+  const employeeFio = clientData.employeeFio || getEmployeeFio(clientData);
 
-setTimeout(()=>{
-sendingOverlay.style.display="none";
-confetti({particleCount:150,spread:90});
+  fetch(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      inn: inn.value,
+      income: income.value,
+      month: month.value,
+      fio: clientData.fio || "",
+      employeeFio: employeeFio || "",
+      employee: employeeFio || "",
+      sotrudnik: employeeFio || "",
+      fio_sotrudnika: employeeFio || ""
+    })
+  })
+  .then(r => r.text())
+  .then(() => {
+    clearInterval(progress);
 
-inn.value="";
-income.value="";
-client.innerHTML="";
-clientData=null;
-validate();
-},500);
-});
+    progressFill.style.width = "100%";
+    progressText.innerText = "100%";
+
+    setTimeout(() => {
+      sendingOverlay.style.display = "none";
+      confetti({ particleCount: 150, spread: 90 });
+
+      inn.value = "";
+      income.value = "";
+      client.innerHTML = "";
+      searchStatus.innerHTML = "";
+      clientData = null;
+      validate();
+    }, 500);
+  })
+  .catch(() => {
+    clearInterval(progress);
+    sendingOverlay.style.display = "none";
+    alert("Ошибка отправки");
+  });
 }
 </script>
 
