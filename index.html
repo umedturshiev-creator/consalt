@@ -2,24 +2,18 @@
 <html lang="ru">
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <title>UZA App</title>
 
 <style>
-
-/* ===== BODY ===== */
 body {
   margin:0;
   font-family:Arial;
   color:#fff;
-  overflow-x:hidden;
-
   background: radial-gradient(circle at 20% 20%, #1e3a8a, transparent),
               radial-gradient(circle at 80% 80%, #065f46, transparent),
               #0f172a;
 }
 
-/* ===== CONTAINER ===== */
 .container {
   padding:15px;
   max-width:480px;
@@ -32,7 +26,6 @@ body {
   to {opacity:1; transform:translateY(0);}
 }
 
-/* ===== INPUT ===== */
 input {
   width:100%;
   padding:14px;
@@ -42,7 +35,6 @@ input {
   background:#1e293b;
   color:white;
   border:1px solid transparent;
-  transition:0.2s;
 }
 
 input:focus {
@@ -51,7 +43,6 @@ input:focus {
   box-shadow:0 0 10px rgba(34,197,94,0.4);
 }
 
-/* ===== BUTTON ===== */
 button {
   width:100%;
   padding:14px;
@@ -62,104 +53,49 @@ button {
   color:white;
   font-weight:bold;
   border:none;
-  transition:0.2s;
 }
 
-button:active { transform:scale(0.97); }
-button:hover { box-shadow:0 0 15px rgba(34,197,94,0.5); }
-
-/* ===== CARD ===== */
 .card {
   background: rgba(30,41,59,0.7);
   backdrop-filter: blur(10px);
   padding:15px;
   border-radius:15px;
   margin-top:10px;
-  border:1px solid rgba(255,255,255,0.05);
 }
 
-/* ===== SPLASH ===== */
-#splashScreen {
+#sendingOverlay, #successPopup {
   position:fixed;
   top:0;left:0;width:100%;height:100%;
-  background:#0f172a;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  z-index:99999;
-  transition:opacity 0.6s;
-}
-
-#splashScreen.hide {opacity:0;}
-
-.logo {
-  font-size:42px;
-  font-weight:bold;
-  background:linear-gradient(90deg,#22c55e,#3b82f6,#22c55e);
-  background-size:200% 200%;
-  -webkit-background-clip:text;
-  color:transparent;
-  animation:gradientMove 3s infinite linear;
-}
-
-@keyframes gradientMove {
-  0% {background-position:0%}
-  100% {background-position:200%}
-}
-
-/* ===== LOADER ===== */
-.loaderCircle {
-  width:40px;height:40px;
-  border:4px solid #334155;
-  border-top:4px solid #22c55e;
-  border-radius:50%;
-  animation:spin 1s linear infinite;
-  margin-top:20px;
-}
-
-@keyframes spin {100%{transform:rotate(360deg);}}
-
-/* ===== OVERLAY ===== */
-#sendingOverlay {
-  position:fixed;top:0;left:0;width:100%;height:100%;
-  background:rgba(0,0,0,0.85);
   display:none;
   justify-content:center;
   align-items:center;
   z-index:9999;
 }
 
-/* ===== SUCCESS ===== */
-#successPopup {
-  position:fixed;
-  top:0;left:0;width:100%;height:100%;
-  background:rgba(0,0,0,0.7);
-  display:none;
-  justify-content:center;
-  align-items:center;
-  z-index:9999;
-}
+#sendingOverlay {background:rgba(0,0,0,0.85);}
+#successPopup {background:rgba(0,0,0,0.7);}
 
 .popupBox {
   background:#22c55e;
   padding:20px;
   border-radius:15px;
   text-align:center;
-  font-size:16px;
 }
+
+.loader {
+  width:40px;height:40px;
+  border:4px solid #334155;
+  border-top:4px solid #22c55e;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin {100%{transform:rotate(360deg);}}
 
 </style>
 </head>
 
 <body>
-
-<div id="splashScreen">
-  <div>
-    <div class="logo">UZA</div>
-    <div style="margin-top:10px;">Добро пожаловать</div>
-    <div class="loaderCircle"></div>
-  </div>
-</div>
 
 <div class="container">
 
@@ -180,15 +116,13 @@ button:hover { box-shadow:0 0 15px rgba(34,197,94,0.5); }
 
 <div id="sendingOverlay">
   <div>
-    <div class="loaderCircle"></div>
+    <div class="loader"></div>
     <div style="margin-top:10px;">Отправка...</div>
   </div>
 </div>
 
 <div id="successPopup">
-  <div class="popupBox">
-    🎉<br><br>Заявка отправлена!
-  </div>
+  <div class="popupBox">🎉 Заявка отправлена!</div>
 </div>
 
 <script>
@@ -197,16 +131,21 @@ const API_URL = "https://script.google.com/macros/s/AKfycbyajQuG9u4H-O78Ox0yHeMs
 
 let clientData = null;
 
-/* splash */
-window.addEventListener("load",()=>{
-  setTimeout(()=>{splashScreen.classList.add("hide");},1500);
-  setTimeout(()=>{splashScreen.style.display="none";},2200);
-});
-
 /* месяц */
 document.addEventListener("DOMContentLoaded",()=>{
-  const now=new Date();
+  const now = new Date();
+
+  // максимум — текущий месяц
   month.max = now.toISOString().slice(0,7);
+
+  // 👇 прошлый месяц
+  const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+
+  const year = prev.getFullYear();
+  const monthValue = String(prev.getMonth() + 1).padStart(2, '0');
+
+  // 👇 устанавливаем значение
+  month.value = year + "-" + monthValue;
 });
 
 /* поиск клиента */
@@ -217,8 +156,11 @@ inn.addEventListener("input",()=>{
     fetch(API_URL+"?inn="+inn.value)
     .then(r=>r.json())
     .then(data=>{
+      console.log(data); // 👈 для проверки сотрудников
+
       if(data.found){
         clientData=data;
+
         client.innerHTML=`
           <div class="card">
             👤 ${data.fio}<br>
@@ -254,12 +196,22 @@ function send(){
   fetch(API_URL,{
     method:"POST",
     body:JSON.stringify({
+
       inn:inn.value,
       income:income.value,
       month:month.value,
+
       fio:clientData.fio,
       address:clientData.address,
-      phone:clientData.phone
+      phone:clientData.phone,
+
+      // 🔥 ВОТ ОНИ — СОТРУДНИКИ
+      employee_fio: clientData.employee_fio,
+      employee_inn: clientData.employee_inn,
+      employee_sin: clientData.employee_sin,
+      employee_salary: clientData.employee_salary,
+      employee_date: clientData.employee_date
+
     })
   })
   .then(()=>{
