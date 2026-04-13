@@ -272,33 +272,50 @@ searchStatus.innerHTML='<div class="searchSpinner"></div>';
 fetch(API_URL+"?inn="+inn.value)
 .then(r=>r.json())
 .then(d=>{
-searchStatus.innerHTML="";
-if(d.found){
-  clientData=d;
+  console.log(d); // 👈 оставь для проверки
 
-  searchStatus.innerHTML = `<div style="color:#22c55e;font-weight:bold;">
-  ✅ ИНН найден
+  searchStatus.innerHTML = "";
+
+  if(d.found){
+    clientData = d;
+
+    searchStatus.innerHTML = `
+    <div style="color:#22c55e;font-weight:bold;">
+      ✅ ИНН найден
+    </div>`;
+
+    const fio = d.fio || d.name || "—";
+    const address = d.address || d.addr || "—";
+    const phone = d.phone || d.tel || "—";
+
+    client.innerHTML = `
+    <div class="card">
+      👤 <b>${fio}</b><br>
+      📍 ${address}<br>
+      📞 ${phone}
+    </div>`;
+
+  } else {
+    clientData = null;
+
+    searchStatus.innerHTML = `
+    <div style="color:#ef4444;font-weight:bold;">
+      ❌ ИНН не найден
+    </div>`;
+
+    client.innerHTML = "";
+  }
+
+  validate();
+})
+.catch(err=>{
+  console.log(err);
+
+  searchStatus.innerHTML = `
+  <div style="color:#ef4444;">
+    ⚠️ Ошибка подключения
   </div>`;
-
-  client.innerHTML=`
-  <div class="card">
-    👤 <b>${d.fio}</b><br>
-    📍 ${d.address}<br>
-    📞 ${d.phone}
-  </div>`;
-}else{
-  clientData=null;
-
-  searchStatus.innerHTML = `<div style="color:#ef4444;font-weight:bold;">
-  ❌ ИНН не найден
-  </div>`;
-
-  client.innerHTML="";
-}
-validate();
 });
-}
-};
 
 /* прогресс */
 function startProgress(){
