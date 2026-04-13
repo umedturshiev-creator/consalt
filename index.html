@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>UZA App</title>
 
 <style>
@@ -9,9 +9,19 @@ body {
   margin:0;
   font-family:-apple-system, Arial;
   color:#fff;
-  background: radial-gradient(circle at 20% 20%, #1e3a8a, transparent),
-              radial-gradient(circle at 80% 80%, #065f46, transparent),
-              #0f172a;
+  background:#0f172a;
+}
+
+/* VERSION */
+#appVersion {
+  position:fixed;
+  top:8px;
+  right:12px;
+  font-size:11px;
+  opacity:0.6;
+  background:#1e293b;
+  padding:4px 8px;
+  border-radius:8px;
 }
 
 /* SPLASH */
@@ -23,9 +33,11 @@ body {
   display:flex;
   justify-content:center;
   align-items:center;
-  z-index:9999;
+  z-index:99999;
 }
-.splash-logo {width:80px;margin-bottom:10px;}
+
+.splash-content{text-align:center;}
+.splash-logo{width:80px;margin-bottom:10px;}
 
 .loader {
   width:40px;height:40px;
@@ -34,6 +46,7 @@ body {
   border-radius:50%;
   animation:spin 1s linear infinite;
 }
+
 @keyframes spin {100%{transform:rotate(360deg);}}
 
 /* HEADER */
@@ -43,7 +56,8 @@ body {
   align-items:center;
   padding:15px;
 }
-.logo {width:40px}
+
+.logo-right {width:40px}
 
 /* INPUT */
 input {
@@ -58,13 +72,10 @@ input {
 }
 
 /* SEARCH */
-.searchSpinner {
-  width:28px;height:28px;
-  border:3px solid #334155;
-  border-top:3px solid #22c55e;
-  border-radius:50%;
-  animation:spin 0.8s linear infinite;
-  margin:auto;
+.searchLoader {
+  margin-top:10px;
+  text-align:center;
+  opacity:0.7;
 }
 
 /* CARD */
@@ -73,11 +84,6 @@ input {
   padding:15px;
   border-radius:15px;
   margin-top:10px;
-  animation:fadeIn 0.3s ease;
-}
-@keyframes fadeIn {
-  from {opacity:0; transform:translateY(10px);}
-  to {opacity:1; transform:translateY(0);}
 }
 
 /* BUTTON */
@@ -91,92 +97,55 @@ button {
   color:white;
   border:none;
 }
-button:disabled {background:#475569}
 
-/* PROGRESS FORM */
-.progressBox {height:6px;background:#1e293b;margin:10px;}
-#progressBar {height:100%;width:0%;background:#22c55e}
+button:disabled {background:#475569;}
 
-/* LANG */
-.langSwitch {
-  display:flex;
+/* PROGRESS */
+.progressBox {
+  height:6px;
   background:#1e293b;
-  border-radius:20px;
-  overflow:hidden;
-  width:120px;
-  margin:10px;
-}
-.langBtn {
-  flex:1;
-  text-align:center;
-  padding:8px;
-  cursor:pointer;
-}
-.langBtn.active {background:#22c55e}
-
-/* SEND OVERLAY */
-#sendingOverlay {
-  position:fixed;
-  top:0;left:0;
-  width:100%;height:100%;
-  background:rgba(0,0,0,0.9);
-  display:none;
-  justify-content:center;
-  align-items:center;
-  z-index:9999;
 }
 
-.sendBox {
-  text-align:center;
-  width:80%;
-  max-width:300px;
-}
-
-.progressLine {
-  height:8px;
-  background:#334155;
-  border-radius:10px;
-  margin-top:10px;
-}
-
-#progressFill {
+#progressBar {
   height:100%;
-  width:0;
+  width:0%;
   background:#22c55e;
 }
 
-.container {padding:15px;}
+.container{padding:15px;}
 </style>
 </head>
 
 <body>
 
-<!-- SPLASH -->
+<div id="appVersion"></div>
+
 <div id="splashScreen">
-  <div style="text-align:center">
+  <div class="splash-content">
     <img src="logo.png" class="splash-logo">
     <h2 id="splashTitle"></h2>
     <div id="splashSub"></div>
+    <div id="splashVersion"></div>
     <div class="loader"></div>
   </div>
 </div>
 
 <div class="container">
 
-<div class="langSwitch">
-  <div class="langBtn" data-lang="ru">RU</div>
-  <div class="langBtn" data-lang="tj">TJ</div>
-</div>
+<select id="langSwitcher">
+  <option value="ru">Русский</option>
+  <option value="tj">Тоҷикӣ</option>
+</select>
 
 <div class="progressBox"><div id="progressBar"></div></div>
 
 <div class="header">
   <span id="title"></span>
-  <img src="logo.png" class="logo">
+  <img src="logo.png" class="logo-right">
 </div>
 
 <input id="inn" inputmode="numeric" maxlength="9">
-<div id="searchStatus"></div>
+<div id="searchStatus" class="searchLoader"></div>
 <div id="client"></div>
 
 <input id="income" inputmode="numeric">
@@ -188,24 +157,34 @@ button:disabled {background:#475569}
 
 </div>
 
-<!-- SEND -->
-<div id="sendingOverlay">
-  <div class="sendBox">
-    <div id="progressText">0%</div>
-    <div class="progressLine">
-      <div id="progressFill"></div>
-    </div>
-  </div>
-</div>
-
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script>
+const APP_VERSION="v5.0";
+appVersion.innerText=APP_VERSION;
+splashVersion.innerText=APP_VERSION;
+
 const API_URL="https://script.google.com/macros/s/AKfycbyajQuG9u4H-O78Ox0yHeMsXXqb9cfMNgS5Ow3q0AMcP1lifn0fwxR1_rTdMMyNN91l/exec";
 
 const translations={
-ru:{title:"📝 Портал подачи заявок",inn:"Введите ИНН",income:"Введите доход",month:"Выберите месяц",send:"🚀 Отправить",splash:"Добро пожаловать",sub:"в Портал подачи заявок"},
-tj:{title:"📝 Портали дархостҳо",inn:"РМА-ро ворид кунед",income:"Даромадро ворид кунед",month:"Моҳро интихоб кунед",send:"🚀 Ирсол",splash:"Хуш омадед",sub:"ба портал"}
+ru:{
+title:"📝 Портал подачи заявок",
+inn:"Введите ИНН",
+income:"Введите доход",
+month:"Выберите месяц",
+send:"🚀 Отправить",
+splash:"Добро пожаловать",
+sub:"в Портал подачи заявок"
+},
+tj:{
+title:"📝 Портали дархостҳо",
+inn:"РМА-ро ворид кунед",
+income:"Даромадро ворид кунед",
+month:"Моҳро интихоб кунед",
+send:"🚀 Ирсол",
+splash:"Хуш омадед",
+sub:"ба портал"
+}
 };
 
 let clientData=null;
@@ -224,98 +203,85 @@ localStorage.setItem("lang",l);
 }
 
 const lang=localStorage.getItem("lang")||"ru";
+langSwitcher.value=lang;
 setLang(lang);
-
-document.querySelectorAll(".langBtn").forEach(btn=>{
-if(btn.dataset.lang===lang)btn.classList.add("active");
-btn.onclick=()=>{
-document.querySelectorAll(".langBtn").forEach(b=>b.classList.remove("active"));
-btn.classList.add("active");
-setLang(btn.dataset.lang);
-};
-});
+langSwitcher.onchange=()=>setLang(langSwitcher.value);
 
 /* splash */
 window.onload=()=>setTimeout(()=>splashScreen.style.display="none",1500);
 
-/* месяц */
+/* месяц правильный */
+document.addEventListener("DOMContentLoaded",()=>{
 const now=new Date();
-const prev=new Date(now.getFullYear(),now.getMonth()-1,1);
-month.value=prev.toISOString().slice(0,7);
+const prev=new Date(now.getFullYear(), now.getMonth()-1, 1);
+
+const y=prev.getFullYear();
+const m=String(prev.getMonth()+1).padStart(2,'0');
+
+month.value = y+"-"+m;
+});
+
+/* только цифры */
+income.oninput=()=>income.value=income.value.replace(/\D/g,'');
+
+/* progress */
+function updateProgress(){
+let p=0;
+if(inn.value.length===9)p+=33;
+if(income.value)p+=33;
+if(month.value)p+=34;
+progressBar.style.width=p+"%";
+}
 
 /* validate */
 function validate(){
 submitBtn.disabled=!(inn.value.length===9 && income.value && month.value && clientData);
 }
 
-/* цифры */
-income.oninput=()=>{
-income.value=income.value.replace(/\D/g,'');
-validate();
-};
-
 /* поиск */
 inn.oninput=()=>{
-clientData=null;
-validate();
+updateProgress();validate();
 
 if(inn.value.length===9){
-searchStatus.innerHTML='<div class="searchSpinner"></div>';
+searchStatus.innerHTML="🔍 Поиск...";
+client.innerHTML="";
 
 fetch(API_URL+"?inn="+inn.value)
 .then(r=>r.json())
 .then(d=>{
-searchStatus.innerHTML="";
 if(d.found){
 clientData=d;
-client.innerHTML=`<div class="card">${d.fio}<br>${d.address}<br>${d.phone}</div>`;
+
+client.innerHTML=`
+<div class="card">
+👤 ${d.fio}<br>
+📍 ${d.address || "-"}<br>
+📞 ${d.phone || "-"}
+</div>`;
+
+searchStatus.innerHTML="✅ Найдено";
+}else{
+searchStatus.innerHTML="❌ Не найдено";
 }
 validate();
 });
 }
 };
 
-/* прогресс */
-function startProgress(){
-let p=0;
-return setInterval(()=>{
-p+=10;
-if(p>90)p=90;
-progressFill.style.width=p+"%";
-progressText.innerText=p+"%";
-},300);
-}
-
 /* отправка */
 function send(){
-sendingOverlay.style.display="flex";
-
-let progress=startProgress();
-
 fetch(API_URL,{
 method:"POST",
 body:JSON.stringify({
 inn:inn.value,
 income:income.value,
 month:month.value,
-fio:clientData.fio
+fio:clientData.fio,
+employee_fio:clientData.employee_fio
 })
 }).then(()=>{
-clearInterval(progress);
-
-progressFill.style.width="100%";
-progressText.innerText="100%";
-
-setTimeout(()=>{
-sendingOverlay.style.display="none";
-confetti({particleCount:150,spread:90});
-
-inn.value="";
-income.value="";
-client.innerHTML="";
-clientData=null;
-validate();
-},500);
+confetti({particleCount:120,spread:70});
+alert("Успешно!");
 });
 }
 </script>
