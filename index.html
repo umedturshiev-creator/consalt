@@ -9,7 +9,10 @@ body {
   margin:0;
   font-family:-apple-system, Arial;
   color:#fff;
-  background:#0f172a;
+
+  background: radial-gradient(circle at 20% 20%, #1e3a8a, transparent),
+              radial-gradient(circle at 80% 80%, #065f46, transparent),
+              #0f172a;
 }
 
 /* VERSION */
@@ -71,19 +74,46 @@ input {
   border:none;
 }
 
+/* CHECK */
+.input-success {
+  border:1px solid #22c55e !important;
+}
+
 /* SEARCH */
-.searchLoader {
+.searchBox {
+  display:flex;
+  justify-content:center;
+  align-items:center;
   margin-top:10px;
-  text-align:center;
+}
+
+.searchSpinner {
+  width:28px;
+  height:28px;
+  border:3px solid #334155;
+  border-top:3px solid #22c55e;
+  border-radius:50%;
+  animation:spin 0.8s linear infinite;
+}
+
+.searchText {
+  margin-left:10px;
   opacity:0.7;
 }
 
-/* CARD */
+/* CARD ANIMATION */
 .card {
   background:#1e293b;
   padding:15px;
   border-radius:15px;
   margin-top:10px;
+  opacity:0;
+  transform:translateY(10px);
+  animation:fadeInCard 0.4s ease forwards;
+}
+
+@keyframes fadeInCard {
+  to {opacity:1; transform:translateY(0);}
 }
 
 /* BUTTON */
@@ -101,16 +131,27 @@ button {
 button:disabled {background:#475569;}
 
 /* PROGRESS */
-.progressBox {
-  height:6px;
+.progressBox {height:6px;background:#1e293b;}
+#progressBar {height:100%;width:0%;background:#22c55e;}
+
+/* LANG */
+.langSwitch {
+  display:flex;
   background:#1e293b;
+  border-radius:20px;
+  overflow:hidden;
+  width:120px;
+  margin:10px;
 }
 
-#progressBar {
-  height:100%;
-  width:0%;
-  background:#22c55e;
+.langBtn {
+  flex:1;
+  text-align:center;
+  padding:8px;
+  cursor:pointer;
 }
+
+.langBtn.active {background:#22c55e;}
 
 .container{padding:15px;}
 </style>
@@ -132,10 +173,10 @@ button:disabled {background:#475569;}
 
 <div class="container">
 
-<select id="langSwitcher">
-  <option value="ru">Русский</option>
-  <option value="tj">Тоҷикӣ</option>
-</select>
+<div class="langSwitch">
+  <div class="langBtn active" data-lang="ru">RU</div>
+  <div class="langBtn" data-lang="tj">TJ</div>
+</div>
 
 <div class="progressBox"><div id="progressBar"></div></div>
 
@@ -145,7 +186,7 @@ button:disabled {background:#475569;}
 </div>
 
 <input id="inn" inputmode="numeric" maxlength="9">
-<div id="searchStatus" class="searchLoader"></div>
+<div id="searchStatus"></div>
 <div id="client"></div>
 
 <input id="income" inputmode="numeric">
@@ -158,33 +199,18 @@ button:disabled {background:#475569;}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<audio id="successSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_6c4e9c4f57.mp3"></audio>
 
 <script>
-const APP_VERSION="v5.0";
+const APP_VERSION="v6.0";
 appVersion.innerText=APP_VERSION;
 splashVersion.innerText=APP_VERSION;
 
 const API_URL="https://script.google.com/macros/s/AKfycbyajQuG9u4H-O78Ox0yHeMsXXqb9cfMNgS5Ow3q0AMcP1lifn0fwxR1_rTdMMyNN91l/exec";
 
 const translations={
-ru:{
-title:"📝 Портал подачи заявок",
-inn:"Введите ИНН",
-income:"Введите доход",
-month:"Выберите месяц",
-send:"🚀 Отправить",
-splash:"Добро пожаловать",
-sub:"в Портал подачи заявок"
-},
-tj:{
-title:"📝 Портали дархостҳо",
-inn:"РМА-ро ворид кунед",
-income:"Даромадро ворид кунед",
-month:"Моҳро интихоб кунед",
-send:"🚀 Ирсол",
-splash:"Хуш омадед",
-sub:"ба портал"
-}
+ru:{title:"📝 Портал подачи заявок",inn:"Введите ИНН",income:"Введите доход",month:"Выберите месяц",send:"🚀 Отправить",splash:"Добро пожаловать",sub:"в Портал подачи заявок"},
+tj:{title:"📝 Портали дархостҳо",inn:"РМА-ро ворид кунед",income:"Даромадро ворид кунед",month:"Моҳро интихоб кунед",send:"🚀 Ирсол",splash:"Хуш омадед",sub:"ба портал"}
 };
 
 let clientData=null;
@@ -202,26 +228,31 @@ splashSub.innerText=t.sub;
 localStorage.setItem("lang",l);
 }
 
-const lang=localStorage.getItem("lang")||"ru";
-langSwitcher.value=lang;
-setLang(lang);
-langSwitcher.onchange=()=>setLang(langSwitcher.value);
+/* init lang */
+const savedLang=localStorage.getItem("lang")||"ru";
+setLang(savedLang);
+
+document.querySelectorAll(".langBtn").forEach(btn=>{
+if(btn.dataset.lang===savedLang)btn.classList.add("active");
+
+btn.onclick=()=>{
+document.querySelectorAll(".langBtn").forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
+setLang(btn.dataset.lang);
+};
+});
 
 /* splash */
 window.onload=()=>setTimeout(()=>splashScreen.style.display="none",1500);
 
-/* месяц правильный */
+/* month */
 document.addEventListener("DOMContentLoaded",()=>{
 const now=new Date();
-const prev=new Date(now.getFullYear(), now.getMonth()-1, 1);
-
-const y=prev.getFullYear();
-const m=String(prev.getMonth()+1).padStart(2,'0');
-
-month.value = y+"-"+m;
+const prev=new Date(now.getFullYear(), now.getMonth()-1,1);
+month.value=prev.getFullYear()+"-"+String(prev.getMonth()+1).padStart(2,'0');
 });
 
-/* только цифры */
+/* only digits */
 income.oninput=()=>income.value=income.value.replace(/\D/g,'');
 
 /* progress */
@@ -235,16 +266,20 @@ progressBar.style.width=p+"%";
 
 /* validate */
 function validate(){
-submitBtn.disabled=!(inn.value.length===9 && income.value && month.value && clientData);
+submitBtn.disabled=!(inn.value.length===9&&income.value&&month.value&&clientData);
 }
 
-/* поиск */
+/* search */
 inn.oninput=()=>{
 updateProgress();validate();
 
 if(inn.value.length===9){
-searchStatus.innerHTML="🔍 Поиск...";
-client.innerHTML="";
+
+searchStatus.innerHTML=`
+<div class="searchBox">
+<div class="searchSpinner"></div>
+<div class="searchText">Поиск...</div>
+</div>`;
 
 fetch(API_URL+"?inn="+inn.value)
 .then(r=>r.json())
@@ -268,7 +303,7 @@ validate();
 }
 };
 
-/* отправка */
+/* send */
 function send(){
 fetch(API_URL,{
 method:"POST",
@@ -281,6 +316,7 @@ employee_fio:clientData.employee_fio
 })
 }).then(()=>{
 confetti({particleCount:120,spread:70});
+successSound.play().catch(()=>{});
 alert("Успешно!");
 });
 }
