@@ -1,16 +1,51 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>UZA App</title>
 
 <style>
 body {
   margin:0;
-  font-family:Arial;
+  font-family:-apple-system, Arial;
   color:#fff;
-  background:#0f172a;
+  background: radial-gradient(circle at 20% 20%, #1e3a8a, transparent),
+              radial-gradient(circle at 80% 80%, #065f46, transparent),
+              #0f172a;
 }
+
+/* VERSION */
+#appVersion {
+  position:fixed;
+  top:8px;
+  right:12px;
+  font-size:11px;
+  opacity:0.6;
+  background:#1e293b;
+  padding:4px 8px;
+  border-radius:8px;
+}
+
+/* SPLASH */
+#splashScreen {
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:#0f172a;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:99999;
+}
+.splash-logo {width:80px;margin-bottom:10px;}
+.loader {
+  width:40px;height:40px;
+  border:4px solid #334155;
+  border-top:4px solid #22c55e;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+@keyframes spin {100%{transform:rotate(360deg);}}
 
 /* HEADER */
 .header {
@@ -19,51 +54,59 @@ body {
   align-items:center;
   padding:15px;
 }
-
 .logo {width:40px}
 
 /* INPUT */
 input {
   width:100%;
-  padding:14px;
-  border-radius:12px;
-  margin-top:10px;
+  padding:16px;
+  border-radius:14px;
+  margin-top:12px;
+  font-size:18px;
   background:#1e293b;
-  color:#fff;
+  color:white;
   border:none;
+}
+
+/* SEARCH */
+.searchSpinner {
+  width:28px;height:28px;
+  border:3px solid #334155;
+  border-top:3px solid #22c55e;
+  border-radius:50%;
+  animation:spin 0.8s linear infinite;
+  margin:auto;
+}
+
+/* CARD */
+.card {
+  background:#1e293b;
+  padding:15px;
+  border-radius:15px;
+  margin-top:10px;
+  animation:fadeIn 0.3s ease;
+}
+@keyframes fadeIn {
+  from {opacity:0; transform:translateY(10px);}
+  to {opacity:1; transform:translateY(0);}
 }
 
 /* BUTTON */
 button {
   width:100%;
-  padding:14px;
-  border-radius:12px;
-  margin-top:10px;
+  padding:16px;
+  border-radius:14px;
+  margin-top:15px;
+  font-size:18px;
   background:#22c55e;
-  color:#fff;
+  color:white;
   border:none;
 }
 button:disabled {background:#475569}
 
-/* CARD */
-.card {
-  background:#1e293b;
-  padding:10px;
-  border-radius:10px;
-  margin-top:10px;
-}
-
-/* SEARCH */
-.spinner {
-  width:30px;
-  height:30px;
-  border:4px solid #334155;
-  border-top:4px solid #22c55e;
-  border-radius:50%;
-  animation:spin 1s linear infinite;
-  margin:auto;
-}
-@keyframes spin {100%{transform:rotate(360deg);}}
+/* PROGRESS */
+.progressBox {height:6px;background:#1e293b;margin:10px;}
+#progressBar {height:100%;width:0%;background:#22c55e}
 
 /* SEND */
 #sendingOverlay {
@@ -74,26 +117,12 @@ button:disabled {background:#475569}
   display:none;
   justify-content:center;
   align-items:center;
+  z-index:9999;
 }
 
-.progressBox {
-  width:80%;
-  max-width:250px;
-  text-align:center;
-}
-
-.progressBar {
-  width:100%;
-  height:8px;
-  background:#334155;
-  border-radius:10px;
-}
-
-#progressFill {
-  height:100%;
-  width:0%;
-  background:#22c55e;
-}
+.sendBox {text-align:center;width:80%;max-width:300px;}
+.progressLine {height:8px;background:#334155;border-radius:10px;margin-top:10px;}
+#progressFill {height:100%;width:0;background:#22c55e;}
 
 .container {padding:15px;}
 </style>
@@ -101,44 +130,62 @@ button:disabled {background:#475569}
 
 <body>
 
+<div id="appVersion"></div>
+
+<!-- SPLASH -->
+<div id="splashScreen">
+  <div style="text-align:center">
+    <img src="logo.png" class="splash-logo">
+    <h2 id="splashTitle">Добро пожаловать</h2>
+    <div id="splashSub">в Портал подачи заявок</div>
+    <div class="loader"></div>
+  </div>
+</div>
+
 <div class="container">
 
+<div class="progressBox"><div id="progressBar"></div></div>
+
 <div class="header">
-  <span id="title">📝 Портал подачи заявок</span>
+  <span>📝 Портал подачи заявок</span>
   <img src="logo.png" class="logo">
 </div>
 
-<input id="inn" placeholder="Введите ИНН" maxlength="9">
+<input id="inn" inputmode="numeric" maxlength="9" placeholder="Введите ИНН">
 <div id="searchStatus"></div>
 <div id="client"></div>
 
-<input id="income" placeholder="Введите доход">
+<input id="income" inputmode="numeric" placeholder="Введите доход">
 
-<label>📅 Месяц</label>
+<label>📅 Выберите месяц</label>
 <input type="month" id="month">
 
-<button id="submitBtn" disabled onclick="send()">Отправить</button>
+<button id="submitBtn" onclick="send()" disabled>Отправить</button>
 
 </div>
 
 <!-- SEND -->
 <div id="sendingOverlay">
-  <div class="progressBox">
+  <div class="sendBox">
     <div id="progressText">0%</div>
-    <div class="progressBar">
-      <div id="progressFill"></div>
-    </div>
+    <div class="progressLine"><div id="progressFill"></div></div>
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
 <script>
+
 const API_URL="https://script.google.com/macros/s/AKfycbyajQuG9u4H-O78Ox0yHeMsXXqb9cfMNgS5Ow3q0AMcP1lifn0fwxR1_rTdMMyNN91l/exec";
 
 let clientData=null;
 
+/* splash */
+window.onload=()=>setTimeout(()=>splashScreen.style.display="none",1500);
+
 /* месяц */
 const now=new Date();
-const prev=new Date(now.getFullYear(), now.getMonth()-1,1);
+const prev=new Date(now.getFullYear(),now.getMonth()-1,1);
 month.value=prev.toISOString().slice(0,7);
 
 /* validate */
@@ -158,8 +205,7 @@ clientData=null;
 validate();
 
 if(inn.value.length===9){
-
-searchStatus.innerHTML='<div class="spinner"></div>';
+searchStatus.innerHTML='<div class="searchSpinner"></div>';
 
 fetch(API_URL+"?inn="+inn.value)
 .then(r=>r.json())
@@ -187,9 +233,7 @@ progressText.innerText=p+"%";
 
 /* send */
 function send(){
-
 sendingOverlay.style.display="flex";
-
 let progress=startProgress();
 
 fetch(API_URL,{
@@ -202,13 +246,12 @@ fio:clientData.fio
 })
 }).then(()=>{
 clearInterval(progress);
-
 progressFill.style.width="100%";
 progressText.innerText="100%";
 
 setTimeout(()=>{
 sendingOverlay.style.display="none";
-alert("Успешно");
+confetti({particleCount:150,spread:90});
 },500);
 });
 }
