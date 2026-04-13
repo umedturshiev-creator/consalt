@@ -7,7 +7,7 @@
 <style>
 body {
   margin:0;
-  font-family:-apple-system, BlinkMacSystemFont, Arial;
+  font-family:-apple-system, Arial;
   color:#fff;
   background:#0f172a;
 }
@@ -19,7 +19,7 @@ body {
   right:12px;
   font-size:11px;
   opacity:0.6;
-  background:rgba(30,41,59,0.6);
+  background:#1e293b;
   padding:4px 8px;
   border-radius:8px;
 }
@@ -36,6 +36,9 @@ body {
   z-index:99999;
 }
 
+.splash-content{text-align:center;}
+.splash-logo{width:80px;margin-bottom:10px;}
+
 .loader {
   width:40px;height:40px;
   border:4px solid #334155;
@@ -45,6 +48,16 @@ body {
 }
 
 @keyframes spin {100%{transform:rotate(360deg);}}
+
+/* HEADER */
+.header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px;
+}
+
+.logo-right {width:40px}
 
 /* INPUT */
 input {
@@ -58,11 +71,10 @@ input {
   border:none;
 }
 
-/* SEARCH LOADER */
+/* SEARCH */
 .searchLoader {
-  text-align:center;
   margin-top:10px;
-  font-size:14px;
+  text-align:center;
   opacity:0.7;
 }
 
@@ -86,15 +98,12 @@ button {
   border:none;
 }
 
-button:disabled {
-  background:#475569;
-}
+button:disabled {background:#475569;}
 
 /* PROGRESS */
 .progressBox {
   height:6px;
   background:#1e293b;
-  border-radius:10px;
 }
 
 #progressBar {
@@ -103,10 +112,7 @@ button:disabled {
   background:#22c55e;
 }
 
-/* MOBILE */
-@media (max-width:480px){
-  body {font-size:16px;}
-}
+.container{padding:15px;}
 </style>
 </head>
 
@@ -115,8 +121,10 @@ button:disabled {
 <div id="appVersion"></div>
 
 <div id="splashScreen">
-  <div>
-    <h2>Добро пожаловать</h2>
+  <div class="splash-content">
+    <img src="logo.png" class="splash-logo">
+    <h2 id="splashTitle"></h2>
+    <div id="splashSub"></div>
     <div id="splashVersion"></div>
     <div class="loader"></div>
   </div>
@@ -124,46 +132,97 @@ button:disabled {
 
 <div class="container">
 
-<div class="progressBox">
-  <div id="progressBar"></div>
+<select id="langSwitcher">
+  <option value="ru">Русский</option>
+  <option value="tj">Тоҷикӣ</option>
+</select>
+
+<div class="progressBox"><div id="progressBar"></div></div>
+
+<div class="header">
+  <span id="title"></span>
+  <img src="logo.png" class="logo-right">
 </div>
 
-<input id="inn" inputmode="numeric" pattern="[0-9]*" maxlength="9" placeholder="ИНН">
-<div id="searchStatus"></div>
+<input id="inn" inputmode="numeric" maxlength="9">
+<div id="searchStatus" class="searchLoader"></div>
 <div id="client"></div>
 
-<input id="income" inputmode="numeric" placeholder="Доход">
+<input id="income" inputmode="numeric">
 
+<label id="monthLabel"></label>
 <input type="month" id="month">
 
-<button id="submitBtn" disabled onclick="send()">Отправить</button>
+<button id="submitBtn" onclick="send()" disabled></button>
 
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script>
-
-const APP_VERSION="v4.0";
+const APP_VERSION="v5.0";
 appVersion.innerText=APP_VERSION;
 splashVersion.innerText=APP_VERSION;
 
 const API_URL="https://script.google.com/macros/s/AKfycbyajQuG9u4H-O78Ox0yHeMsXXqb9cfMNgS5Ow3q0AMcP1lifn0fwxR1_rTdMMyNN91l/exec";
 
+const translations={
+ru:{
+title:"📝 Портал подачи заявок",
+inn:"Введите ИНН",
+income:"Введите доход",
+month:"Выберите месяц",
+send:"🚀 Отправить",
+splash:"Добро пожаловать",
+sub:"в Портал подачи заявок"
+},
+tj:{
+title:"📝 Портали дархостҳо",
+inn:"РМА-ро ворид кунед",
+income:"Даромадро ворид кунед",
+month:"Моҳро интихоб кунед",
+send:"🚀 Ирсол",
+splash:"Хуш омадед",
+sub:"ба портал"
+}
+};
+
 let clientData=null;
+
+/* язык */
+function setLang(l){
+const t=translations[l];
+title.innerText=t.title;
+inn.placeholder=t.inn;
+income.placeholder=t.income;
+monthLabel.innerText="📅 "+t.month;
+submitBtn.innerText=t.send;
+splashTitle.innerText=t.splash;
+splashSub.innerText=t.sub;
+localStorage.setItem("lang",l);
+}
+
+const lang=localStorage.getItem("lang")||"ru";
+langSwitcher.value=lang;
+setLang(lang);
+langSwitcher.onchange=()=>setLang(langSwitcher.value);
 
 /* splash */
 window.onload=()=>setTimeout(()=>splashScreen.style.display="none",1500);
 
-/* month */
+/* месяц правильный */
+document.addEventListener("DOMContentLoaded",()=>{
 const now=new Date();
-const prev=new Date(now.getFullYear(),now.getMonth()-1,1);
-month.value=prev.toISOString().slice(0,7);
+const prev=new Date(now.getFullYear(), now.getMonth()-1, 1);
+
+const y=prev.getFullYear();
+const m=String(prev.getMonth()+1).padStart(2,'0');
+
+month.value = y+"-"+m;
+});
 
 /* только цифры */
-income.addEventListener("input",()=>{
-  income.value = income.value.replace(/\D/g,'');
-});
+income.oninput=()=>income.value=income.value.replace(/\D/g,'');
 
 /* progress */
 function updateProgress(){
@@ -179,33 +238,32 @@ function validate(){
 submitBtn.disabled=!(inn.value.length===9 && income.value && month.value && clientData);
 }
 
-/* поиск с анимацией */
+/* поиск */
 inn.oninput=()=>{
-updateProgress(); validate();
+updateProgress();validate();
 
 if(inn.value.length===9){
-
 searchStatus.innerHTML="🔍 Поиск...";
 client.innerHTML="";
 
 fetch(API_URL+"?inn="+inn.value)
 .then(r=>r.json())
 .then(d=>{
-  if(d.found){
-    clientData=d;
+if(d.found){
+clientData=d;
 
-    client.innerHTML=`
-      <div class="card">
-        👤 ${d.fio}<br>
-        📍 ${d.address || "-"}<br>
-        📞 ${d.phone || "-"}
-      </div>`;
-    
-    searchStatus.innerHTML="✅ Найдено";
-  }else{
-    searchStatus.innerHTML="❌ Не найдено";
-  }
-  validate();
+client.innerHTML=`
+<div class="card">
+👤 ${d.fio}<br>
+📍 ${d.address || "-"}<br>
+📞 ${d.phone || "-"}
+</div>`;
+
+searchStatus.innerHTML="✅ Найдено";
+}else{
+searchStatus.innerHTML="❌ Не найдено";
+}
+validate();
 });
 }
 };
@@ -226,7 +284,6 @@ confetti({particleCount:120,spread:70});
 alert("Успешно!");
 });
 }
-
 </script>
 
 </body>
