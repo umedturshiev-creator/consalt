@@ -1,17 +1,15 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>UZA App</title>
 
 <style>
 body {
   margin:0;
-  font-family:Arial;
+  font-family:-apple-system, BlinkMacSystemFont, Arial;
   color:#fff;
-  background: radial-gradient(circle at 20% 20%, #1e3a8a, transparent),
-              radial-gradient(circle at 80% 80%, #065f46, transparent),
-              #0f172a;
+  background:#0f172a;
 }
 
 /* VERSION */
@@ -29,7 +27,8 @@ body {
 /* SPLASH */
 #splashScreen {
   position:fixed;
-  top:0;left:0;width:100%;height:100%;
+  width:100%;
+  height:100%;
   background:#0f172a;
   display:flex;
   justify-content:center;
@@ -37,125 +36,76 @@ body {
   z-index:99999;
 }
 
-.splash-content {text-align:center;}
-.splash-logo {width:80px;margin-bottom:10px;}
-
 .loader {
   width:40px;height:40px;
   border:4px solid #334155;
   border-top:4px solid #22c55e;
   border-radius:50%;
   animation:spin 1s linear infinite;
-  margin-top:15px;
 }
 
 @keyframes spin {100%{transform:rotate(360deg);}}
 
-/* CONTAINER */
-.container {
-  padding:15px;
-  max-width:480px;
-  margin:auto;
-}
-
-/* HEADER */
-.header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.logo-right {width:40px}
-
 /* INPUT */
 input {
   width:100%;
-  padding:14px;
-  border-radius:12px;
-  margin-top:10px;
+  padding:16px;
+  border-radius:14px;
+  margin-top:12px;
+  font-size:18px;
   background:#1e293b;
   color:white;
-  border:1px solid transparent;
+  border:none;
 }
 
-.input-success {
-  border:1px solid #22c55e !important;
-  position:relative;
+/* SEARCH LOADER */
+.searchLoader {
+  text-align:center;
+  margin-top:10px;
+  font-size:14px;
+  opacity:0.7;
 }
 
-.input-success::after {
-  content:"";
-  position:absolute;
-  right:12px;
-  top:50%;
-  transform:translateY(-50%) scale(0.5);
-  width:20px;height:20px;
-  background-image:url('data:image/svg+xml;utf8,<svg fill="%2322c55e" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M7.629 13.233L3.4 9l-1.4 1.4 5.629 5.633L18 5.657 16.6 4.243z"/></svg>');
-  opacity:0;
-  transition:0.3s;
-}
-
-.input-success.show-check::after {
-  opacity:1;
-  transform:translateY(-50%) scale(1);
+/* CARD */
+.card {
+  background:#1e293b;
+  padding:15px;
+  border-radius:15px;
+  margin-top:10px;
 }
 
 /* BUTTON */
 button {
   width:100%;
-  padding:14px;
-  border-radius:12px;
-  margin-top:12px;
-  background: linear-gradient(135deg,#22c55e,#16a34a);
+  padding:16px;
+  border-radius:14px;
+  margin-top:15px;
+  font-size:18px;
+  background:#22c55e;
   color:white;
   border:none;
 }
 
 button:disabled {
   background:#475569;
-  opacity:0.6;
-}
-
-/* CARD */
-.card {
-  background: rgba(30,41,59,0.7);
-  padding:15px;
-  border-radius:15px;
-  margin-top:10px;
 }
 
 /* PROGRESS */
 .progressBox {
-  width:100%;
   height:6px;
   background:#1e293b;
   border-radius:10px;
-  margin-bottom:10px;
 }
 
 #progressBar {
   height:100%;
   width:0%;
   background:#22c55e;
-  transition:0.3s;
 }
 
-/* POPUPS */
-#sendingOverlay,#successPopup {
-  position:fixed;
-  top:0;left:0;width:100%;height:100%;
-  display:none;
-  justify-content:center;
-  align-items:center;
-}
-
-#sendingOverlay {background:rgba(0,0,0,0.8);}
-#successPopup {background:rgba(0,0,0,0.6);}
-
-.popupBox {
-  background:#22c55e;
-  padding:20px;
-  border-radius:12px;
+/* MOBILE */
+@media (max-width:480px){
+  body {font-size:16px;}
 }
 </style>
 </head>
@@ -165,108 +115,54 @@ button:disabled {
 <div id="appVersion"></div>
 
 <div id="splashScreen">
-  <div class="splash-content">
-    <img src="logo.png" class="splash-logo">
-    <h2 id="splashTitle">Добро пожаловать</h2>
-    <div id="splashSub">в Портал подачи заявок</div>
-    <div id="splashVersion" style="opacity:0.6;font-size:12px;"></div>
+  <div>
+    <h2>Добро пожаловать</h2>
+    <div id="splashVersion"></div>
     <div class="loader"></div>
   </div>
 </div>
 
 <div class="container">
 
-<select id="langSwitcher">
-  <option value="ru">Русский</option>
-  <option value="tj">Тоҷикӣ</option>
-</select>
-
 <div class="progressBox">
   <div id="progressBar"></div>
 </div>
 
-<h2 class="header">
-  <span id="title">📝 Портал подачи заявок</span>
-  <img src="logo.png" class="logo-right">
-</h2>
-
-<input id="inn" maxlength="9">
+<input id="inn" inputmode="numeric" pattern="[0-9]*" maxlength="9" placeholder="ИНН">
+<div id="searchStatus"></div>
 <div id="client"></div>
 
-<input id="income">
+<input id="income" inputmode="numeric" placeholder="Доход">
 
-<label id="monthLabel"></label>
 <input type="month" id="month">
 
-<button id="submitBtn" onclick="send()" disabled></button>
+<button id="submitBtn" disabled onclick="send()">Отправить</button>
 
 </div>
 
-<div id="sendingOverlay"><div class="loader"></div></div>
-<div id="successPopup"><div class="popupBox"></div></div>
-
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-<audio id="successSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_6c4e9c4f57.mp3"></audio>
 
 <script>
-const APP_VERSION="v3.0";
+
+const APP_VERSION="v4.0";
 appVersion.innerText=APP_VERSION;
 splashVersion.innerText=APP_VERSION;
 
 const API_URL="https://script.google.com/macros/s/AKfycbyajQuG9u4H-O78Ox0yHeMsXXqb9cfMNgS5Ow3q0AMcP1lifn0fwxR1_rTdMMyNN91l/exec";
 
-const translations={
-ru:{
-title:"📝 Портал подачи заявок",
-inn:"Введите ИНН",
-income:"Введите доход",
-month:"Выберите месяц",
-send:"🚀 Отправить",
-success:"🎉 Заявка отправлена!",
-splash:"Добро пожаловать",
-sub:"в Портал подачи заявок"
-},
-tj:{
-title:"📝 Портали пешниҳоди дархостҳо",
-inn:"РМА-ро ворид кунед",
-income:"Даромадро ворид кунед",
-month:"Моҳро интихоб кунед",
-send:"🚀 Ирсол кардан",
-success:"🎉 Дархост фиристода шуд!",
-splash:"Хуш омадед",
-sub:"ба портали дархостҳо"
-}
-};
-
 let clientData=null;
 
-/* язык */
-function setLang(l){
-const t=translations[l];
-title.innerText=t.title;
-inn.placeholder=t.inn;
-income.placeholder=t.income;
-monthLabel.innerText="📅 "+t.month;
-submitBtn.innerText=t.send;
-successPopup.querySelector(".popupBox").innerText=t.success;
-splashTitle.innerText=t.splash;
-splashSub.innerText=t.sub;
-localStorage.setItem("lang",l);
-}
-
-const lang=localStorage.getItem("lang")||"ru";
-langSwitcher.value=lang;
-setLang(lang);
-langSwitcher.onchange=()=>setLang(langSwitcher.value);
-
 /* splash */
-window.onload=()=>setTimeout(()=>splashScreen.style.display="none",2000);
+window.onload=()=>setTimeout(()=>splashScreen.style.display="none",1500);
 
 /* month */
-document.addEventListener("DOMContentLoaded",()=>{
-const n=new Date();
-const p=new Date(n.getFullYear(),n.getMonth()-1,1);
-month.value=p.getFullYear()+"-"+String(p.getMonth()+1).padStart(2,'0');
+const now=new Date();
+const prev=new Date(now.getFullYear(),now.getMonth()-1,1);
+month.value=prev.toISOString().slice(0,7);
+
+/* только цифры */
+income.addEventListener("input",()=>{
+  income.value = income.value.replace(/\D/g,'');
 });
 
 /* progress */
@@ -280,50 +176,42 @@ progressBar.style.width=p+"%";
 
 /* validate */
 function validate(){
-submitBtn.disabled=!(inn.value.length===9&&income.value&&month.value&&clientData);
+submitBtn.disabled=!(inn.value.length===9 && income.value && month.value && clientData);
 }
 
-/* search */
+/* поиск с анимацией */
 inn.oninput=()=>{
-updateProgress();validate();
+updateProgress(); validate();
+
 if(inn.value.length===9){
+
+searchStatus.innerHTML="🔍 Поиск...";
+client.innerHTML="";
+
 fetch(API_URL+"?inn="+inn.value)
 .then(r=>r.json())
 .then(d=>{
-if(d.found){
-clientData=d;
-inn.classList.add("input-success");
-setTimeout(()=>inn.classList.add("show-check"),100);
-client.innerHTML = `
-  <div class="card">
-    👤 ${d.fio}<br>
-    📍 ${d.address || "-"}<br>
-    📞 ${d.phone || "-"}
-  </div>
-`;
-}else{
-inn.classList.remove("input-success","show-check");
-}
-validate();
+  if(d.found){
+    clientData=d;
+
+    client.innerHTML=`
+      <div class="card">
+        👤 ${d.fio}<br>
+        📍 ${d.address || "-"}<br>
+        📞 ${d.phone || "-"}
+      </div>`;
+    
+    searchStatus.innerHTML="✅ Найдено";
+  }else{
+    searchStatus.innerHTML="❌ Не найдено";
+  }
+  validate();
 });
 }
 };
 
-/* income */
-income.oninput=()=>{
-if(income.value>0){
-income.classList.add("input-success");
-setTimeout(()=>income.classList.add("show-check"),100);
-}else{
-income.classList.remove("input-success","show-check");
-}
-updateProgress();validate();
-};
-
-/* send */
+/* отправка */
 function send(){
-sendingOverlay.style.display="flex";
-
 fetch(API_URL,{
 method:"POST",
 body:JSON.stringify({
@@ -334,22 +222,11 @@ fio:clientData.fio,
 employee_fio:clientData.employee_fio
 })
 }).then(()=>{
-sendingOverlay.style.display="none";
-successPopup.style.display="flex";
-
 confetti({particleCount:120,spread:70});
-successSound.play().catch(()=>{});
-
-setTimeout(()=>successPopup.style.display="none",2000);
-
-inn.value="";
-income.value="";
-client.innerHTML="";
-clientData=null;
-updateProgress();
-validate();
+alert("Успешно!");
 });
 }
+
 </script>
 
 </body>
