@@ -294,7 +294,13 @@ if(d.found){
 clientData=d;
 inn.classList.add("input-success");
 setTimeout(()=>inn.classList.add("show-check"),100);
-client.innerHTML=`<div class="card">${d.fio}</div>`;
+client.innerHTML = `
+  <div class="card">
+    👤 ${d.fio}<br>
+    📍 ${d.address || "-"}<br>
+    📞 ${d.phone || "-"}
+  </div>
+`;
 }else{
 inn.classList.remove("input-success","show-check");
 }
