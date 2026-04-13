@@ -26,7 +26,7 @@ body {
   border-radius:8px;
 }
 
-/* UPDATE TOAST */
+/* UPDATE */
 #updateToast {
   position:fixed;
   bottom:20px;
@@ -36,7 +36,6 @@ body {
   padding:10px 15px;
   border-radius:10px;
   display:none;
-  z-index:9999;
 }
 
 /* SPLASH */
@@ -51,6 +50,9 @@ body {
   z-index:99999;
 }
 
+.splash-content{text-align:center;}
+.splash-logo{width:80px;margin-bottom:10px;}
+
 .loader {
   width:40px;height:40px;
   border:4px solid #334155;
@@ -60,6 +62,16 @@ body {
 }
 
 @keyframes spin {100%{transform:rotate(360deg);}}
+
+/* HEADER */
+.header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px;
+}
+
+.logo-right {width:40px}
 
 /* INPUT */
 input {
@@ -72,20 +84,6 @@ input {
   color:white;
   border:none;
 }
-
-/* BUTTON */
-button {
-  width:100%;
-  padding:16px;
-  border-radius:14px;
-  margin-top:15px;
-  font-size:18px;
-  background:#22c55e;
-  color:white;
-  border:none;
-}
-
-button:disabled {background:#475569;}
 
 /* CARD */
 .card {
@@ -116,6 +114,20 @@ button:disabled {background:#475569;}
   animation:spin 0.8s linear infinite;
 }
 
+/* BUTTON */
+button {
+  width:100%;
+  padding:16px;
+  border-radius:14px;
+  margin-top:15px;
+  font-size:18px;
+  background:#22c55e;
+  color:white;
+  border:none;
+}
+
+button:disabled {background:#475569;}
+
 /* LANG */
 .langSwitch {
   display:flex;
@@ -142,11 +154,14 @@ button:disabled {background:#475569;}
 <body>
 
 <div id="appVersion"></div>
-<div id="updateToast">🔄 Обновляем приложение...</div>
+<div id="updateToast">🔄 Обновляем...</div>
 
+<!-- SPLASH -->
 <div id="splashScreen">
-  <div>
-    <h2>Добро пожаловать</h2>
+  <div class="splash-content">
+    <img src="logo.png" class="splash-logo">
+    <h2 id="splashTitle"></h2>
+    <div id="splashSub"></div>
     <div id="splashVersion"></div>
     <div class="loader"></div>
   </div>
@@ -155,18 +170,25 @@ button:disabled {background:#475569;}
 <div class="container">
 
 <div class="langSwitch">
-  <div class="langBtn active" data-lang="ru">RU</div>
+  <div class="langBtn" data-lang="ru">RU</div>
   <div class="langBtn" data-lang="tj">TJ</div>
 </div>
 
-<input id="inn" inputmode="numeric" maxlength="9" placeholder="ИНН">
+<div class="header">
+  <span id="title"></span>
+  <img src="logo.png" class="logo-right">
+</div>
+
+<input id="inn" inputmode="numeric" maxlength="9">
 <div id="searchStatus"></div>
 <div id="client"></div>
 
-<input id="income" inputmode="numeric" placeholder="Доход">
+<input id="income" inputmode="numeric">
+
+<label id="monthLabel"></label>
 <input type="month" id="month">
 
-<button id="submitBtn" onclick="send()" disabled>Отправить</button>
+<button id="submitBtn" onclick="send()" disabled></button>
 
 </div>
 
@@ -175,100 +197,129 @@ button:disabled {background:#475569;}
 <script>
 
 /* VERSION */
-const APP_VERSION="v7.0";
-const SERVER_VERSION="v7.1";
+const APP_VERSION="v8.0";
+const SERVER_VERSION="v8.1";
 
 appVersion.innerText=APP_VERSION;
 splashVersion.innerText=APP_VERSION;
 
 /* AUTO UPDATE */
-function checkUpdate(){
-  const saved = localStorage.getItem("app_version");
-
-  if(saved !== SERVER_VERSION){
-    updateToast.style.display="block";
-    localStorage.setItem("app_version", SERVER_VERSION);
-
-    setTimeout(()=>location.reload(true),1500);
-  }
+if(localStorage.getItem("ver")!==SERVER_VERSION){
+  updateToast.style.display="block";
+  localStorage.setItem("ver",SERVER_VERSION);
+  setTimeout(()=>location.reload(),1500);
 }
-
-window.onload=()=>{
-  setTimeout(()=>splashScreen.style.display="none",1500);
-  checkUpdate();
-};
 
 /* API */
 const API_URL="https://script.google.com/macros/s/AKfycbyajQuG9u4H-O78Ox0yHeMsXXqb9cfMNgS5Ow3q0AMcP1lifn0fwxR1_rTdMMyNN91l/exec";
 
+const translations={
+ru:{title:"📝 Портал подачи заявок",inn:"Введите ИНН",income:"Введите доход",month:"Выберите месяц",send:"🚀 Отправить",splash:"Добро пожаловать",sub:"в Портал подачи заявок"},
+tj:{title:"📝 Портали дархостҳо",inn:"РМА-ро ворид кунед",income:"Даромадро ворид кунед",month:"Моҳро интихоб кунед",send:"🚀 Ирсол",splash:"Хуш омадед",sub:"ба портал"}
+};
+
 let clientData=null;
 
-/* FIX BUTTON */
-function validate(){
-  submitBtn.disabled=!(inn.value.length===9 && income.value && month.value && clientData);
+/* LANG */
+function setLang(l){
+const t=translations[l];
+title.innerText=t.title;
+inn.placeholder=t.inn;
+income.placeholder=t.income;
+monthLabel.innerText="📅 "+t.month;
+submitBtn.innerText=t.send;
+splashTitle.innerText=t.splash;
+splashSub.innerText=t.sub;
+localStorage.setItem("lang",l);
 }
 
-/* month fix */
+const lang=localStorage.getItem("lang")||"ru";
+setLang(lang);
+
+document.querySelectorAll(".langBtn").forEach(btn=>{
+if(btn.dataset.lang===lang)btn.classList.add("active");
+
+btn.onclick=()=>{
+document.querySelectorAll(".langBtn").forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
+setLang(btn.dataset.lang);
+};
+});
+
+/* SPLASH */
+window.onload=()=>setTimeout(()=>splashScreen.style.display="none",1500);
+
+/* МЕСЯЦ (СТРОГО ПРАВИЛЬНО) */
+document.addEventListener("DOMContentLoaded",()=>{
 const now=new Date();
-const prev=new Date(now.getFullYear(), now.getMonth()-1,1);
-month.value=prev.toISOString().slice(0,7);
+const prev=new Date(now.getFullYear(), now.getMonth()-1, 1);
 
-/* only numbers */
+const y = prev.getFullYear();
+const m = String(prev.getMonth()+1).padStart(2,'0');
+
+month.value = y + "-" + m;
+});
+
+/* VALIDATE */
+function validate(){
+submitBtn.disabled=!(inn.value.length===9 && income.value && month.value && clientData);
+}
+
+/* ONLY NUMBERS */
 income.oninput=()=>{
-  income.value=income.value.replace(/\D/g,'');
-  validate();
+income.value=income.value.replace(/\D/g,'');
+validate();
 };
 
-/* search */
+/* SEARCH */
 inn.oninput=()=>{
-  clientData=null;
-  validate();
+clientData=null;
+validate();
 
-  if(inn.value.length===9){
+if(inn.value.length===9){
 
-    searchStatus.innerHTML='<div class="searchBox"><div class="searchSpinner"></div></div>';
+searchStatus.innerHTML='<div class="searchBox"><div class="searchSpinner"></div></div>';
 
-    fetch(API_URL+"?inn="+inn.value)
-    .then(r=>r.json())
-    .then(d=>{
-      if(d.found){
-        clientData=d;
+fetch(API_URL+"?inn="+inn.value)
+.then(r=>r.json())
+.then(d=>{
+if(d.found){
+clientData=d;
 
-        client.innerHTML=`
-        <div class="card">
-        👤 ${d.fio}<br>
-        📍 ${d.address || "-"}<br>
-        📞 ${d.phone || "-"}
-        </div>`;
-      } else {
-        searchStatus.innerHTML="❌ Не найдено";
-      }
+client.innerHTML=`
+<div class="card">
+👤 ${d.fio}<br>
+📍 ${d.address || "-"}<br>
+📞 ${d.phone || "-"}
+</div>`;
+}else{
+searchStatus.innerHTML="❌ Не найдено";
+}
 
-      validate();
-    });
-  }
+validate();
+});
+}
 };
 
-/* month fix */
+/* MONTH FIX */
 month.addEventListener("change", validate);
 
-/* send */
+/* SEND */
 function send(){
-  fetch(API_URL,{
-    method:"POST",
-    body:JSON.stringify({
-      inn:inn.value,
-      income:income.value,
-      month:month.value,
-      fio:clientData.fio,
-      employee_fio:clientData.employee_fio
-    })
-  }).then(()=>{
-    confetti({particleCount:120,spread:70});
-    alert("Успешно!");
-  });
+fetch(API_URL,{
+method:"POST",
+body:JSON.stringify({
+inn:inn.value,
+income:income.value,
+month:month.value,
+fio:clientData.fio,
+employee_fio:clientData.employee_fio
+})
+}).then(()=>{
+confetti({particleCount:120,spread:70});
+alert("Успешно!");
+});
 }
-
 </script>
 
 </body>
