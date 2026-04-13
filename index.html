@@ -171,7 +171,10 @@ button:disabled {background:#475569}
 <div class="progressBox"><div id="progressBar"></div></div>
 
 <div class="header">
-  <span id="title"></span>
+  <div>
+    <span id="title"></span><br>
+    <small id="appVersion" style="color:#94a3b8;font-size:12px;">v1.0.0</small>
+  </div>
   <img src="logo.png" class="logo">
 </div>
 
@@ -267,8 +270,26 @@ fetch(API_URL+"?inn="+inn.value)
 .then(d=>{
 searchStatus.innerHTML="";
 if(d.found){
-clientData=d;
-client.innerHTML=`<div class="card">${d.fio}<br>${d.address}<br>${d.phone}</div>`;
+  clientData=d;
+
+  searchStatus.innerHTML = `<div style="color:#22c55e;font-weight:bold;">
+  ✅ ИНН найден
+  </div>`;
+
+  client.innerHTML=`
+  <div class="card">
+    👤 <b>${d.fio}</b><br>
+    📍 ${d.address}<br>
+    📞 ${d.phone}
+  </div>`;
+}else{
+  clientData=null;
+
+  searchStatus.innerHTML = `<div style="color:#ef4444;font-weight:bold;">
+  ❌ ИНН не найден
+  </div>`;
+
+  client.innerHTML="";
 }
 validate();
 });
