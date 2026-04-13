@@ -6,148 +6,171 @@
 
 <style>
 body {
-  margin:0;
-  font-family:-apple-system, Arial;
-  color:#fff;
-  background: radial-gradient(circle at 20% 20%, #1e3a8a, transparent),
-              radial-gradient(circle at 80% 80%, #065f46, transparent),
-              #0f172a;
+  margin: 0;
+  font-family: -apple-system, Arial;
+  color: #fff;
+  background:
+    radial-gradient(circle at 20% 20%, #1e3a8a, transparent),
+    radial-gradient(circle at 80% 80%, #065f46, transparent),
+    #0f172a;
 }
 
 /* SPLASH */
 #splashScreen {
-  position:fixed;
-  width:100%;
-  height:100%;
-  background:#0f172a;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  z-index:9999;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: #0f172a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
 }
-.splash-logo {width:80px;margin-bottom:10px;}
+.splash-logo {
+  width: 80px;
+  margin-bottom: 10px;
+}
 
 .loader {
-  width:40px;height:40px;
-  border:4px solid #334155;
-  border-top:4px solid #22c55e;
-  border-radius:50%;
-  animation:spin 1s linear infinite;
+  width: 40px;
+  height: 40px;
+  border: 4px solid #334155;
+  border-top: 4px solid #22c55e;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
-@keyframes spin {100%{transform:rotate(360deg);}}
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
 
 /* HEADER */
 .header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
 }
-.logo {width:40px}
+.logo {
+  width: 40px;
+}
 
 /* INPUT */
 input {
-  width:100%;
-  padding:16px;
-  border-radius:14px;
-  margin-top:12px;
-  font-size:18px;
-  background:#1e293b;
-  color:white;
-  border:none;
-  box-sizing:border-box;
+  width: 100%;
+  padding: 16px;
+  border-radius: 14px;
+  margin-top: 12px;
+  font-size: 18px;
+  background: #1e293b;
+  color: white;
+  border: none;
+  box-sizing: border-box;
 }
 
 /* SEARCH */
 .searchSpinner {
-  width:28px;height:28px;
-  border:3px solid #334155;
-  border-top:3px solid #22c55e;
-  border-radius:50%;
-  animation:spin 0.8s linear infinite;
-  margin:auto;
+  width: 28px;
+  height: 28px;
+  border: 3px solid #334155;
+  border-top: 3px solid #22c55e;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: auto;
 }
 
 /* CARD */
 .card {
-  background:#1e293b;
-  padding:15px;
-  border-radius:15px;
-  margin-top:10px;
-  animation:fadeIn 0.3s ease;
-  line-height:1.6;
+  background: #1e293b;
+  padding: 15px;
+  border-radius: 15px;
+  margin-top: 10px;
+  animation: fadeIn 0.3s ease;
+  line-height: 1.6;
 }
 @keyframes fadeIn {
-  from {opacity:0; transform:translateY(10px);}
-  to {opacity:1; transform:translateY(0);}
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* BUTTON */
 button {
-  width:100%;
-  padding:16px;
-  border-radius:14px;
-  margin-top:15px;
-  font-size:18px;
-  background:#22c55e;
-  color:white;
-  border:none;
+  width: 100%;
+  padding: 16px;
+  border-radius: 14px;
+  margin-top: 15px;
+  font-size: 18px;
+  background: #22c55e;
+  color: white;
+  border: none;
 }
-button:disabled {background:#475569}
+button:disabled {
+  background: #475569;
+}
 
 /* PROGRESS FORM */
-.progressBox {height:6px;background:#1e293b;margin:10px;}
-#progressBar {height:100%;width:0%;background:#22c55e}
+.progressBox {
+  height: 6px;
+  background: #1e293b;
+  margin: 10px;
+}
+#progressBar {
+  height: 100%;
+  width: 0%;
+  background: #22c55e;
+}
 
 /* LANG */
 .langSwitch {
-  display:flex;
-  background:#1e293b;
-  border-radius:20px;
-  overflow:hidden;
-  width:120px;
-  margin:10px;
+  display: flex;
+  background: #1e293b;
+  border-radius: 20px;
+  overflow: hidden;
+  width: 120px;
+  margin: 10px;
 }
 .langBtn {
-  flex:1;
-  text-align:center;
-  padding:8px;
-  cursor:pointer;
+  flex: 1;
+  text-align: center;
+  padding: 8px;
+  cursor: pointer;
 }
-.langBtn.active {background:#22c55e}
+.langBtn.active {
+  background: #22c55e;
+}
 
 /* SEND OVERLAY */
 #sendingOverlay {
-  position:fixed;
-  top:0;left:0;
-  width:100%;height:100%;
-  background:rgba(0,0,0,0.9);
-  display:none;
-  justify-content:center;
-  align-items:center;
-  z-index:9999;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.9);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
 }
-
 .sendBox {
-  text-align:center;
-  width:80%;
-  max-width:300px;
+  text-align: center;
+  width: 80%;
+  max-width: 300px;
 }
-
 .progressLine {
-  height:8px;
-  background:#334155;
-  border-radius:10px;
-  margin-top:10px;
+  height: 8px;
+  background: #334155;
+  border-radius: 10px;
+  margin-top: 10px;
 }
-
 #progressFill {
-  height:100%;
-  width:0;
-  background:#22c55e;
+  height: 100%;
+  width: 0;
+  background: #22c55e;
 }
 
-.container {padding:15px;}
+.container {
+  padding: 15px;
+}
 </style>
 </head>
 
@@ -165,31 +188,33 @@ button:disabled {background:#475569}
 
 <div class="container">
 
-<div class="langSwitch">
-  <div class="langBtn" data-lang="ru">RU</div>
-  <div class="langBtn" data-lang="tj">TJ</div>
-</div>
-
-<div class="progressBox"><div id="progressBar"></div></div>
-
-<div class="header">
-  <div>
-    <span id="title"></span><br>
-    <small id="appVersion" style="color:#94a3b8;font-size:12px;">v1.0.3</small>
+  <div class="langSwitch">
+    <div class="langBtn" data-lang="ru">RU</div>
+    <div class="langBtn" data-lang="tj">TJ</div>
   </div>
-  <img src="logo.png" class="logo">
-</div>
 
-<input id="inn" inputmode="numeric" maxlength="9">
-<div id="searchStatus"></div>
-<div id="client"></div>
+  <div class="progressBox">
+    <div id="progressBar"></div>
+  </div>
 
-<input id="income" inputmode="numeric">
+  <div class="header">
+    <div>
+      <span id="title"></span><br>
+      <small id="appVersion" style="color:#94a3b8;font-size:12px;">v1.0.0</small>
+    </div>
+    <img src="logo.png" class="logo">
+  </div>
 
-<label id="monthLabel"></label>
-<input type="month" id="month">
+  <input id="inn" inputmode="numeric" maxlength="9">
+  <div id="searchStatus"></div>
+  <div id="client"></div>
 
-<button id="submitBtn" onclick="send()" disabled></button>
+  <input id="income" inputmode="numeric">
+
+  <label id="monthLabel"></label>
+  <input type="month" id="month">
+
+  <button id="submitBtn" onclick="send()" disabled></button>
 
 </div>
 
@@ -231,6 +256,29 @@ const translations = {
 
 let clientData = null;
 
+/* helpers */
+function getEmployeeFio(data) {
+  return data.employeeFio ||
+         data.employee ||
+         data.sotrudnik ||
+         data.fio_sotrudnika ||
+         data.sotrudnikFio ||
+         data.employee_name ||
+         data.manager ||
+         data.sotrudnik_name ||
+         "";
+}
+
+function escapeHtml(value) {
+  if (value === null || value === undefined) return "";
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 /* язык */
 function setLang(l) {
   const t = translations[l];
@@ -257,50 +305,34 @@ document.querySelectorAll(".langBtn").forEach(btn => {
 });
 
 /* splash */
-window.onload = () => setTimeout(() => splashScreen.style.display = "none", 1500);
+window.onload = () => {
+  setTimeout(() => {
+    splashScreen.style.display = "none";
+  }, 1500);
+};
 
-/* месяц */
+/* предыдущий месяц */
 const now = new Date();
 const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1);
 const year = prev.getFullYear();
 const monthNum = String(prev.getMonth() + 1).padStart(2, "0");
 month.value = `${year}-${monthNum}`;
 
-/* helpers */
-function getEmployeeFio(data) {
-  return data.employeeFio ||
-         data.employee ||
-         data.sotrudnik ||
-         data.fio_sotrudnika ||
-         data.sotrudnikFio ||
-         data.employee_name ||
-         data.manager ||
-         "";
-}
-
-function escapeHtml(value) {
-  if (value === null || value === undefined) return "";
-  return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
-
 /* validate */
 function validate() {
   submitBtn.disabled = !(inn.value.length === 9 && income.value && month.value && clientData);
 }
 
-/* цифры */
+/* только цифры */
 income.oninput = () => {
   income.value = income.value.replace(/\D/g, "");
   validate();
 };
 
-/* поиск */
+/* поиск по ИНН */
 inn.oninput = () => {
+  inn.value = inn.value.replace(/\D/g, "").slice(0, 9);
+
   clientData = null;
   client.innerHTML = "";
   searchStatus.innerHTML = "";
@@ -309,12 +341,12 @@ inn.oninput = () => {
   if (inn.value.length === 9) {
     searchStatus.innerHTML = '<div class="searchSpinner"></div>';
 
-    fetch(API_URL + "?inn=" + inn.value)
+    fetch(API_URL + "?inn=" + encodeURIComponent(inn.value))
       .then(r => r.json())
       .then(d => {
         searchStatus.innerHTML = "";
 
-        if (d.found) {
+        if (d && d.found) {
           const employeeFio = getEmployeeFio(d);
 
           clientData = {
@@ -348,7 +380,8 @@ inn.oninput = () => {
 
         validate();
       })
-      .catch(() => {
+      .catch(error => {
+        console.log("GET error:", error);
         clientData = null;
         searchStatus.innerHTML = `
           <div style="color:#ef4444;font-weight:bold;">
@@ -361,7 +394,7 @@ inn.oninput = () => {
   }
 };
 
-/* прогресс */
+/* прогресс отправки */
 function startProgress() {
   let p = 0;
   return setInterval(() => {
@@ -381,14 +414,10 @@ function send() {
   progressText.innerText = "0%";
 
   let progress = startProgress();
-
   const employeeFio = clientData.employeeFio || getEmployeeFio(clientData);
 
   fetch(API_URL, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
     body: JSON.stringify({
       inn: inn.value,
       income: income.value,
@@ -401,9 +430,10 @@ function send() {
     })
   })
   .then(r => r.text())
-  .then(() => {
-    clearInterval(progress);
+  .then(res => {
+    console.log("POST success:", res);
 
+    clearInterval(progress);
     progressFill.style.width = "100%";
     progressText.innerText = "100%";
 
@@ -419,7 +449,8 @@ function send() {
       validate();
     }, 500);
   })
-  .catch(() => {
+  .catch(error => {
+    console.log("POST error:", error);
     clearInterval(progress);
     sendingOverlay.style.display = "none";
     alert("Ошибка отправки");
