@@ -1,125 +1,172 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>TEST App</title>
+<title>UZA App</title>
 
 <style>
-body {margin:0;font-family:Arial;background:#0f172a;color:#fff;overflow-x:hidden;}
-.container {padding:15px;max-width:480px;margin:auto;}
 
-input, button {
+/* ===== BODY ===== */
+body {
+  margin:0;
+  font-family:Arial;
+  color:#fff;
+  overflow-x:hidden;
+
+  background: radial-gradient(circle at 20% 20%, #1e3a8a, transparent),
+              radial-gradient(circle at 80% 80%, #065f46, transparent),
+              #0f172a;
+}
+
+/* ===== CONTAINER ===== */
+.container {
+  padding:15px;
+  max-width:480px;
+  margin:auto;
+  animation:fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {opacity:0; transform:translateY(10px);}
+  to {opacity:1; transform:translateY(0);}
+}
+
+/* ===== INPUT ===== */
+input {
   width:100%;
   padding:14px;
   border-radius:12px;
-  border:none;
   margin-top:10px;
   font-size:16px;
+  background:#1e293b;
+  color:white;
+  border:1px solid transparent;
+  transition:0.2s;
 }
 
-input {background:#334155;color:white;}
-button {background:#22c55e;color:white;font-weight:bold;}
-
-.card {background:#1e293b;padding:15px;border-radius:15px;margin-top:10px;}
-
-.loader {text-align:center;margin-top:10px;}
-
-#appVersion {position:fixed;top:8px;right:12px;font-size:11px;opacity:0.5;}
-
-#sendingOverlay {
-position:fixed;top:0;left:0;width:100%;height:100%;
-background:rgba(0,0,0,0.85);display:none;
-justify-content:center;align-items:center;z-index:9999;
+input:focus {
+  border:1px solid #22c55e;
+  outline:none;
+  box-shadow:0 0 10px rgba(34,197,94,0.4);
 }
 
-.spinner {
-width:50px;height:50px;border:5px solid #334155;
-border-top:5px solid #22c55e;border-radius:50%;
-animation:spin 1s linear infinite;
+/* ===== BUTTON ===== */
+button {
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  margin-top:12px;
+  font-size:16px;
+  background: linear-gradient(135deg,#22c55e,#16a34a);
+  color:white;
+  font-weight:bold;
+  border:none;
+  transition:0.2s;
 }
 
-@keyframes spin {100%{transform:rotate(360deg);}}
+button:active { transform:scale(0.97); }
+button:hover { box-shadow:0 0 15px rgba(34,197,94,0.5); }
 
-/* popup */
-#successPopup {
-position:fixed;top:0;left:0;width:100%;height:100%;
-background:rgba(0,0,0,0.7);display:none;
-justify-content:center;align-items:center;
-z-index:9999;
+/* ===== CARD ===== */
+.card {
+  background: rgba(30,41,59,0.7);
+  backdrop-filter: blur(10px);
+  padding:15px;
+  border-radius:15px;
+  margin-top:10px;
+  border:1px solid rgba(255,255,255,0.05);
 }
 
-.popupBox {
-background:#22c55e;padding:20px;border-radius:15px;
-text-align:center;font-size:16px;
-}
-
-/* splash */
+/* ===== SPLASH ===== */
 #splashScreen {
-position:fixed;
-top:0;left:0;width:100%;height:100%;
-background:#0f172a;
-display:flex;justify-content:center;align-items:center;
-z-index:99999;
-transition:opacity 0.6s;
+  position:fixed;
+  top:0;left:0;width:100%;height:100%;
+  background:#0f172a;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:99999;
+  transition:opacity 0.6s;
 }
 
 #splashScreen.hide {opacity:0;}
 
 .logo {
-font-size:42px;
-font-weight:bold;
-background:linear-gradient(45deg,#22c55e,#3b82f6);
--webkit-background-clip:text;
-color:transparent;
+  font-size:42px;
+  font-weight:bold;
+  background:linear-gradient(90deg,#22c55e,#3b82f6,#22c55e);
+  background-size:200% 200%;
+  -webkit-background-clip:text;
+  color:transparent;
+  animation:gradientMove 3s infinite linear;
 }
 
+@keyframes gradientMove {
+  0% {background-position:0%}
+  100% {background-position:200%}
+}
+
+/* ===== LOADER ===== */
 .loaderCircle {
-width:40px;height:40px;
-border:4px solid #334155;
-border-top:4px solid #22c55e;
-border-radius:50%;
-animation:spin 1s linear infinite;
-margin-top:20px;
+  width:40px;height:40px;
+  border:4px solid #334155;
+  border-top:4px solid #22c55e;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+  margin-top:20px;
 }
 
-/* pull */
-#pullRefresh {
-text-align:center;
-font-size:13px;
-opacity:0.6;
-transform:translateY(-40px);
-transition:0.3s;
+@keyframes spin {100%{transform:rotate(360deg);}}
+
+/* ===== OVERLAY ===== */
+#sendingOverlay {
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.85);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
 }
+
+/* ===== SUCCESS ===== */
+#successPopup {
+  position:fixed;
+  top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.7);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+}
+
+.popupBox {
+  background:#22c55e;
+  padding:20px;
+  border-radius:15px;
+  text-align:center;
+  font-size:16px;
+}
+
 </style>
-
 </head>
 
 <body>
 
-<!-- SPLASH -->
 <div id="splashScreen">
   <div>
     <div class="logo">UZA</div>
-    <div style="margin-top:10px;">Добро пожаловать Тестовая версия</div>
+    <div style="margin-top:10px;">Добро пожаловать</div>
     <div class="loaderCircle"></div>
   </div>
 </div>
 
-<audio id="startSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_6c4e9c4f57.mp3"></audio>
-
-<div id="appVersion">v1.3</div>
-
 <div class="container">
-
-<div id="pullRefresh">⬇ Потяните вниз</div>
 
 <h2>📝 Портал подачи заявок</h2>
 
-<input type="tel" id="inn" placeholder="Введите свой ИНН" maxlength="9">
+<input type="tel" id="inn" placeholder="Введите ИНН" maxlength="9">
 
-<div id="searchLoader" class="loader" style="display:none;">🔍 Поиск...</div>
 <div id="client"></div>
 
 <input type="tel" id="income" placeholder="Введите доход">
@@ -132,19 +179,17 @@ transition:0.3s;
 </div>
 
 <div id="sendingOverlay">
-<div>
-<div class="spinner"></div>
-<div style="margin-top:10px;">Отправка...</div>
-</div>
+  <div>
+    <div class="loaderCircle"></div>
+    <div style="margin-top:10px;">Отправка...</div>
+  </div>
 </div>
 
 <div id="successPopup">
-<div class="popupBox">
-🎉<br><br>Ваша заявка успешно отправлена!
+  <div class="popupBox">
+    🎉<br><br>Заявка отправлена!
+  </div>
 </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script>
 
@@ -152,54 +197,57 @@ const API_URL = "https://script.google.com/macros/s/AKfycbyajQuG9u4H-O78Ox0yHeMs
 
 let clientData = null;
 
-// splash
+/* splash */
 window.addEventListener("load",()=>{
-  setTimeout(()=>{startSound.play().catch(()=>{});},300);
-  setTimeout(()=>{splashScreen.classList.add("hide");},1800);
-  setTimeout(()=>{splashScreen.style.display="none";},2500);
+  setTimeout(()=>{splashScreen.classList.add("hide");},1500);
+  setTimeout(()=>{splashScreen.style.display="none";},2200);
 });
 
-// месяц
+/* месяц */
 document.addEventListener("DOMContentLoaded",()=>{
-  const m=month;
   const now=new Date();
-
-  m.max = now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,'0');
-
-  const prev=new Date(now.getFullYear(),now.getMonth()-1,1);
-  m.value = prev.getFullYear()+"-"+String(prev.getMonth()+1).padStart(2,'0');
+  month.max = now.toISOString().slice(0,7);
 });
 
-// поиск
+/* поиск клиента */
 inn.addEventListener("input",()=>{
-  if(inn.value.length===9) searchAuto(inn.value);
+  if(inn.value.length===9){
+    client.innerHTML="🔍 Поиск...";
+    
+    fetch(API_URL+"?inn="+inn.value)
+    .then(r=>r.json())
+    .then(data=>{
+      if(data.found){
+        clientData=data;
+        client.innerHTML=`
+          <div class="card">
+            👤 ${data.fio}<br>
+            📍 ${data.address}<br>
+            📞 ${data.phone}
+          </div>`;
+      } else {
+        clientData=null;
+        client.innerHTML=`<div class="card" style="background:#7f1d1d">❌ Не найдено</div>`;
+      }
+    })
+    .catch(()=>{
+      client.innerHTML=`<div class="card" style="background:#7f1d1d">Ошибка соединения</div>`;
+    });
+  }
 });
 
-function searchAuto(val){
-  searchLoader.style.display="block";
-  fetch(API_URL+"?inn="+val)
-  .then(r=>r.json())
-  .then(data=>{
-    searchLoader.style.display="none";
-    if(data.found){
-      clientData=data;
-      client.innerHTML=`<div class="card">${data.fio}<br>${data.address}<br>${data.phone}</div>`;
-    } else {
-      client.innerHTML="❌ Не найдено";
-      clientData=null;
-    }
-  });
-}
-
-// вибрация
-function vibrate(){
-  if(navigator.vibrate) navigator.vibrate([200,100,200]);
-}
-
-// отправка
+/* отправка */
 function send(){
 
-  if(!clientData){alert("Введите ИНН");return;}
+  if(!clientData){
+    client.innerHTML=`<div class="card" style="background:#7f1d1d">Введите корректный ИНН</div>`;
+    return;
+  }
+
+  if(!income.value){
+    client.innerHTML=`<div class="card" style="background:#7f1d1d">Введите доход</div>`;
+    return;
+  }
 
   sendingOverlay.style.display="flex";
 
@@ -211,55 +259,25 @@ function send(){
       month:month.value,
       fio:clientData.fio,
       address:clientData.address,
-      phone:clientData.phone,
-      employee_fio: clientData.employee_fio,
-      employee_inn: clientData.employee_inn,
-      employee_sin: clientData.employee_sin,
-      employee_salary: clientData.employee_salary,
-      employee_date: clientData.employee_date
+      phone:clientData.phone
     })
   })
-  .then(r=>r.text())
   .then(()=>{
     sendingOverlay.style.display="none";
-    confetti({particleCount:120,spread:70});
-    vibrate();
     successPopup.style.display="flex";
-    setTimeout(()=>successPopup.style.display="none",2500);
+
+    setTimeout(()=>successPopup.style.display="none",2000);
 
     inn.value="";
     income.value="";
     client.innerHTML="";
     clientData=null;
+  })
+  .catch(()=>{
+    sendingOverlay.style.display="none";
+    client.innerHTML=`<div class="card" style="background:#7f1d1d">Ошибка отправки</div>`;
   });
-
 }
-
-// pull refresh
-let startY=0,currentY=0,pulling=false;
-
-document.addEventListener("touchstart",e=>{
-  if(window.scrollY===0){
-    startY=e.touches[0].clientY;
-    pulling=true;
-  }
-});
-
-document.addEventListener("touchmove",e=>{
-  if(!pulling)return;
-  currentY=e.touches[0].clientY;
-  let diff=currentY-startY;
-
-  if(diff>80){
-    pullRefresh.innerHTML="🔄 Отпустите";
-  }
-});
-
-document.addEventListener("touchend",()=>{
-  if(!pulling)return;
-  if(currentY-startY>80) location.reload();
-  pulling=false;
-});
 
 </script>
 
