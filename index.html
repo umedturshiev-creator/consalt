@@ -448,8 +448,11 @@ function setLang(l) {
   passwordInput.placeholder = tr.password;
   loginBtn.innerText = tr.enter;
   document.querySelector('#loginScreen button[style*="475569"]').innerText = tr.close;
+  }
 
-  adminLoginBtn.innerText = tr.loginBtn;
+  if (document.getElementById("topLoginBtn")) {
+  topLoginBtn.innerText = "🔐 " + tr.enter;
+}
   refreshBtn.innerText = tr.refresh;
   logoutBtn.innerText = tr.logout;
   applicationsTitle.innerText = tr.applications;
