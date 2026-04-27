@@ -40,6 +40,24 @@ body {
   margin: 10px auto;
 }
 
+#toggleFormIcon {
+  position: fixed;
+  top: 60px;
+  right: 15px;
+  background: rgba(30,41,59,0.9);
+  padding: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 9996;
+  font-size: 18px;
+  border: 1px solid rgba(255,255,255,0.1);
+  transition: 0.2s;
+}
+
+#toggleFormIcon:hover {
+  background: rgba(34,197,94,0.8);
+}
+  
 @keyframes spin {
   100% { transform: rotate(360deg); }
 }
@@ -300,8 +318,8 @@ button:disabled {
   </div>
 
   <div id="adminPanel">
+    <div id="toggleFormIcon" onclick="toggleRequestForm()">📝</div>
     <button id="refreshBtn" onclick="loadApplications()">📋 Обновить список заявок</button>
-    <button id="toggleFormBtn" onclick="toggleRequestForm()" style="background:#475569;">📝 Показать / скрыть форму заявки</button>
     <button id="logoutBtn" onclick="logout()" style="background:#ef4444;">Выйти</button>
 
     <h3 id="applicationsTitle">📋 Список заявок</h3>
@@ -641,8 +659,17 @@ function send() {
 
 function toggleRequestForm() {
   const block = $("requestFormBlock");
+  const icon = $("toggleFormIcon");
+
   if (!block) return;
-  block.style.display = block.style.display === "none" ? "block" : "none";
+
+  if (block.style.display === "none") {
+    block.style.display = "block";
+    if (icon) icon.innerText = "❌";
+  } else {
+    block.style.display = "none";
+    if (icon) icon.innerText = "📝";
+  }
 }
 
 function showLogin() {
@@ -756,6 +783,7 @@ function filterApplications() {
 
 function updateDashboard(items) {
   const today = new Date().toLocaleDateString();
+
   let todayCount = 0;
   let sum = 0;
   let done = 0;
@@ -765,16 +793,23 @@ function updateDashboard(items) {
   items.forEach(item => {
     const itemDate = String(item.date || "");
     if (itemDate.includes(today)) todayCount++;
+
     sum += Number(String(item.income || "0").replace(/\D/g, "")) || 0;
-    if (item.status === "Ð ÐµÑÐµÐ½") done++;
-    else unresolved++;
+
+    const status = String(item.status || "").toLowerCase().trim();
+
+    if (status === "решен" || status === "ҳал шуд") {
+      done++;
+    } else {
+      unresolved++;
+    }
   });
 
-  if ($("dashToday")) $("dashToday").innerText = todayCount;
-  if ($("dashSum")) $("dashSum").innerText = sum;
-  if ($("dashDone")) $("dashDone").innerText = done;
-  if ($("dashTotal")) $("dashTotal").innerText = total;
-  if ($("dashUnresolved")) $("dashUnresolved").innerText = unresolved;
+  $("dashToday").innerText = todayCount;
+  $("dashSum").innerText = sum;
+  $("dashDone").innerText = done;
+  $("dashTotal").innerText = total;
+  $("dashUnresolved").innerText = unresolved;
 }
 
 function renderApplications(items) {
