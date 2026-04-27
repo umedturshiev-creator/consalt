@@ -387,6 +387,43 @@ button:disabled {
   #adminPanel { display:block !important; }
   .card { background:#fff; color:#000; border:1px solid #ccc; box-shadow:none; }
 }
+
+.statusBadge {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-block;
+}
+
+/* Новый */
+.status-new {
+  background: rgba(148,163,184,0.2);
+  color: #cbd5f5;
+  border: 1px solid rgba(148,163,184,0.4);
+}
+
+/* В процессе */
+.status-process {
+  background: rgba(250,204,21,0.15);
+  color: #fde047;
+  border: 1px solid rgba(250,204,21,0.4);
+}
+
+/* Решен */
+.status-done {
+  background: rgba(34,197,94,0.15);
+  color: #bbf7d0;
+  border: 1px solid rgba(34,197,94,0.4);
+}
+
+/* Отменен */
+.status-cancel {
+  background: rgba(239,68,68,0.15);
+  color: #fecaca;
+  border: 1px solid rgba(239,68,68,0.4);
+}
+  
 </style>
 </head>
 
@@ -1023,9 +1060,12 @@ function renderApplications(items) {
       <div class="applicationMain">
         <div>
           <div class="applicationName">👤 ${highlightMatch(item.fio || "-")}</div>
-          <div>🆔 ИНН: <b>${highlightMatch(item.inn || "-")}</b></div>
+<div>🆔 ИНН: <b>${highlightMatch(item.inn || "-")}</b></div>
         </div>
-        <div class="statusBadge">${escapeHtml(translateStatus(item.status))}</div>
+
+        <div class="statusBadge ${getStatusClass(item.status)}">
+          ${escapeHtml(translateStatus(item.status))}
+        </div>
       </div>
 
       <div class="appDetails">
@@ -1131,6 +1171,17 @@ function exportExcel() {
   link.download = "applications.csv";
   link.click();
   URL.revokeObjectURL(link.href);
+}
+
+function getStatusClass(status) {
+  const s = String(status || "").toLowerCase().trim();
+
+  if (s === "новый") return "status-new";
+  if (s === "в процессе") return "status-process";
+  if (s === "решен" || s === "решён" || s === "ҳал шуд") return "status-done";
+  if (s === "отменен") return "status-cancel";
+
+  return "";
 }
 
 function exportPdf() {
