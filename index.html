@@ -186,7 +186,20 @@ button:disabled {
   </div>
 </div>
 
-<div class="container">
+<div id="loginScreen" class="container" style="display:none;">
+  <div class="card">
+    <h2>🔐 Вход в программу</h2>
+
+    <input id="loginInput" placeholder="Логин">
+    <input id="passwordInput" type="password" placeholder="Пароль">
+
+    <button onclick="login()">Войти</button>
+
+    <div id="loginError" style="color:#ef4444;margin-top:10px;"></div>
+  </div>
+</div>  
+  
+<div class="container" id="appScreen" style="display:none;">
 
   <div class="langSwitch">
     <div class="langBtn" data-lang="ru">RU</div>
@@ -215,6 +228,12 @@ button:disabled {
   <input type="month" id="month">
 
   <button id="submitBtn" onclick="send()" disabled></button>
+
+  <button onclick="loadApplications()">📋 Обновить список заявок</button>
+<button onclick="logout()" style="background:#ef4444;">Выйти</button>
+
+<h3>📋 Список заявок</h3>
+<div id="applicationsList"></div>
 
 </div>
 
@@ -308,6 +327,7 @@ document.querySelectorAll(".langBtn").forEach(btn => {
 window.onload = () => {
   setTimeout(() => {
     splashScreen.style.display = "none";
+    checkLogin();
   }, 1500);
 };
 
@@ -456,6 +476,104 @@ function send() {
     alert("Ошибка отправки");
   });
 }
+
+function login() {
+  const login = loginInput.value.trim();
+  const password = passwordInput.value.trim();
+
+  loginError.innerText = "";
+
+  if (!login || !password) {
+    loginError.innerText = "Введите логин и пароль";
+    return;
+  }
+
+  fetch(API_URL + "?action=login&login=" + encodeURIComponent(login) + "&password=" + encodeURIComponent(password))
+    .then(r => r.json())
+    .then(d => {
+      if (d.success) {
+        localStorage.setItem("authToken", d.token);
+        localStorage.setItem("userName", d.name);
+
+        loginScreen.style.display = "none";
+        appScreen.style.display = "block";
+
+        loadApplications();
+      } else {
+        loginError.innerText = d.error || "Ошибка входа";
+      }
+    })
+    .catch(() => {
+      loginError.innerText = "Ошибка подключения";
+    });
+}
+
+function checkLogin() {
+  const token = localStorage.getItem("authToken");
+
+  if (token) {
+    loginScreen.style.display = "none";
+    appScreen.style.display = "block";
+    loadApplications();
+  } else {
+    loginScreen.style.display = "block";
+    appScreen.style.display = "none";
+  }
+}
+
+function logout() {
+  localStorage.removeItem("authToken");
+  localStorage.removeItem("userName");
+
+  loginScreen.style.display = "block";
+  appScreen.style.display = "none";
+}
+
+function loadApplications() {
+  const token = localStorage.getItem("authToken");
+
+  applicationsList.innerHTML = '<div class="searchSpinner"></div>';
+
+  fetch(API_URL + "?action=list&token=" + encodeURIComponent(token))
+    .then(r => r.json())
+    .then(d => {
+      if (!d.success) {
+        applicationsList.innerHTML = `
+          <div style="color:#ef4444;font-weight:bold;">
+            ${escapeHtml(d.error || "Нет доступа")}
+          </div>
+        `;
+        return;
+      }
+
+      if (!d.items.length) {
+        applicationsList.innerHTML = `
+          <div class="card">Заявок пока нет</div>
+        `;
+        return;
+      }
+
+      applicationsList.innerHTML = d.items.map(item => `
+        <div class="card">
+          📅 ${escapeHtml(item.date || "-")}<br>
+          👤 <b>${escapeHtml(item.fio || "-")}</b><br>
+          🆔 ИНН: ${escapeHtml(item.inn || "-")}<br>
+          💰 Доход: ${escapeHtml(item.income || "-")}<br>
+          📞 ${escapeHtml(item.phone || "-")}<br>
+          📊 Статус: <b>${escapeHtml(item.status || "-")}</b><br>
+          🧑‍💼 Сотрудник: ${escapeHtml(item.employee || "-")}
+        </div>
+      `).join("");
+    })
+    .catch(() => {
+      applicationsList.innerHTML = `
+        <div style="color:#ef4444;font-weight:bold;">
+          Ошибка загрузки заявок
+        </div>
+      `;
+    });
+}
+  
 </script>
 
 </body>
