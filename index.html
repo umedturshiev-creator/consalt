@@ -877,13 +877,33 @@ function loadApplications() {
   $("applicationsList").innerHTML = '<div class="searchSpinner"></div>';
 
   fetch(API_URL + "?action=list&token=" + encodeURIComponent(token || ""))
-    .then(r => r.json())
-    .then(d => {
+    .then(r => r.text())
+    .then(text => {
+      let d;
 
-      // ❗ ВАЖНО: убрали проверку success
-      if (!d || !d.items) {
+      try {
+        d = JSON.parse(text);
+      } catch (e) {
         $("applicationsList").innerHTML =
-          `<div style="color:#ef4444;font-weight:bold;">${escapeHtml(x.loadError)}</div>`;
+          `<div style="color:#ef4444;font-weight:bold;">
+            Ошибка ответа сервера:<br>${escapeHtml(text)}
+          </div>`;
+        return;
+      }
+
+      if (d.success === false) {
+        $("applicationsList").innerHTML =
+          `<div style="color:#ef4444;font-weight:bold;">
+            ${escapeHtml(d.error || x.noAccess)}
+          </div>`;
+        return;
+      }
+
+      if (!d.items) {
+        $("applicationsList").innerHTML =
+          `<div style="color:#ef4444;font-weight:bold;">
+            ${escapeHtml(x.loadError)}
+          </div>`;
         return;
       }
 
@@ -893,9 +913,11 @@ function loadApplications() {
       updateDashboard(filtered);
       renderApplications(filtered);
     })
-    .catch(() => {
+    .catch(error => {
       $("applicationsList").innerHTML =
-        `<div style="color:#ef4444;font-weight:bold;">${escapeHtml(x.loadError)}</div>`;
+        `<div style="color:#ef4444;font-weight:bold;">
+          ${escapeHtml(x.loadError)}<br>${escapeHtml(error.message)}
+        </div>`;
     });
 }
 
