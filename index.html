@@ -873,22 +873,29 @@ function logout() {
 function loadApplications() {
   const token = localStorage.getItem("authToken");
   const x = tr();
+
   $("applicationsList").innerHTML = '<div class="searchSpinner"></div>';
 
   fetch(API_URL + "?action=list&token=" + encodeURIComponent(token || ""))
     .then(r => r.json())
     .then(d => {
-      if (!d.success) {
-        $("applicationsList").innerHTML = `<div style="color:#ef4444;font-weight:bold;">${escapeHtml(d.error || x.noAccess)}</div>`;
+
+      // ❗ ВАЖНО: убрали проверку success
+      if (!d || !d.items) {
+        $("applicationsList").innerHTML =
+          `<div style="color:#ef4444;font-weight:bold;">${escapeHtml(x.loadError)}</div>`;
         return;
       }
+
       allApplications = d.items || [];
+
       const filtered = getCurrentFilteredApplications();
       updateDashboard(filtered);
       renderApplications(filtered);
     })
     .catch(() => {
-      $("applicationsList").innerHTML = `<div style="color:#ef4444;font-weight:bold;">${escapeHtml(x.loadError)}</div>`;
+      $("applicationsList").innerHTML =
+        `<div style="color:#ef4444;font-weight:bold;">${escapeHtml(x.loadError)}</div>`;
     });
 }
 
