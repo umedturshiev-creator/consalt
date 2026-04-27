@@ -495,6 +495,11 @@ button:disabled {
       <div class="card"><b id="dashDoneLabel">Решено</b><br><span id="dashDone">0</span></div>
       <div class="card"><b id="dashTotalLabel">Всего</b><br><span id="dashTotal">0</span></div>
       <div class="card"><b id="dashUnresolvedLabel">Нерешенные</b><br><span id="dashUnresolved">0</span></div>
+
+      <div class="card">
+  <b id="dashCancelledLabel">Отмененные</b><br>
+  <span id="dashCancelled">0</span>
+</div>
     </div>
 
     <input id="applicationSearch" placeholder="Поиск по ИНН / ФИО" oninput="filterApplications()">
@@ -569,7 +574,8 @@ const translations = {
     status_new: "Новый",
     status_process: "В процессе",
     status_done: "Решен",
-    status_cancel: "Отменен"
+    status_cancel: "Отменен",
+    dashboardCancelled: "Отмененные",
   },
   tj: {
     title: "📝 Портали дархостҳо",
@@ -619,7 +625,8 @@ const translations = {
     status_new: "Нав",
     status_process: "Дар раванди кор",
     status_done: "Ҳал шуд",
-    status_cancel: "Бекор шуд"
+    status_cancel: "Бекор шуд",
+    dashboardCancelled: "Бекоршуда",
   }
 };
 
@@ -666,6 +673,7 @@ function setLang(lang) {
   setText("exportPdfBtn", x.exportPdf);
   setText("dashTotalLabel", x.dashboardTotal);
   setText("dashUnresolvedLabel", x.dashboardUnresolved);
+  setText("dashCancelledLabel", x.dashboardCancelled);
   localStorage.setItem("lang", lang);
 }
 
@@ -1015,6 +1023,7 @@ function updateDashboard(items) {
   let done = 0;
   let total = items.length;
   let unresolved = 0;
+  let cancelled = 0;
 
   const today = new Date().toLocaleDateString();
 
@@ -1029,12 +1038,10 @@ function updateDashboard(items) {
 
     const status = String(item.status || "").toLowerCase().trim();
 
-    if (
-      status === "решен" ||
-      status === "решён" ||
-      status === "ҳал шуд"
-    ) {
+    if (status === "решен" || status === "решён" || status === "ҳал шуд") {
       done++;
+    } else if (status === "отменен" || status === "бекор шуд") {
+      cancelled++;
     } else {
       unresolved++;
     }
@@ -1045,6 +1052,11 @@ function updateDashboard(items) {
   $("dashDone").innerText = done;
   $("dashTotal").innerText = total;
   $("dashUnresolved").innerText = unresolved;
+
+  // 👇 новый блок (если добавишь в HTML)
+  if ($("dashCancelled")) {
+    $("dashCancelled").innerText = cancelled;
+  }
 }
   
 function renderApplications(items) {
