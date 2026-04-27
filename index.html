@@ -632,6 +632,18 @@ function setLang(lang) {
   localStorage.setItem("lang", lang);
 }
 
+function translateStatus(status) {
+  const x = tr();
+  const s = String(status || "").toLowerCase().trim();
+
+  if (s === "новый") return x.status_new;
+  if (s === "в процессе") return x.status_process;
+  if (s === "решен" || s === "решён") return x.status_done;
+  if (s === "отменен") return x.status_cancel;
+
+  return status; // fallback
+}
+  
 function escapeHtml(value) {
   if (value === null || value === undefined) return "";
   return String(value)
@@ -1013,7 +1025,7 @@ function renderApplications(items) {
           <div class="applicationName">👤 ${highlightMatch(item.fio || "-")}</div>
           <div>🆔 ИНН: <b>${highlightMatch(item.inn || "-")}</b></div>
         </div>
-        <div class="statusBadge">${escapeHtml(item.status || "-")}</div>
+        <div class="statusBadge">${escapeHtml(translateStatus(item.status))}</div>
       </div>
 
       <div class="appDetails">
