@@ -205,7 +205,7 @@ button:disabled {
 
 .dashboardGrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 10px;
   margin-top: 10px;
 }
@@ -229,6 +229,11 @@ button:disabled {
 }
 
 .adminActions button { margin-top: 10px; }
+
+ (max-width: 600px) {
+  .dashboardGrid { grid-template-columns: repeat(2, 1fr); }
+}
+
 
 @media print {
   body { background: #fff; color: #000; }
@@ -271,10 +276,12 @@ button:disabled {
 
   <div class="progressBox"><div id="progressBar"></div></div>
 
+  <div id="requestFormBlock">
+
   <div class="header">
     <div>
       <span id="title">📝 Портал подачи заявок</span><br>
-      <small id="appVersion" style="color:#94a3b8;font-size:12px;">v1.1.0</small>
+      <small id="appVersion" style="color:#94a3b8;font-size:12px;">v1.2.0</small>
     </div>
     <img src="logo.png" class="logo">
   </div>
@@ -290,8 +297,11 @@ button:disabled {
 
   <button id="submitBtn" onclick="send()" disabled>🚀 Отправить</button>
 
+  </div>
+
   <div id="adminPanel">
     <button id="refreshBtn" onclick="loadApplications()">📋 Обновить список заявок</button>
+    <button id="toggleFormBtn" onclick="toggleRequestForm()" style="background:#475569;">📝 Показать / скрыть форму заявки</button>
     <button id="logoutBtn" onclick="logout()" style="background:#ef4444;">Выйти</button>
 
     <h3 id="applicationsTitle">📋 Список заявок</h3>
@@ -300,6 +310,8 @@ button:disabled {
       <div class="card"><b id="dashTodayLabel">Сегодня</b><br><span id="dashToday">0</span></div>
       <div class="card"><b id="dashSumLabel">Сумма</b><br><span id="dashSum">0</span></div>
       <div class="card"><b id="dashDoneLabel">Решено</b><br><span id="dashDone">0</span></div>
+      <div class="card"><b id="dashTotalLabel">Всего</b><br><span id="dashTotal">0</span></div>
+      <div class="card"><b id="dashUnresolvedLabel">Нерешенные</b><br><span id="dashUnresolved">0</span></div>
     </div>
 
     <input id="applicationSearch" placeholder="Поиск по ИНН / ФИО" oninput="filterApplications()">
@@ -358,6 +370,9 @@ const translations = {
     exportExcel: "📊 Экспорт Excel",
     exportPdf: "📄 Экспорт PDF",
     confirmStatus: "Вы уверены, что хотите изменить статус?",
+    toggleForm: "📝 Показать / скрыть форму заявки",
+    dashboardTotal: "Всего",
+    dashboardUnresolved: "Нерешенные",
     date: "Дата",
     fio: "ФИО",
     address: "Адрес",
@@ -405,6 +420,9 @@ const translations = {
     exportExcel: "📊 Содирот Excel",
     exportPdf: "📄 Содирот PDF",
     confirmStatus: "Шумо мутмаин ҳастед, ки ҳолатро иваз мекунед?",
+    toggleForm: "📝 Нишон / пинҳон кардани шакли дархост",
+    dashboardTotal: "Ҳамагӣ",
+    dashboardUnresolved: "Ҳалнашуда",
     date: "Сана",
     fio: "Ному насаб",
     address: "Суроға",
@@ -463,6 +481,9 @@ function setLang(lang) {
   setText("dashDoneLabel", x.dashboardDone);
   setText("exportExcelBtn", x.exportExcel);
   setText("exportPdfBtn", x.exportPdf);
+  setText("toggleFormBtn", x.toggleForm);
+  setText("dashTotalLabel", x.dashboardTotal);
+  setText("dashUnresolvedLabel", x.dashboardUnresolved);
   localStorage.setItem("lang", lang);
 }
 
@@ -618,6 +639,12 @@ function send() {
   });
 }
 
+function toggleRequestForm() {
+  const block = $("requestFormBlock");
+  if (!block) return;
+  block.style.display = block.style.display === "none" ? "block" : "none";
+}
+
 function showLogin() {
   $("loginScreen").style.display = "block";
   $("loginError").innerText = "";
@@ -654,6 +681,7 @@ function login() {
         $("loginScreen").style.display = "none";
         $("topLoginBtn").style.display = "none";
         $("adminPanel").style.display = "block";
+        if ($("requestFormBlock")) $("requestFormBlock").style.display = "none";
         loadApplications();
       } else {
         $("loginError").innerText = d.error || x.loginError;
@@ -671,6 +699,7 @@ function checkLogin() {
   if (token) {
     $("topLoginBtn").style.display = "none";
     $("adminPanel").style.display = "block";
+    if ($("requestFormBlock")) $("requestFormBlock").style.display = "none";
     loadApplications();
   } else {
     $("topLoginBtn").style.display = "block";
@@ -683,6 +712,7 @@ function logout() {
   localStorage.removeItem("userName");
   $("topLoginBtn").style.display = "block";
   $("adminPanel").style.display = "none";
+  if ($("requestFormBlock")) $("requestFormBlock").style.display = "block";
   $("applicationsList").innerHTML = "";
   allApplications = [];
 }
@@ -729,17 +759,22 @@ function updateDashboard(items) {
   let todayCount = 0;
   let sum = 0;
   let done = 0;
+  let total = items.length;
+  let unresolved = 0;
 
   items.forEach(item => {
     const itemDate = String(item.date || "");
     if (itemDate.includes(today)) todayCount++;
     sum += Number(String(item.income || "0").replace(/\D/g, "")) || 0;
-    if (item.status === "Решен") done++;
+    if (item.status === "Ð ÐµÑÐµÐ½") done++;
+    else unresolved++;
   });
 
-  $("dashToday").innerText = todayCount;
-  $("dashSum").innerText = sum;
-  $("dashDone").innerText = done;
+  if ($("dashToday")) $("dashToday").innerText = todayCount;
+  if ($("dashSum")) $("dashSum").innerText = sum;
+  if ($("dashDone")) $("dashDone").innerText = done;
+  if ($("dashTotal")) $("dashTotal").innerText = total;
+  if ($("dashUnresolved")) $("dashUnresolved").innerText = unresolved;
 }
 
 function renderApplications(items) {
@@ -855,10 +890,76 @@ function exportExcel() {
 }
 
 function exportPdf() {
-  const oldTitle = document.title;
-  document.title = "Applications";
-  window.print();
-  document.title = oldTitle;
+  const x = tr();
+  const rowsData = getCurrentFilteredApplications();
+
+  const rows = rowsData.map((item, index) => `
+    <tr>
+      <td>${index + 1}</td>
+      <td>${escapeHtml(item.date || "-")}</td>
+      <td>${escapeHtml(item.inn || "-")}</td>
+      <td>${escapeHtml(item.fio || "-")}</td>
+      <td>${escapeHtml(item.income || "-")}</td>
+      <td>${escapeHtml(item.phone || "-")}</td>
+      <td>${escapeHtml(item.status || "-")}</td>
+      <td>${escapeHtml(item.employee || "-")}</td>
+    </tr>
+  `).join("");
+
+  const printWindow = window.open("", "_blank");
+  if (!printWindow) {
+    alert("Ð Ð°Ð·ÑÐµÑÐ¸ÑÐµ Ð²ÑÐ¿Ð»ÑÐ²Ð°ÑÑÐ¸Ðµ Ð¾ÐºÐ½Ð° Ð´Ð»Ñ ÑÐºÑÐ¿Ð¾ÑÑÐ° PDF");
+    return;
+  }
+
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <title>${escapeHtml(x.applications)}</title>
+      <style>
+        body { font-family: Arial, sans-serif; padding: 20px; color: #111827; }
+        h2 { text-align: center; margin-bottom: 5px; }
+        .date { text-align: center; font-size: 12px; color: #6b7280; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        th { background: #1e293b; color: white; padding: 8px; border: 1px solid #cbd5e1; text-align: left; }
+        td { padding: 7px; border: 1px solid #cbd5e1; vertical-align: top; }
+        tr:nth-child(even) { background: #f8fafc; }
+        .footer { margin-top: 20px; font-size: 11px; color: #6b7280; text-align: right; }
+        @media print {
+          body { padding: 10px; }
+          table { page-break-inside: auto; }
+          tr { page-break-inside: avoid; page-break-after: auto; }
+        }
+      </style>
+    </head>
+    <body>
+      <h2>${escapeHtml(x.applications)}</h2>
+      <div class="date">${new Date().toLocaleString()}</div>
+      <table>
+        <thead>
+          <tr>
+            <th>â</th>
+            <th>${escapeHtml(x.date)}</th>
+            <th>ÐÐÐ</th>
+            <th>${escapeHtml(x.fio)}</th>
+            <th>${escapeHtml(x.income)}</th>
+            <th>${escapeHtml(x.phone)}</th>
+            <th>${escapeHtml(x.status)}</th>
+            <th>${escapeHtml(x.employee)}</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <div class="footer">UZA App â v1.2.0</div>
+      <script>
+        window.onload = function() { window.print(); };
+      <\/script>
+    </body>
+    </html>
+  `);
+  printWindow.document.close();
 }
 </script>
 </body>
