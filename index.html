@@ -474,12 +474,15 @@ document.querySelectorAll(".langBtn").forEach(btn => {
 });
 
 /* splash */
-window.onload = () => {
+window.addEventListener("load", () => {
   setTimeout(() => {
-    splashScreen.style.display = "none";
-    checkLogin();
+    document.getElementById("splashScreen").style.display = "none";
+
+    if (typeof checkLogin === "function") {
+      checkLogin();
+    }
   }, 1500);
-};
+});
 
 /* предыдущий месяц */
 const now = new Date();
@@ -681,11 +684,11 @@ function checkLogin() {
   loginScreen.style.display = "none";
 
   if (token) {
-    adminLoginBlock.style.display = "none";
+    topLoginBtn.style.display = "none";
     adminPanel.style.display = "block";
     loadApplications();
   } else {
-    adminLoginBlock.style.display = "block";
+    topLoginBtn.style.display = "block";
     adminPanel.style.display = "none";
   }
 }
