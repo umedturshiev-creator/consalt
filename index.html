@@ -44,9 +44,7 @@ body {
   100% { transform: rotate(360deg); }
 }
 
-.container {
-  padding: 15px;
-}
+.container { padding: 15px; }
 
 .header {
   display: flex;
@@ -55,9 +53,7 @@ body {
   padding: 15px;
 }
 
-.logo {
-  width: 40px;
-}
+.logo { width: 40px; }
 
 input, select {
   width: 100%;
@@ -140,9 +136,7 @@ button:disabled {
   cursor: pointer;
 }
 
-.langBtn.active {
-  background: #22c55e;
-}
+.langBtn.active { background: #22c55e; }
 
 #sendingOverlay {
   position: fixed;
@@ -182,9 +176,7 @@ button:disabled {
   padding-top: 70px;
 }
 
-#adminPanel {
-  display: none;
-}
+#adminPanel { display: none; }
 
 #topLoginBtn {
   position: fixed;
@@ -210,6 +202,40 @@ button:disabled {
   font-size: 13px;
   margin-top: 8px;
 }
+
+.dashboardGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.dashboardGrid .card {
+  text-align: center;
+  margin-top: 0;
+}
+
+.dashboardGrid span {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.adminActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.adminActions button { margin-top: 10px; }
+
+@media print {
+  body { background: #fff; color: #000; }
+  #topLoginBtn, #loginScreen, .langSwitch, .progressBox, .header, #inn, #income, #monthLabel, #month, #submitBtn, #refreshBtn, #logoutBtn, #applicationSearch, #exportExcelBtn, #exportPdfBtn, select, #sendingOverlay, #splashScreen { display:none !important; }
+  #adminPanel { display:block !important; }
+  .card { background:#fff; color:#000; border:1px solid #ccc; box-shadow:none; }
+}
 </style>
 </head>
 
@@ -229,32 +255,26 @@ button:disabled {
 <div id="loginScreen" class="container">
   <div class="card">
     <h2 id="loginTitleText">🔐 Вход в программу</h2>
-
     <input id="loginInput" placeholder="Логин">
     <input id="passwordInput" type="password" placeholder="Пароль">
-
     <button id="loginBtn" onclick="login()">Войти</button>
     <button id="closeLoginBtn" onclick="hideLogin()" style="background:#475569;">Закрыть</button>
-
     <div id="loginError" style="color:#ef4444;margin-top:10px;"></div>
   </div>
 </div>
 
 <div class="container" id="appScreen">
-
   <div class="langSwitch">
     <div class="langBtn" data-lang="ru">RU</div>
     <div class="langBtn" data-lang="tj">TJ</div>
   </div>
 
-  <div class="progressBox">
-    <div id="progressBar"></div>
-  </div>
+  <div class="progressBox"><div id="progressBar"></div></div>
 
   <div class="header">
     <div>
       <span id="title">📝 Портал подачи заявок</span><br>
-      <small id="appVersion" style="color:#94a3b8;font-size:12px;">v1.0.0</small>
+      <small id="appVersion" style="color:#94a3b8;font-size:12px;">v1.1.0</small>
     </div>
     <img src="logo.png" class="logo">
   </div>
@@ -275,17 +295,28 @@ button:disabled {
     <button id="logoutBtn" onclick="logout()" style="background:#ef4444;">Выйти</button>
 
     <h3 id="applicationsTitle">📋 Список заявок</h3>
+
+    <div id="adminDashboard" class="dashboardGrid">
+      <div class="card"><b id="dashTodayLabel">Сегодня</b><br><span id="dashToday">0</span></div>
+      <div class="card"><b id="dashSumLabel">Сумма</b><br><span id="dashSum">0</span></div>
+      <div class="card"><b id="dashDoneLabel">Решено</b><br><span id="dashDone">0</span></div>
+    </div>
+
+    <input id="applicationSearch" placeholder="Поиск по ИНН / ФИО" oninput="filterApplications()">
+
+    <div class="adminActions">
+      <button id="exportExcelBtn" onclick="exportExcel()">📊 Экспорт Excel</button>
+      <button id="exportPdfBtn" onclick="exportPdf()" style="background:#475569;">📄 Экспорт PDF</button>
+    </div>
+
     <div id="applicationsList"></div>
   </div>
-
 </div>
 
 <div id="sendingOverlay">
   <div class="sendBox">
     <div id="progressText">0%</div>
-    <div class="progressLine">
-      <div id="progressFill"></div>
-    </div>
+    <div class="progressLine"><div id="progressFill"></div></div>
   </div>
 </div>
 
@@ -319,6 +350,14 @@ const translations = {
     loadError: "Ошибка загрузки заявок",
     statusError: "Ошибка изменения статуса",
     saved: "Сохранено",
+    loginLoading: "Вход выполняется...",
+    searchApplications: "Поиск по ИНН / ФИО",
+    dashboardToday: "Сегодня",
+    dashboardSum: "Сумма",
+    dashboardDone: "Решено",
+    exportExcel: "📊 Экспорт Excel",
+    exportPdf: "📄 Экспорт PDF",
+    confirmStatus: "Вы уверены, что хотите изменить статус?",
     date: "Дата",
     fio: "ФИО",
     address: "Адрес",
@@ -358,6 +397,14 @@ const translations = {
     loadError: "Хатои боркунии дархостҳо",
     statusError: "Хатои иваз кардани ҳолат",
     saved: "Сабт шуд",
+    loginLoading: "Вуруд иҷро шуда истодааст...",
+    searchApplications: "Ҷустуҷӯ аз рӯи РМА / Ному насаб",
+    dashboardToday: "Имрӯз",
+    dashboardSum: "Маблағ",
+    dashboardDone: "Ҳал шуд",
+    exportExcel: "📊 Содирот Excel",
+    exportPdf: "📄 Содирот PDF",
+    confirmStatus: "Шумо мутмаин ҳастед, ки ҳолатро иваз мекунед?",
     date: "Сана",
     fio: "Ному насаб",
     address: "Суроға",
@@ -376,18 +423,11 @@ const translations = {
 };
 
 let clientData = null;
+let allApplications = [];
 
-function $(id) {
-  return document.getElementById(id);
-}
-
-function currentLang() {
-  return localStorage.getItem("lang") || "ru";
-}
-
-function tr() {
-  return translations[currentLang()] || translations.ru;
-}
+function $(id) { return document.getElementById(id); }
+function currentLang() { return localStorage.getItem("lang") || "ru"; }
+function tr() { return translations[currentLang()] || translations.ru; }
 
 function setText(id, text) {
   const el = $(id);
@@ -401,27 +441,28 @@ function setPlaceholder(id, text) {
 
 function setLang(lang) {
   const x = translations[lang] || translations.ru;
-
   setText("title", x.title);
   setPlaceholder("inn", x.inn);
   setPlaceholder("income", x.income);
   setText("monthLabel", "📅 " + x.month);
   setText("submitBtn", x.send);
-
   setText("splashTitle", x.splash);
   setText("splashSub", x.sub);
-
   setText("loginTitleText", x.loginTitle);
   setPlaceholder("loginInput", x.login);
   setPlaceholder("passwordInput", x.password);
   setText("loginBtn", x.enter);
   setText("closeLoginBtn", x.close);
-
   setText("topLoginBtn", "🔐 " + x.enter);
   setText("refreshBtn", x.refresh);
   setText("logoutBtn", x.logout);
   setText("applicationsTitle", x.applications);
-
+  setPlaceholder("applicationSearch", x.searchApplications);
+  setText("dashTodayLabel", x.dashboardToday);
+  setText("dashSumLabel", x.dashboardSum);
+  setText("dashDoneLabel", x.dashboardDone);
+  setText("exportExcelBtn", x.exportExcel);
+  setText("exportPdfBtn", x.exportPdf);
   localStorage.setItem("lang", lang);
 }
 
@@ -436,15 +477,7 @@ function escapeHtml(value) {
 }
 
 function getEmployeeFio(data) {
-  return data.employeeFio ||
-         data.employee ||
-         data.sotrudnik ||
-         data.fio_sotrudnika ||
-         data.sotrudnikFio ||
-         data.employee_name ||
-         data.manager ||
-         data.sotrudnik_name ||
-         "";
+  return data.employeeFio || data.employee || data.sotrudnik || data.fio_sotrudnika || data.sotrudnikFio || data.employee_name || data.manager || data.sotrudnik_name || "";
 }
 
 function initApp() {
@@ -456,7 +489,10 @@ function initApp() {
       document.querySelectorAll(".langBtn").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
       setLang(btn.dataset.lang);
-      if ($("adminPanel").style.display !== "none") loadApplications();
+      if ($("adminPanel").style.display !== "none") {
+        renderApplications(getCurrentFilteredApplications());
+        updateDashboard(getCurrentFilteredApplications());
+      }
     };
   });
 
@@ -489,7 +525,6 @@ $("income").oninput = () => {
 
 $("inn").oninput = () => {
   $("inn").value = $("inn").value.replace(/\D/g, "").slice(0, 9);
-
   clientData = null;
   $("client").innerHTML = "";
   $("searchStatus").innerHTML = "";
@@ -506,9 +541,7 @@ $("inn").oninput = () => {
         if (d && d.found) {
           const employeeFio = getEmployeeFio(d);
           clientData = { ...d, employeeFio };
-
           $("searchStatus").innerHTML = `<div style="color:#22c55e;font-weight:bold;">✅ ИНН найден</div>`;
-
           $("client").innerHTML = `
             <div class="card">
               👤 <b>${escapeHtml(d.fio || "")}</b><br>
@@ -520,7 +553,6 @@ $("inn").oninput = () => {
         } else {
           $("searchStatus").innerHTML = `<div style="color:#ef4444;font-weight:bold;">❌ ИНН не найден</div>`;
         }
-
         validate();
       })
       .catch(() => {
@@ -543,11 +575,9 @@ function startProgress() {
 
 function send() {
   if (!clientData) return;
-
   $("sendingOverlay").style.display = "flex";
   $("progressFill").style.width = "0%";
   $("progressText").innerText = "0%";
-
   const progress = startProgress();
   const employeeFio = clientData.employeeFio || getEmployeeFio(clientData);
 
@@ -569,18 +599,15 @@ function send() {
     clearInterval(progress);
     $("progressFill").style.width = "100%";
     $("progressText").innerText = "100%";
-
     setTimeout(() => {
       $("sendingOverlay").style.display = "none";
       if (typeof confetti === "function") confetti({ particleCount: 150, spread: 90 });
-
       $("inn").value = "";
       $("income").value = "";
       $("client").innerHTML = "";
       $("searchStatus").innerHTML = "";
       clientData = null;
       validate();
-
       if ($("adminPanel").style.display !== "none") loadApplications();
     }, 500);
   })
@@ -605,7 +632,6 @@ function login() {
   const userLogin = $("loginInput").value.trim();
   const password = $("passwordInput").value.trim();
   const x = tr();
-
   $("loginError").innerText = "";
 
   if (!userLogin || !password) {
@@ -613,30 +639,35 @@ function login() {
     return;
   }
 
+  $("loginBtn").disabled = true;
+  $("loginBtn").innerText = x.loginLoading;
+
   fetch(API_URL + "?action=login&login=" + encodeURIComponent(userLogin) + "&password=" + encodeURIComponent(password))
     .then(r => r.json())
     .then(d => {
+      $("loginBtn").disabled = false;
+      $("loginBtn").innerText = x.enter;
+
       if (d.success) {
         localStorage.setItem("authToken", d.token);
         localStorage.setItem("userName", d.name || userLogin);
-
         $("loginScreen").style.display = "none";
         $("topLoginBtn").style.display = "none";
         $("adminPanel").style.display = "block";
-
         loadApplications();
       } else {
         $("loginError").innerText = d.error || x.loginError;
       }
     })
     .catch(() => {
+      $("loginBtn").disabled = false;
+      $("loginBtn").innerText = x.enter;
       $("loginError").innerText = x.connectionError;
     });
 }
 
 function checkLogin() {
   const token = localStorage.getItem("authToken");
-
   if (token) {
     $("topLoginBtn").style.display = "none";
     $("adminPanel").style.display = "block";
@@ -650,16 +681,15 @@ function checkLogin() {
 function logout() {
   localStorage.removeItem("authToken");
   localStorage.removeItem("userName");
-
   $("topLoginBtn").style.display = "block";
   $("adminPanel").style.display = "none";
   $("applicationsList").innerHTML = "";
+  allApplications = [];
 }
 
 function loadApplications() {
   const token = localStorage.getItem("authToken");
   const x = tr();
-
   $("applicationsList").innerHTML = '<div class="searchSpinner"></div>';
 
   fetch(API_URL + "?action=list&token=" + encodeURIComponent(token || ""))
@@ -669,46 +699,91 @@ function loadApplications() {
         $("applicationsList").innerHTML = `<div style="color:#ef4444;font-weight:bold;">${escapeHtml(d.error || x.noAccess)}</div>`;
         return;
       }
-
-      if (!d.items || !d.items.length) {
-        $("applicationsList").innerHTML = `<div class="card">${escapeHtml(x.noData)}</div>`;
-        return;
-      }
-
-      $("applicationsList").innerHTML = d.items.map(item => `
-        <div class="card">
-          📅 ${escapeHtml(x.date)}: ${escapeHtml(item.date || "-")}<br>
-          👤 ${escapeHtml(x.fio)}: <b>${escapeHtml(item.fio || "-")}</b><br>
-          🆔 ИНН: ${escapeHtml(item.inn || "-")}<br>
-          💰 ${escapeHtml(x.income)}: ${escapeHtml(item.income || "-")}<br>
-          📍 ${escapeHtml(x.address)}: ${escapeHtml(item.address || "-")}<br>
-          📞 ${escapeHtml(x.phone)}: ${escapeHtml(item.phone || "-")}<br>
-          🧑‍💼 ${escapeHtml(x.employee)}: ${escapeHtml(item.employee || "-")}<br>
-          🆔 ${escapeHtml(x.employeeInn)}: ${escapeHtml(item.employeeInn || "-")}<br>
-          🔢 ${escapeHtml(x.employeeSin)}: ${escapeHtml(item.employeeSin || "-")}<br>
-          💵 ${escapeHtml(x.employeeSalary)}: ${escapeHtml(item.employeeSalary || "-")}<br>
-          📆 ${escapeHtml(x.employeeDate)}: ${escapeHtml(item.employeeDate || "-")}<br><br>
-
-          📊 ${escapeHtml(x.status)}:
-          <select onchange="changeStatus(${item.rowIndex}, this.value)">
-            <option value="Новый" ${item.status === "Новый" ? "selected" : ""}>${escapeHtml(x.status_new)}</option>
-            <option value="В процессе" ${item.status === "В процессе" ? "selected" : ""}>${escapeHtml(x.status_process)}</option>
-            <option value="Решен" ${item.status === "Решен" ? "selected" : ""}>${escapeHtml(x.status_done)}</option>
-            <option value="Отменен" ${item.status === "Отменен" ? "selected" : ""}>${escapeHtml(x.status_cancel)}</option>
-          </select>
-          <div id="status-message-${item.rowIndex}"></div>
-        </div>
-      `).join("");
+      allApplications = d.items || [];
+      const filtered = getCurrentFilteredApplications();
+      updateDashboard(filtered);
+      renderApplications(filtered);
     })
     .catch(() => {
       $("applicationsList").innerHTML = `<div style="color:#ef4444;font-weight:bold;">${escapeHtml(x.loadError)}</div>`;
     });
 }
 
+function getCurrentFilteredApplications() {
+  const q = ($("applicationSearch") ? $("applicationSearch").value : "").toLowerCase().trim();
+  if (!q) return allApplications;
+  return allApplications.filter(item => {
+    return String(item.inn || "").toLowerCase().includes(q) ||
+           String(item.fio || "").toLowerCase().includes(q);
+  });
+}
+
+function filterApplications() {
+  const filtered = getCurrentFilteredApplications();
+  renderApplications(filtered);
+  updateDashboard(filtered);
+}
+
+function updateDashboard(items) {
+  const today = new Date().toLocaleDateString();
+  let todayCount = 0;
+  let sum = 0;
+  let done = 0;
+
+  items.forEach(item => {
+    const itemDate = String(item.date || "");
+    if (itemDate.includes(today)) todayCount++;
+    sum += Number(String(item.income || "0").replace(/\D/g, "")) || 0;
+    if (item.status === "Решен") done++;
+  });
+
+  $("dashToday").innerText = todayCount;
+  $("dashSum").innerText = sum;
+  $("dashDone").innerText = done;
+}
+
+function renderApplications(items) {
+  const x = tr();
+
+  if (!items.length) {
+    $("applicationsList").innerHTML = `<div class="card">${escapeHtml(x.noData)}</div>`;
+    return;
+  }
+
+  $("applicationsList").innerHTML = items.map(item => `
+    <div class="card">
+      📅 ${escapeHtml(x.date)}: ${escapeHtml(item.date || "-")}<br>
+      👤 ${escapeHtml(x.fio)}: <b>${escapeHtml(item.fio || "-")}</b><br>
+      🆔 ИНН: ${escapeHtml(item.inn || "-")}<br>
+      💰 ${escapeHtml(x.income)}: ${escapeHtml(item.income || "-")}<br>
+      📍 ${escapeHtml(x.address)}: ${escapeHtml(item.address || "-")}<br>
+      📞 ${escapeHtml(x.phone)}: ${escapeHtml(item.phone || "-")}<br>
+      🧑‍💼 ${escapeHtml(x.employee)}: ${escapeHtml(item.employee || "-")}<br>
+      🆔 ${escapeHtml(x.employeeInn)}: ${escapeHtml(item.employeeInn || "-")}<br>
+      🔢 ${escapeHtml(x.employeeSin)}: ${escapeHtml(item.employeeSin || "-")}<br>
+      💵 ${escapeHtml(x.employeeSalary)}: ${escapeHtml(item.employeeSalary || "-")}<br>
+      📆 ${escapeHtml(x.employeeDate)}: ${escapeHtml(item.employeeDate || "-")}<br><br>
+      📊 ${escapeHtml(x.status)}:
+      <select onchange="changeStatus(${item.rowIndex}, this.value)">
+        <option value="Новый" ${item.status === "Новый" ? "selected" : ""}>${escapeHtml(x.status_new)}</option>
+        <option value="В процессе" ${item.status === "В процессе" ? "selected" : ""}>${escapeHtml(x.status_process)}</option>
+        <option value="Решен" ${item.status === "Решен" ? "selected" : ""}>${escapeHtml(x.status_done)}</option>
+        <option value="Отменен" ${item.status === "Отменен" ? "selected" : ""}>${escapeHtml(x.status_cancel)}</option>
+      </select>
+      <div id="status-message-${item.rowIndex}"></div>
+    </div>
+  `).join("");
+}
+
 function changeStatus(rowIndex, status) {
   const token = localStorage.getItem("authToken");
   const x = tr();
   const msg = $("status-message-" + rowIndex);
+
+  if (!confirm(x.confirmStatus)) {
+    loadApplications();
+    return;
+  }
 
   if (msg) {
     msg.className = "statusSaved";
@@ -731,6 +806,7 @@ function changeStatus(rowIndex, status) {
         msg.className = "statusSaved";
         msg.innerText = "✅ " + x.saved;
       }
+      loadApplications();
     } else {
       if (msg) {
         msg.className = "statusError";
@@ -747,7 +823,43 @@ function changeStatus(rowIndex, status) {
     loadApplications();
   });
 }
-</script>
 
+function exportExcel() {
+  const x = tr();
+  const rows = getCurrentFilteredApplications();
+  let csv = `${x.date};ИНН;${x.income};${x.fio};${x.address};${x.phone};${x.status};${x.employee};${x.employeeInn};${x.employeeSin};${x.employeeSalary};${x.employeeDate}\n`;
+
+  rows.forEach(item => {
+    csv += [
+      item.date,
+      item.inn,
+      item.income,
+      item.fio,
+      item.address,
+      item.phone,
+      item.status,
+      item.employee,
+      item.employeeInn,
+      item.employeeSin,
+      item.employeeSalary,
+      item.employeeDate
+    ].map(v => `"${String(v || "").replace(/"/g, '""')}"`).join(";") + "\n";
+  });
+
+  const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "applications.csv";
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
+
+function exportPdf() {
+  const oldTitle = document.title;
+  document.title = "Applications";
+  window.print();
+  document.title = oldTitle;
+}
+</script>
 </body>
 </html>
