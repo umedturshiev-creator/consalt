@@ -55,7 +55,7 @@ body {
 }
 
 /* INPUT */
-input {
+input, select {
   width: 100%;
   padding: 16px;
   border-radius: 14px;
@@ -65,6 +65,9 @@ input {
   color: white;
   border: none;
   box-sizing: border-box;
+}
+select {
+  cursor: pointer;
 }
 
 /* SEARCH */
@@ -102,9 +105,11 @@ button {
   background: #22c55e;
   color: white;
   border: none;
+  cursor: pointer;
 }
 button:disabled {
   background: #475569;
+  cursor: not-allowed;
 }
 
 /* PROGRESS FORM */
@@ -171,6 +176,30 @@ button:disabled {
 .container {
   padding: 15px;
 }
+
+#loginScreen {
+  display: none;
+}
+
+#adminPanel {
+  display: none;
+}
+
+.adminTitle {
+  margin-top: 25px;
+}
+
+.statusSaved {
+  color: #22c55e;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.statusError {
+  color: #ef4444;
+  font-size: 13px;
+  margin-top: 8px;
+}
 </style>
 </head>
 
@@ -186,19 +215,22 @@ button:disabled {
   </div>
 </div>
 
-<div id="loginScreen" class="container" style="display:none;">
+<!-- LOGIN ONLY FOR ADMIN LIST -->
+<div id="loginScreen" class="container">
   <div class="card">
-    <h2>🔐 Вход в программу</h2>
+    <h2 id="loginTitleText">🔐 Вход в программу</h2>
 
     <input id="loginInput" placeholder="Логин">
     <input id="passwordInput" type="password" placeholder="Пароль">
 
-    <button onclick="login()">Войти</button>
+    <button id="loginBtn" onclick="login()">Войти</button>
+    <button onclick="hideLogin()" style="background:#475569;">Закрыть</button>
 
     <div id="loginError" style="color:#ef4444;margin-top:10px;"></div>
   </div>
-</div>  
-  
+</div>
+
+<!-- APP -->
 <div class="container" id="appScreen">
 
   <div class="langSwitch">
@@ -229,29 +261,19 @@ button:disabled {
 
   <button id="submitBtn" onclick="send()" disabled></button>
 
-<div id="adminLoginBlock">
-  <button onclick="showLogin()">🔐 Войти для просмотра заявок</button>
-</div>
+  <!-- ADMIN ACCESS BUTTON -->
+  <div id="adminLoginBlock">
+    <button id="adminLoginBtn" onclick="showLogin()">🔐 Войти для просмотра заявок</button>
+  </div>
 
-<div id="adminPanel" style="display:none;">
-<div id="adminLoginBlock">
-  <button onclick="showLogin()">🔐 Войти для просмотра заявок</button>
-</div>
+  <!-- ADMIN PANEL -->
+  <div id="adminPanel">
+    <button id="refreshBtn" onclick="loadApplications()">📋 Обновить список заявок</button>
+    <button id="logoutBtn" onclick="logout()" style="background:#ef4444;">Выйти</button>
 
-<div id="adminPanel" style="display:none;">
-  <button onclick="loadApplications()">📋 Обновить список заявок</button>
-  <button onclick="logout()" style="background:#ef4444;">Выйти</button>
-
-  <h3>📋 Список заявок</h3>
-  <div id="applicationsList"></div>
-</div>
-</div>
-
- <div id="loginScreen">
-
- <div id="adminLoginBlock">
-
- <div id="adminPanel">
+    <h3 id="applicationsTitle" class="adminTitle">📋 Список заявок</h3>
+    <div id="applicationsList"></div>
+  </div>
 
 </div>
 
@@ -268,7 +290,7 @@ button:disabled {
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbyxGVfsFc2iUHVtJqpXfWzpHVBMS0fr2EiqHknohNTvzhXGavIZg-phsE8a0b6cj3REQA/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxo4IWYh48BQBqL4VGSvp0LcHMok3vLjYg9JVGPGTOvF4Bxca2PlD3zqhjh90h2C-sG7g/exec";
 
 const translations = {
   ru: {
@@ -278,7 +300,41 @@ const translations = {
     month: "Выберите месяц (Автоматический выбран прошлый месяц)",
     send: "🚀 Отправить",
     splash: "Добро пожаловать",
-    sub: "в Портал подачи заявок"
+    sub: "в Портал подачи заявок",
+
+    loginBtn: "🔐 Войти для просмотра заявок",
+    logout: "Выйти",
+    applications: "📋 Список заявок",
+    refresh: "📋 Обновить список заявок",
+    loginTitle: "🔐 Вход в программу",
+    login: "Логин",
+    password: "Пароль",
+    enter: "Войти",
+    close: "Закрыть",
+    noAccess: "Нет доступа",
+    noData: "Заявок пока нет",
+    loginEmpty: "Введите логин и пароль",
+    loginError: "Ошибка входа",
+    connectionError: "Ошибка подключения",
+    loadError: "Ошибка загрузки заявок",
+    statusError: "Ошибка изменения статуса",
+    saved: "Сохранено",
+
+    date: "Дата",
+    fio: "ФИО",
+    address: "Адрес",
+    phone: "Телефон",
+    status: "Статус",
+    employee: "Сотрудник",
+    employeeInn: "ИНН сотрудника",
+    employeeSin: "СИН сотрудника",
+    employeeSalary: "ЗП сотрудника",
+    employeeDate: "Дата принятия",
+
+    status_new: "Новый",
+    status_process: "В процессе",
+    status_done: "Решен",
+    status_cancel: "Отменен"
   },
   tj: {
     title: "📝 Портали дархостҳо",
@@ -287,11 +343,53 @@ const translations = {
     month: "Моҳро интихоб кунед (Моҳи гузашта худкор интихоб шудааст)",
     send: "🚀 Ирсол",
     splash: "Хуш омадед",
-    sub: "ба портал"
+    sub: "ба портал",
+
+    loginBtn: "🔐 Вуруд барои дидани дархостҳо",
+    logout: "Баромадан",
+    applications: "📋 Рӯйхати дархостҳо",
+    refresh: "📋 Навсозии рӯйхат",
+    loginTitle: "🔐 Вуруд ба система",
+    login: "Логин",
+    password: "Рамз",
+    enter: "Вуруд",
+    close: "Пӯшидан",
+    noAccess: "Дастрасӣ нест",
+    noData: "Ҳоло дархост нест",
+    loginEmpty: "Логин ва рамзро ворид кунед",
+    loginError: "Хатои воридшавӣ",
+    connectionError: "Хатои пайвастшавӣ",
+    loadError: "Хатои боркунии дархостҳо",
+    statusError: "Хатои иваз кардани ҳолат",
+    saved: "Сабт шуд",
+
+    date: "Сана",
+    fio: "Ному насаб",
+    address: "Суроға",
+    phone: "Телефон",
+    status: "Ҳолат",
+    employee: "Корманд",
+    employeeInn: "РМА-и корманд",
+    employeeSin: "СИН-и корманд",
+    employeeSalary: "Музди корманд",
+    employeeDate: "Санаи қабул",
+
+    status_new: "Нав",
+    status_process: "Дар раванди кор",
+    status_done: "Ҳал шуд",
+    status_cancel: "Бекор шуд"
   }
 };
 
 let clientData = null;
+
+function currentLang() {
+  return localStorage.getItem("lang") || "ru";
+}
+
+function t() {
+  return translations[currentLang()] || translations.ru;
+}
 
 /* helpers */
 function getEmployeeFio(data) {
@@ -318,18 +416,34 @@ function escapeHtml(value) {
 
 /* язык */
 function setLang(l) {
-  const t = translations[l];
-  title.innerText = t.title;
-  inn.placeholder = t.inn;
-  income.placeholder = t.income;
-  monthLabel.innerText = "📅 " + t.month;
-  submitBtn.innerText = t.send;
-  splashTitle.innerText = t.splash;
-  splashSub.innerText = t.sub;
+  const tr = translations[l];
+  title.innerText = tr.title;
+  inn.placeholder = tr.inn;
+  income.placeholder = tr.income;
+  monthLabel.innerText = "📅 " + tr.month;
+  submitBtn.innerText = tr.send;
+  splashTitle.innerText = tr.splash;
+  splashSub.innerText = tr.sub;
+
+  loginTitleText.innerText = tr.loginTitle;
+  loginInput.placeholder = tr.login;
+  passwordInput.placeholder = tr.password;
+  loginBtn.innerText = tr.enter;
+  document.querySelector('#loginScreen button[style*="475569"]').innerText = tr.close;
+
+  adminLoginBtn.innerText = tr.loginBtn;
+  refreshBtn.innerText = tr.refresh;
+  logoutBtn.innerText = tr.logout;
+  applicationsTitle.innerText = tr.applications;
+
   localStorage.setItem("lang", l);
+
+  if (adminPanel.style.display !== "none" && applicationsList.innerHTML.trim()) {
+    loadApplications();
+  }
 }
 
-const lang = localStorage.getItem("lang") || "ru";
+const lang = currentLang();
 setLang(lang);
 
 document.querySelectorAll(".langBtn").forEach(btn => {
@@ -443,7 +557,7 @@ function startProgress() {
   }, 300);
 }
 
-/* отправка */
+/* отправка заявки работает без входа */
 function send() {
   if (!clientData) return;
 
@@ -485,6 +599,10 @@ function send() {
       searchStatus.innerHTML = "";
       clientData = null;
       validate();
+
+      if (adminPanel.style.display !== "none") {
+        loadApplications();
+      }
     }, 500);
   })
   .catch(error => {
@@ -500,18 +618,24 @@ function showLogin() {
   loginError.innerText = "";
 }
 
+function hideLogin() {
+  loginScreen.style.display = "none";
+  loginError.innerText = "";
+}
+
 function login() {
-  const login = loginInput.value.trim();
+  const userLogin = loginInput.value.trim();
   const password = passwordInput.value.trim();
+  const tr = t();
 
   loginError.innerText = "";
 
-  if (!login || !password) {
-    loginError.innerText = "Введите логин и пароль";
+  if (!userLogin || !password) {
+    loginError.innerText = tr.loginEmpty;
     return;
   }
 
-  fetch(API_URL + "?action=login&login=" + encodeURIComponent(login) + "&password=" + encodeURIComponent(password))
+  fetch(API_URL + "?action=login&login=" + encodeURIComponent(userLogin) + "&password=" + encodeURIComponent(password))
     .then(r => r.json())
     .then(d => {
       if (d.success) {
@@ -524,11 +648,11 @@ function login() {
 
         loadApplications();
       } else {
-        loginError.innerText = d.error || "Ошибка входа";
+        loginError.innerText = d.error || tr.loginError;
       }
     })
     .catch(() => {
-      loginError.innerText = "Ошибка подключения";
+      loginError.innerText = tr.connectionError;
     });
 }
 
@@ -557,8 +681,18 @@ function logout() {
   applicationsList.innerHTML = "";
 }
 
+function statusText(status) {
+  const tr = t();
+  if (status === "Новый") return tr.status_new;
+  if (status === "В процессе") return tr.status_process;
+  if (status === "Решен") return tr.status_done;
+  if (status === "Отменен") return tr.status_cancel;
+  return status || "-";
+}
+
 function loadApplications() {
   const token = localStorage.getItem("authToken");
+  const tr = t();
 
   applicationsList.innerHTML = '<div class="searchSpinner"></div>';
 
@@ -568,45 +702,46 @@ function loadApplications() {
       if (!d.success) {
         applicationsList.innerHTML = `
           <div style="color:#ef4444;font-weight:bold;">
-            ${escapeHtml(d.error || "Нет доступа")}
+            ${escapeHtml(d.error || tr.noAccess)}
           </div>
         `;
         return;
       }
 
       if (!d.items.length) {
-        applicationsList.innerHTML = `<div class="card">Заявок пока нет</div>`;
+        applicationsList.innerHTML = `<div class="card">${escapeHtml(tr.noData)}</div>`;
         return;
       }
 
       applicationsList.innerHTML = d.items.map(item => `
-        <div class="card">
-          📅 Дата: ${escapeHtml(item.date || "-")}<br>
+        <div class="card" id="app-card-${item.rowIndex}">
+          📅 ${escapeHtml(tr.date)}: ${escapeHtml(item.date || "-")}<br>
+          👤 ${escapeHtml(tr.fio)}: <b>${escapeHtml(item.fio || "-")}</b><br>
           🆔 ИНН: ${escapeHtml(item.inn || "-")}<br>
-          💰 Доход: ${escapeHtml(item.income || "-")}<br>
-          👤 ФИО: <b>${escapeHtml(item.fio || "-")}</b><br>
-          📍 Адрес: ${escapeHtml(item.address || "-")}<br>
-          📞 Телефон: ${escapeHtml(item.phone || "-")}<br>
-          🧑‍💼 Сотрудник: ${escapeHtml(item.employee || "-")}<br>
-          🆔 ИНН сотрудника: ${escapeHtml(item.employeeInn || "-")}<br>
-          🔢 СИН сотрудника: ${escapeHtml(item.employeeSin || "-")}<br>
-          💵 ЗП сотрудника: ${escapeHtml(item.employeeSalary || "-")}<br>
-          📆 Дата принятия: ${escapeHtml(item.employeeDate || "-")}<br><br>
+          💰 ${escapeHtml(tr.income)}: ${escapeHtml(item.income || "-")}<br>
+          📍 ${escapeHtml(tr.address)}: ${escapeHtml(item.address || "-")}<br>
+          📞 ${escapeHtml(tr.phone)}: ${escapeHtml(item.phone || "-")}<br>
+          🧑‍💼 ${escapeHtml(tr.employee)}: ${escapeHtml(item.employee || "-")}<br>
+          🆔 ${escapeHtml(tr.employeeInn)}: ${escapeHtml(item.employeeInn || "-")}<br>
+          🔢 ${escapeHtml(tr.employeeSin)}: ${escapeHtml(item.employeeSin || "-")}<br>
+          💵 ${escapeHtml(tr.employeeSalary)}: ${escapeHtml(item.employeeSalary || "-")}<br>
+          📆 ${escapeHtml(tr.employeeDate)}: ${escapeHtml(item.employeeDate || "-")}<br><br>
 
-          📊 Статус:
+          📊 ${escapeHtml(tr.status)}:
           <select onchange="changeStatus(${item.rowIndex}, this.value)">
-            <option value="Новый" ${item.status === "Новый" ? "selected" : ""}>Новый</option>
-            <option value="В процессе" ${item.status === "В процессе" ? "selected" : ""}>В процессе</option>
-            <option value="Решен" ${item.status === "Решен" ? "selected" : ""}>Решен</option>
-            <option value="Отменен" ${item.status === "Отменен" ? "selected" : ""}>Отменен</option>
+            <option value="Новый" ${item.status === "Новый" ? "selected" : ""}>${escapeHtml(tr.status_new)}</option>
+            <option value="В процессе" ${item.status === "В процессе" ? "selected" : ""}>${escapeHtml(tr.status_process)}</option>
+            <option value="Решен" ${item.status === "Решен" ? "selected" : ""}>${escapeHtml(tr.status_done)}</option>
+            <option value="Отменен" ${item.status === "Отменен" ? "selected" : ""}>${escapeHtml(tr.status_cancel)}</option>
           </select>
+          <div id="status-message-${item.rowIndex}"></div>
         </div>
       `).join("");
     })
     .catch(() => {
       applicationsList.innerHTML = `
         <div style="color:#ef4444;font-weight:bold;">
-          Ошибка загрузки заявок
+          ${escapeHtml(tr.loadError)}
         </div>
       `;
     });
@@ -614,6 +749,13 @@ function loadApplications() {
 
 function changeStatus(rowIndex, status) {
   const token = localStorage.getItem("authToken");
+  const tr = t();
+  const msg = document.getElementById("status-message-" + rowIndex);
+
+  if (msg) {
+    msg.className = "statusSaved";
+    msg.innerText = "...";
+  }
 
   fetch(API_URL, {
     method: "POST",
@@ -626,17 +768,31 @@ function changeStatus(rowIndex, status) {
   })
   .then(r => r.text())
   .then(res => {
-    if (res !== "ok") {
-      alert(res);
+    if (res === "ok") {
+      if (msg) {
+        msg.className = "statusSaved";
+        msg.innerText = "✅ " + tr.saved;
+      }
+    } else {
+      if (msg) {
+        msg.className = "statusError";
+        msg.innerText = res || tr.statusError;
+      } else {
+        alert(res || tr.statusError);
+      }
       loadApplications();
     }
   })
   .catch(() => {
-    alert("Ошибка изменения статуса");
+    if (msg) {
+      msg.className = "statusError";
+      msg.innerText = tr.statusError;
+    } else {
+      alert(tr.statusError);
+    }
     loadApplications();
   });
 }
-  
 </script>
 
 </body>
