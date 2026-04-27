@@ -199,7 +199,7 @@ button:disabled {
   </div>
 </div>  
   
-<div class="container" id="appScreen" style="display:none;">
+<div class="container" id="appScreen">
 
   <div class="langSwitch">
     <div class="langBtn" data-lang="ru">RU</div>
@@ -229,11 +229,29 @@ button:disabled {
 
   <button id="submitBtn" onclick="send()" disabled></button>
 
-  <button onclick="loadApplications()">📋 Обновить список заявок</button>
-<button onclick="logout()" style="background:#ef4444;">Выйти</button>
+<div id="adminLoginBlock">
+  <button onclick="showLogin()">🔐 Войти для просмотра заявок</button>
+</div>
 
-<h3>📋 Список заявок</h3>
-<div id="applicationsList"></div>
+<div id="adminPanel" style="display:none;">
+<div id="adminLoginBlock">
+  <button onclick="showLogin()">🔐 Войти для просмотра заявок</button>
+</div>
+
+<div id="adminPanel" style="display:none;">
+  <button onclick="loadApplications()">📋 Обновить список заявок</button>
+  <button onclick="logout()" style="background:#ef4444;">Выйти</button>
+
+  <h3>📋 Список заявок</h3>
+  <div id="applicationsList"></div>
+</div>
+</div>
+
+ <div id="loginScreen">
+
+ <div id="adminLoginBlock">
+
+ <div id="adminPanel">
 
 </div>
 
@@ -250,7 +268,7 @@ button:disabled {
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycby17FAKiRiRG44GNu48sIcImv4kfHU_wOWMnkbXHHW4INFEIKoUqXSr6RXn_JD-CGlyHA/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyxGVfsFc2iUHVtJqpXfWzpHVBMS0fr2EiqHknohNTvzhXGavIZg-phsE8a0b6cj3REQA/exec";
 
 const translations = {
   ru: {
@@ -477,6 +495,11 @@ function send() {
   });
 }
 
+function showLogin() {
+  loginScreen.style.display = "block";
+  loginError.innerText = "";
+}
+
 function login() {
   const login = loginInput.value.trim();
   const password = passwordInput.value.trim();
@@ -496,7 +519,8 @@ function login() {
         localStorage.setItem("userName", d.name);
 
         loginScreen.style.display = "none";
-        appScreen.style.display = "block";
+        adminLoginBlock.style.display = "none";
+        adminPanel.style.display = "block";
 
         loadApplications();
       } else {
@@ -511,13 +535,16 @@ function login() {
 function checkLogin() {
   const token = localStorage.getItem("authToken");
 
+  appScreen.style.display = "block";
+  loginScreen.style.display = "none";
+
   if (token) {
-    loginScreen.style.display = "none";
-    appScreen.style.display = "block";
+    adminLoginBlock.style.display = "none";
+    adminPanel.style.display = "block";
     loadApplications();
   } else {
-    loginScreen.style.display = "block";
-    appScreen.style.display = "none";
+    adminLoginBlock.style.display = "block";
+    adminPanel.style.display = "none";
   }
 }
 
@@ -525,8 +552,9 @@ function logout() {
   localStorage.removeItem("authToken");
   localStorage.removeItem("userName");
 
-  loginScreen.style.display = "block";
-  appScreen.style.display = "none";
+  adminLoginBlock.style.display = "block";
+  adminPanel.style.display = "none";
+  applicationsList.innerHTML = "";
 }
 
 function loadApplications() {
@@ -547,21 +575,31 @@ function loadApplications() {
       }
 
       if (!d.items.length) {
-        applicationsList.innerHTML = `
-          <div class="card">Заявок пока нет</div>
-        `;
+        applicationsList.innerHTML = `<div class="card">Заявок пока нет</div>`;
         return;
       }
 
       applicationsList.innerHTML = d.items.map(item => `
         <div class="card">
-          📅 ${escapeHtml(item.date || "-")}<br>
-          👤 <b>${escapeHtml(item.fio || "-")}</b><br>
+          📅 Дата: ${escapeHtml(item.date || "-")}<br>
           🆔 ИНН: ${escapeHtml(item.inn || "-")}<br>
           💰 Доход: ${escapeHtml(item.income || "-")}<br>
-          📞 ${escapeHtml(item.phone || "-")}<br>
-          📊 Статус: <b>${escapeHtml(item.status || "-")}</b><br>
-          🧑‍💼 Сотрудник: ${escapeHtml(item.employee || "-")}
+          👤 ФИО: <b>${escapeHtml(item.fio || "-")}</b><br>
+          📍 Адрес: ${escapeHtml(item.address || "-")}<br>
+          📞 Телефон: ${escapeHtml(item.phone || "-")}<br>
+          🧑‍💼 Сотрудник: ${escapeHtml(item.employee || "-")}<br>
+          🆔 ИНН сотрудника: ${escapeHtml(item.employeeInn || "-")}<br>
+          🔢 СИН сотрудника: ${escapeHtml(item.employeeSin || "-")}<br>
+          💵 ЗП сотрудника: ${escapeHtml(item.employeeSalary || "-")}<br>
+          📆 Дата принятия: ${escapeHtml(item.employeeDate || "-")}<br><br>
+
+          📊 Статус:
+          <select onchange="changeStatus(${item.rowIndex}, this.value)">
+            <option value="Новый" ${item.status === "Новый" ? "selected" : ""}>Новый</option>
+            <option value="В процессе" ${item.status === "В процессе" ? "selected" : ""}>В процессе</option>
+            <option value="Решен" ${item.status === "Решен" ? "selected" : ""}>Решен</option>
+            <option value="Отменен" ${item.status === "Отменен" ? "selected" : ""}>Отменен</option>
+          </select>
         </div>
       `).join("");
     })
@@ -572,6 +610,31 @@ function loadApplications() {
         </div>
       `;
     });
+}
+
+function changeStatus(rowIndex, status) {
+  const token = localStorage.getItem("authToken");
+
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "updateStatus",
+      token: token,
+      rowIndex: rowIndex,
+      status: status
+    })
+  })
+  .then(r => r.text())
+  .then(res => {
+    if (res !== "ok") {
+      alert(res);
+      loadApplications();
+    }
+  })
+  .catch(() => {
+    alert("Ошибка изменения статуса");
+    loadApplications();
+  });
 }
   
 </script>
