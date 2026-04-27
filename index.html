@@ -960,6 +960,44 @@ function highlightMatch(value) {
   return safe;
 }
 
+function updateDashboard(items) {
+  let todayCount = 0;
+  let sum = 0;
+  let done = 0;
+  let total = items.length;
+  let unresolved = 0;
+
+  const today = new Date().toLocaleDateString();
+
+  items.forEach(item => {
+    const itemDate = String(item.date || "");
+
+    if (itemDate.includes(today)) {
+      todayCount++;
+    }
+
+    sum += Number(String(item.income || "0").replace(/\D/g, "")) || 0;
+
+    const status = String(item.status || "").toLowerCase().trim();
+
+    if (
+      status === "решен" ||
+      status === "решён" ||
+      status === "ҳал шуд"
+    ) {
+      done++;
+    } else {
+      unresolved++;
+    }
+  });
+
+  $("dashToday").innerText = todayCount;
+  $("dashSum").innerText = sum;
+  $("dashDone").innerText = done;
+  $("dashTotal").innerText = total;
+  $("dashUnresolved").innerText = unresolved;
+}
+  
 function renderApplications(items) {
   const x = tr();
 
