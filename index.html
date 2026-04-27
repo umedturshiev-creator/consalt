@@ -15,17 +15,16 @@ body {
     #0f172a;
 }
 
-/* SPLASH */
 #splashScreen {
   position: fixed;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background: #0f172a;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
+  z-index: 9998;
 }
+
 .splash-logo {
   width: 80px;
   margin-bottom: 10px;
@@ -38,23 +37,28 @@ body {
   border-top: 4px solid #22c55e;
   border-radius: 50%;
   animation: spin 1s linear infinite;
+  margin: 10px auto;
 }
+
 @keyframes spin {
   100% { transform: rotate(360deg); }
 }
 
-/* HEADER */
+.container {
+  padding: 15px;
+}
+
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 15px;
 }
+
 .logo {
   width: 40px;
 }
 
-/* INPUT */
 input, select {
   width: 100%;
   padding: 16px;
@@ -66,36 +70,7 @@ input, select {
   border: none;
   box-sizing: border-box;
 }
-select {
-  cursor: pointer;
-}
 
-/* SEARCH */
-.searchSpinner {
-  width: 28px;
-  height: 28px;
-  border: 3px solid #334155;
-  border-top: 3px solid #22c55e;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  margin: auto;
-}
-
-/* CARD */
-.card {
-  background: #1e293b;
-  padding: 15px;
-  border-radius: 15px;
-  margin-top: 10px;
-  animation: fadeIn 0.3s ease;
-  line-height: 1.6;
-}
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* BUTTON */
 button {
   width: 100%;
   padding: 16px;
@@ -107,24 +82,48 @@ button {
   border: none;
   cursor: pointer;
 }
+
 button:disabled {
   background: #475569;
   cursor: not-allowed;
 }
 
-/* PROGRESS FORM */
+.card {
+  background: #1e293b;
+  padding: 15px;
+  border-radius: 15px;
+  margin-top: 10px;
+  line-height: 1.6;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.searchSpinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid #334155;
+  border-top: 3px solid #22c55e;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 15px auto;
+}
+
 .progressBox {
   height: 6px;
   background: #1e293b;
   margin: 10px;
 }
+
 #progressBar {
   height: 100%;
   width: 0%;
   background: #22c55e;
 }
 
-/* LANG */
 .langSwitch {
   display: flex;
   background: #1e293b;
@@ -133,60 +132,71 @@ button:disabled {
   width: 120px;
   margin: 10px;
 }
+
 .langBtn {
   flex: 1;
   text-align: center;
   padding: 8px;
   cursor: pointer;
 }
+
 .langBtn.active {
   background: #22c55e;
 }
 
-/* SEND OVERLAY */
 #sendingOverlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background: rgba(0,0,0,0.9);
   display: none;
   justify-content: center;
   align-items: center;
   z-index: 9999;
 }
+
 .sendBox {
   text-align: center;
   width: 80%;
   max-width: 300px;
 }
+
 .progressLine {
   height: 8px;
   background: #334155;
   border-radius: 10px;
   margin-top: 10px;
 }
+
 #progressFill {
   height: 100%;
   width: 0;
   background: #22c55e;
 }
 
-.container {
-  padding: 15px;
-}
-
 #loginScreen {
   display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,0.97);
+  z-index: 9997;
+  padding-top: 70px;
 }
 
 #adminPanel {
   display: none;
 }
 
-.adminTitle {
-  margin-top: 25px;
+#topLoginBtn {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  background: rgba(30,41,59,0.9);
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  cursor: pointer;
+  z-index: 9996;
+  border: 1px solid rgba(255,255,255,0.1);
 }
 
 .statusSaved {
@@ -200,42 +210,22 @@ button:disabled {
   font-size: 13px;
   margin-top: 8px;
 }
-
-#topLoginBtn {
-  position: fixed;
-  top: 15px;
-  right: 15px;
-  background: rgba(30,41,59,0.9);
-  padding: 8px 12px;
-  border-radius: 12px;
-  font-size: 14px;
-  cursor: pointer;
-  z-index: 9999;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.1);
-  transition: 0.2s;
-}
-
-#topLoginBtn:hover {
-  background: rgba(34,197,94,0.8);
-}
-  
 </style>
 </head>
 
 <body>
 
-<!-- SPLASH -->
 <div id="splashScreen">
   <div style="text-align:center">
     <img src="logo.png" class="splash-logo">
-    <h2 id="splashTitle"></h2>
-    <div id="splashSub"></div>
+    <h2 id="splashTitle">Добро пожаловать</h2>
+    <div id="splashSub">в Портал подачи заявок</div>
     <div class="loader"></div>
   </div>
 </div>
 
-<!-- LOGIN ONLY FOR ADMIN LIST -->
+<div id="topLoginBtn" onclick="showLogin()">🔐 Вход</div>
+
 <div id="loginScreen" class="container">
   <div class="card">
     <h2 id="loginTitleText">🔐 Вход в программу</h2>
@@ -244,13 +234,12 @@ button:disabled {
     <input id="passwordInput" type="password" placeholder="Пароль">
 
     <button id="loginBtn" onclick="login()">Войти</button>
-    <button onclick="hideLogin()" style="background:#475569;">Закрыть</button>
+    <button id="closeLoginBtn" onclick="hideLogin()" style="background:#475569;">Закрыть</button>
 
     <div id="loginError" style="color:#ef4444;margin-top:10px;"></div>
   </div>
 </div>
 
-<!-- APP -->
 <div class="container" id="appScreen">
 
   <div class="langSwitch">
@@ -264,38 +253,33 @@ button:disabled {
 
   <div class="header">
     <div>
-      <span id="title"></span><br>
+      <span id="title">📝 Портал подачи заявок</span><br>
       <small id="appVersion" style="color:#94a3b8;font-size:12px;">v1.0.0</small>
     </div>
     <img src="logo.png" class="logo">
   </div>
 
-  <input id="inn" inputmode="numeric" maxlength="9">
+  <input id="inn" inputmode="numeric" maxlength="9" placeholder="Введите ИНН">
   <div id="searchStatus"></div>
   <div id="client"></div>
 
-  <input id="income" inputmode="numeric">
+  <input id="income" inputmode="numeric" placeholder="Введите доход">
 
-  <label id="monthLabel"></label>
+  <label id="monthLabel">📅 Выберите месяц</label>
   <input type="month" id="month">
 
-  <button id="submitBtn" onclick="send()" disabled></button>
+  <button id="submitBtn" onclick="send()" disabled>🚀 Отправить</button>
 
-  <!-- ADMIN ACCESS BUTTON -->
-<div id="topLoginBtn" onclick="showLogin()">🔐 Вход</div>
-
-  <!-- ADMIN PANEL -->
   <div id="adminPanel">
     <button id="refreshBtn" onclick="loadApplications()">📋 Обновить список заявок</button>
     <button id="logoutBtn" onclick="logout()" style="background:#ef4444;">Выйти</button>
 
-    <h3 id="applicationsTitle" class="adminTitle">📋 Список заявок</h3>
+    <h3 id="applicationsTitle">📋 Список заявок</h3>
     <div id="applicationsList"></div>
   </div>
 
 </div>
 
-<!-- SEND -->
 <div id="sendingOverlay">
   <div class="sendBox">
     <div id="progressText">0%</div>
@@ -319,25 +303,22 @@ const translations = {
     send: "🚀 Отправить",
     splash: "Добро пожаловать",
     sub: "в Портал подачи заявок",
-
-    loginBtn: "🔐 Войти для просмотра заявок",
-    logout: "Выйти",
-    applications: "📋 Список заявок",
-    refresh: "📋 Обновить список заявок",
     loginTitle: "🔐 Вход в программу",
     login: "Логин",
     password: "Пароль",
-    enter: "Войти",
+    enter: "Вход",
     close: "Закрыть",
-    noAccess: "Нет доступа",
-    noData: "Заявок пока нет",
+    refresh: "📋 Обновить список заявок",
+    logout: "Выйти",
+    applications: "📋 Список заявок",
     loginEmpty: "Введите логин и пароль",
     loginError: "Ошибка входа",
     connectionError: "Ошибка подключения",
+    noAccess: "Нет доступа",
+    noData: "Заявок пока нет",
     loadError: "Ошибка загрузки заявок",
     statusError: "Ошибка изменения статуса",
     saved: "Сохранено",
-
     date: "Дата",
     fio: "ФИО",
     address: "Адрес",
@@ -348,7 +329,6 @@ const translations = {
     employeeSin: "СИН сотрудника",
     employeeSalary: "ЗП сотрудника",
     employeeDate: "Дата принятия",
-
     status_new: "Новый",
     status_process: "В процессе",
     status_done: "Решен",
@@ -362,25 +342,22 @@ const translations = {
     send: "🚀 Ирсол",
     splash: "Хуш омадед",
     sub: "ба портал",
-
-    loginBtn: "🔐 Вуруд барои дидани дархостҳо",
-    logout: "Баромадан",
-    applications: "📋 Рӯйхати дархостҳо",
-    refresh: "📋 Навсозии рӯйхат",
     loginTitle: "🔐 Вуруд ба система",
     login: "Логин",
     password: "Рамз",
     enter: "Вуруд",
     close: "Пӯшидан",
-    noAccess: "Дастрасӣ нест",
-    noData: "Ҳоло дархост нест",
+    refresh: "📋 Навсозии рӯйхат",
+    logout: "Баромадан",
+    applications: "📋 Рӯйхати дархостҳо",
     loginEmpty: "Логин ва рамзро ворид кунед",
     loginError: "Хатои воридшавӣ",
     connectionError: "Хатои пайвастшавӣ",
+    noAccess: "Дастрасӣ нест",
+    noData: "Ҳоло дархост нест",
     loadError: "Хатои боркунии дархостҳо",
     statusError: "Хатои иваз кардани ҳолат",
     saved: "Сабт шуд",
-
     date: "Сана",
     fio: "Ному насаб",
     address: "Суроға",
@@ -391,7 +368,6 @@ const translations = {
     employeeSin: "СИН-и корманд",
     employeeSalary: "Музди корманд",
     employeeDate: "Санаи қабул",
-
     status_new: "Нав",
     status_process: "Дар раванди кор",
     status_done: "Ҳал шуд",
@@ -401,25 +377,52 @@ const translations = {
 
 let clientData = null;
 
+function $(id) {
+  return document.getElementById(id);
+}
+
 function currentLang() {
   return localStorage.getItem("lang") || "ru";
 }
 
-function t() {
+function tr() {
   return translations[currentLang()] || translations.ru;
 }
 
-/* helpers */
-function getEmployeeFio(data) {
-  return data.employeeFio ||
-         data.employee ||
-         data.sotrudnik ||
-         data.fio_sotrudnika ||
-         data.sotrudnikFio ||
-         data.employee_name ||
-         data.manager ||
-         data.sotrudnik_name ||
-         "";
+function setText(id, text) {
+  const el = $(id);
+  if (el) el.innerText = text;
+}
+
+function setPlaceholder(id, text) {
+  const el = $(id);
+  if (el) el.placeholder = text;
+}
+
+function setLang(lang) {
+  const x = translations[lang] || translations.ru;
+
+  setText("title", x.title);
+  setPlaceholder("inn", x.inn);
+  setPlaceholder("income", x.income);
+  setText("monthLabel", "📅 " + x.month);
+  setText("submitBtn", x.send);
+
+  setText("splashTitle", x.splash);
+  setText("splashSub", x.sub);
+
+  setText("loginTitleText", x.loginTitle);
+  setPlaceholder("loginInput", x.login);
+  setPlaceholder("passwordInput", x.password);
+  setText("loginBtn", x.enter);
+  setText("closeLoginBtn", x.close);
+
+  setText("topLoginBtn", "🔐 " + x.enter);
+  setText("refreshBtn", x.refresh);
+  setText("logoutBtn", x.logout);
+  setText("applicationsTitle", x.applications);
+
+  localStorage.setItem("lang", lang);
 }
 
 function escapeHtml(value) {
@@ -432,111 +435,81 @@ function escapeHtml(value) {
     .replace(/'/g, "&#039;");
 }
 
-/* язык */
-function setLang(l) {
-  const tr = translations[l];
-  title.innerText = tr.title;
-  inn.placeholder = tr.inn;
-  income.placeholder = tr.income;
-  monthLabel.innerText = "📅 " + tr.month;
-  submitBtn.innerText = tr.send;
-  splashTitle.innerText = tr.splash;
-  splashSub.innerText = tr.sub;
-
-  loginTitleText.innerText = tr.loginTitle;
-  loginInput.placeholder = tr.login;
-  passwordInput.placeholder = tr.password;
-  loginBtn.innerText = tr.enter;
-  document.querySelector('#loginScreen button[style*="475569"]').innerText = tr.close;
-  }
-
-  if (document.getElementById("topLoginBtn")) {
-  topLoginBtn.innerText = "🔐 " + tr.enter;
-}
-  refreshBtn.innerText = tr.refresh;
-  logoutBtn.innerText = tr.logout;
-  applicationsTitle.innerText = tr.applications;
-
-  localStorage.setItem("lang", l);
-
-  if (adminPanel.style.display !== "none" && applicationsList.innerHTML.trim()) {
-    loadApplications();
-  }
+function getEmployeeFio(data) {
+  return data.employeeFio ||
+         data.employee ||
+         data.sotrudnik ||
+         data.fio_sotrudnika ||
+         data.sotrudnikFio ||
+         data.employee_name ||
+         data.manager ||
+         data.sotrudnik_name ||
+         "";
 }
 
-const lang = currentLang();
-setLang(lang);
+function initApp() {
+  setLang(currentLang());
 
-document.querySelectorAll(".langBtn").forEach(btn => {
-  if (btn.dataset.lang === lang) btn.classList.add("active");
-  btn.onclick = () => {
-    document.querySelectorAll(".langBtn").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    setLang(btn.dataset.lang);
-  };
-});
+  document.querySelectorAll(".langBtn").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.lang === currentLang());
+    btn.onclick = () => {
+      document.querySelectorAll(".langBtn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      setLang(btn.dataset.lang);
+      if ($("adminPanel").style.display !== "none") loadApplications();
+    };
+  });
 
-/* splash */
-window.addEventListener("load", () => {
+  const now = new Date();
+  const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  $("month").value = `${prev.getFullYear()}-${String(prev.getMonth() + 1).padStart(2, "0")}`;
+
+  checkLogin();
+
   setTimeout(() => {
-    document.getElementById("splashScreen").style.display = "none";
-
-    if (typeof checkLogin === "function") {
-      checkLogin();
-    }
-  }, 1500);
-});
-
-/* предыдущий месяц */
-const now = new Date();
-const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-const year = prev.getFullYear();
-const monthNum = String(prev.getMonth() + 1).padStart(2, "0");
-month.value = `${year}-${monthNum}`;
-
-/* validate */
-function validate() {
-  submitBtn.disabled = !(inn.value.length === 9 && income.value && month.value && clientData);
+    $("splashScreen").style.display = "none";
+  }, 1200);
 }
 
-/* только цифры */
-income.oninput = () => {
-  income.value = income.value.replace(/\D/g, "");
+window.addEventListener("load", initApp);
+
+setTimeout(() => {
+  const splash = $("splashScreen");
+  if (splash) splash.style.display = "none";
+}, 3000);
+
+function validate() {
+  $("submitBtn").disabled = !($("inn").value.length === 9 && $("income").value && $("month").value && clientData);
+}
+
+$("income").oninput = () => {
+  $("income").value = $("income").value.replace(/\D/g, "");
   validate();
 };
 
-/* поиск по ИНН */
-inn.oninput = () => {
-  inn.value = inn.value.replace(/\D/g, "").slice(0, 9);
+$("inn").oninput = () => {
+  $("inn").value = $("inn").value.replace(/\D/g, "").slice(0, 9);
 
   clientData = null;
-  client.innerHTML = "";
-  searchStatus.innerHTML = "";
+  $("client").innerHTML = "";
+  $("searchStatus").innerHTML = "";
   validate();
 
-  if (inn.value.length === 9) {
-    searchStatus.innerHTML = '<div class="searchSpinner"></div>';
+  if ($("inn").value.length === 9) {
+    $("searchStatus").innerHTML = '<div class="searchSpinner"></div>';
 
-    fetch(API_URL + "?inn=" + encodeURIComponent(inn.value))
+    fetch(API_URL + "?inn=" + encodeURIComponent($("inn").value))
       .then(r => r.json())
       .then(d => {
-        searchStatus.innerHTML = "";
+        $("searchStatus").innerHTML = "";
 
         if (d && d.found) {
           const employeeFio = getEmployeeFio(d);
+          clientData = { ...d, employeeFio };
 
-          clientData = {
-            ...d,
-            employeeFio: employeeFio
-          };
+          $("searchStatus").innerHTML = `<div style="color:#22c55e;font-weight:bold;">✅ ИНН найден</div>`;
 
-          searchStatus.innerHTML = `
-            <div style="color:#22c55e;font-weight:bold;">
-              ✅ ИНН найден
-            </div>
-          `;
-
-          client.innerHTML = `
+          $("client").innerHTML = `
             <div class="card">
               👤 <b>${escapeHtml(d.fio || "")}</b><br>
               📍 ${escapeHtml(d.address || "—")}<br>
@@ -545,59 +518,45 @@ inn.oninput = () => {
             </div>
           `;
         } else {
-          clientData = null;
-          searchStatus.innerHTML = `
-            <div style="color:#ef4444;font-weight:bold;">
-              ❌ ИНН не найден
-            </div>
-          `;
-          client.innerHTML = "";
+          $("searchStatus").innerHTML = `<div style="color:#ef4444;font-weight:bold;">❌ ИНН не найден</div>`;
         }
 
         validate();
       })
-      .catch(error => {
-        console.log("GET error:", error);
+      .catch(() => {
         clientData = null;
-        searchStatus.innerHTML = `
-          <div style="color:#ef4444;font-weight:bold;">
-            ❌ Ошибка поиска
-          </div>
-        `;
-        client.innerHTML = "";
+        $("searchStatus").innerHTML = `<div style="color:#ef4444;font-weight:bold;">❌ Ошибка поиска</div>`;
         validate();
       });
   }
 };
 
-/* прогресс отправки */
 function startProgress() {
   let p = 0;
   return setInterval(() => {
     p += 10;
     if (p > 90) p = 90;
-    progressFill.style.width = p + "%";
-    progressText.innerText = p + "%";
+    $("progressFill").style.width = p + "%";
+    $("progressText").innerText = p + "%";
   }, 300);
 }
 
-/* отправка заявки работает без входа */
 function send() {
   if (!clientData) return;
 
-  sendingOverlay.style.display = "flex";
-  progressFill.style.width = "0%";
-  progressText.innerText = "0%";
+  $("sendingOverlay").style.display = "flex";
+  $("progressFill").style.width = "0%";
+  $("progressText").innerText = "0%";
 
-  let progress = startProgress();
+  const progress = startProgress();
   const employeeFio = clientData.employeeFio || getEmployeeFio(clientData);
 
   fetch(API_URL, {
     method: "POST",
     body: JSON.stringify({
-      inn: inn.value,
-      income: income.value,
-      month: month.value,
+      inn: $("inn").value,
+      income: $("income").value,
+      month: $("month").value,
       fio: clientData.fio || "",
       employeeFio: employeeFio || "",
       employee: employeeFio || "",
@@ -606,56 +565,51 @@ function send() {
     })
   })
   .then(r => r.text())
-  .then(res => {
-    console.log("POST success:", res);
-
+  .then(() => {
     clearInterval(progress);
-    progressFill.style.width = "100%";
-    progressText.innerText = "100%";
+    $("progressFill").style.width = "100%";
+    $("progressText").innerText = "100%";
 
     setTimeout(() => {
-      sendingOverlay.style.display = "none";
-      confetti({ particleCount: 150, spread: 90 });
+      $("sendingOverlay").style.display = "none";
+      if (typeof confetti === "function") confetti({ particleCount: 150, spread: 90 });
 
-      inn.value = "";
-      income.value = "";
-      client.innerHTML = "";
-      searchStatus.innerHTML = "";
+      $("inn").value = "";
+      $("income").value = "";
+      $("client").innerHTML = "";
+      $("searchStatus").innerHTML = "";
       clientData = null;
       validate();
 
-      if (adminPanel.style.display !== "none") {
-        loadApplications();
-      }
+      if ($("adminPanel").style.display !== "none") loadApplications();
     }, 500);
   })
-  .catch(error => {
-    console.log("POST error:", error);
+  .catch(() => {
     clearInterval(progress);
-    sendingOverlay.style.display = "none";
+    $("sendingOverlay").style.display = "none";
     alert("Ошибка отправки");
   });
 }
 
 function showLogin() {
-  loginScreen.style.display = "block";
-  loginError.innerText = "";
+  $("loginScreen").style.display = "block";
+  $("loginError").innerText = "";
 }
 
 function hideLogin() {
-  loginScreen.style.display = "none";
-  loginError.innerText = "";
+  $("loginScreen").style.display = "none";
+  $("loginError").innerText = "";
 }
 
 function login() {
-  const userLogin = loginInput.value.trim();
-  const password = passwordInput.value.trim();
-  const tr = t();
+  const userLogin = $("loginInput").value.trim();
+  const password = $("passwordInput").value.trim();
+  const x = tr();
 
-  loginError.innerText = "";
+  $("loginError").innerText = "";
 
   if (!userLogin || !password) {
-    loginError.innerText = tr.loginEmpty;
+    $("loginError").innerText = x.loginEmpty;
     return;
   }
 
@@ -664,35 +618,32 @@ function login() {
     .then(d => {
       if (d.success) {
         localStorage.setItem("authToken", d.token);
-        localStorage.setItem("userName", d.name);
+        localStorage.setItem("userName", d.name || userLogin);
 
-        loginScreen.style.display = "none";
-        topLoginBtn.style.display = "none";
-        adminPanel.style.display = "block";
+        $("loginScreen").style.display = "none";
+        $("topLoginBtn").style.display = "none";
+        $("adminPanel").style.display = "block";
 
         loadApplications();
       } else {
-        loginError.innerText = d.error || tr.loginError;
+        $("loginError").innerText = d.error || x.loginError;
       }
     })
     .catch(() => {
-      loginError.innerText = tr.connectionError;
+      $("loginError").innerText = x.connectionError;
     });
 }
 
 function checkLogin() {
   const token = localStorage.getItem("authToken");
 
-  appScreen.style.display = "block";
-  loginScreen.style.display = "none";
-
   if (token) {
-    topLoginBtn.style.display = "none";
-    adminPanel.style.display = "block";
+    $("topLoginBtn").style.display = "none";
+    $("adminPanel").style.display = "block";
     loadApplications();
   } else {
-    topLoginBtn.style.display = "block";
-    adminPanel.style.display = "none";
+    $("topLoginBtn").style.display = "block";
+    $("adminPanel").style.display = "none";
   }
 }
 
@@ -700,81 +651,64 @@ function logout() {
   localStorage.removeItem("authToken");
   localStorage.removeItem("userName");
 
-  topLoginBtn.style.display = "block";
-  adminPanel.style.display = "none";
-  applicationsList.innerHTML = "";
-}
-
-function statusText(status) {
-  const tr = t();
-  if (status === "Новый") return tr.status_new;
-  if (status === "В процессе") return tr.status_process;
-  if (status === "Решен") return tr.status_done;
-  if (status === "Отменен") return tr.status_cancel;
-  return status || "-";
+  $("topLoginBtn").style.display = "block";
+  $("adminPanel").style.display = "none";
+  $("applicationsList").innerHTML = "";
 }
 
 function loadApplications() {
   const token = localStorage.getItem("authToken");
-  const tr = t();
+  const x = tr();
 
-  applicationsList.innerHTML = '<div class="searchSpinner"></div>';
+  $("applicationsList").innerHTML = '<div class="searchSpinner"></div>';
 
-  fetch(API_URL + "?action=list&token=" + encodeURIComponent(token))
+  fetch(API_URL + "?action=list&token=" + encodeURIComponent(token || ""))
     .then(r => r.json())
     .then(d => {
       if (!d.success) {
-        applicationsList.innerHTML = `
-          <div style="color:#ef4444;font-weight:bold;">
-            ${escapeHtml(d.error || tr.noAccess)}
-          </div>
-        `;
+        $("applicationsList").innerHTML = `<div style="color:#ef4444;font-weight:bold;">${escapeHtml(d.error || x.noAccess)}</div>`;
         return;
       }
 
-      if (!d.items.length) {
-        applicationsList.innerHTML = `<div class="card">${escapeHtml(tr.noData)}</div>`;
+      if (!d.items || !d.items.length) {
+        $("applicationsList").innerHTML = `<div class="card">${escapeHtml(x.noData)}</div>`;
         return;
       }
 
-      applicationsList.innerHTML = d.items.map(item => `
-        <div class="card" id="app-card-${item.rowIndex}">
-          📅 ${escapeHtml(tr.date)}: ${escapeHtml(item.date || "-")}<br>
-          👤 ${escapeHtml(tr.fio)}: <b>${escapeHtml(item.fio || "-")}</b><br>
+      $("applicationsList").innerHTML = d.items.map(item => `
+        <div class="card">
+          📅 ${escapeHtml(x.date)}: ${escapeHtml(item.date || "-")}<br>
+          👤 ${escapeHtml(x.fio)}: <b>${escapeHtml(item.fio || "-")}</b><br>
           🆔 ИНН: ${escapeHtml(item.inn || "-")}<br>
-          💰 ${escapeHtml(tr.income)}: ${escapeHtml(item.income || "-")}<br>
-          📍 ${escapeHtml(tr.address)}: ${escapeHtml(item.address || "-")}<br>
-          📞 ${escapeHtml(tr.phone)}: ${escapeHtml(item.phone || "-")}<br>
-          🧑‍💼 ${escapeHtml(tr.employee)}: ${escapeHtml(item.employee || "-")}<br>
-          🆔 ${escapeHtml(tr.employeeInn)}: ${escapeHtml(item.employeeInn || "-")}<br>
-          🔢 ${escapeHtml(tr.employeeSin)}: ${escapeHtml(item.employeeSin || "-")}<br>
-          💵 ${escapeHtml(tr.employeeSalary)}: ${escapeHtml(item.employeeSalary || "-")}<br>
-          📆 ${escapeHtml(tr.employeeDate)}: ${escapeHtml(item.employeeDate || "-")}<br><br>
+          💰 ${escapeHtml(x.income)}: ${escapeHtml(item.income || "-")}<br>
+          📍 ${escapeHtml(x.address)}: ${escapeHtml(item.address || "-")}<br>
+          📞 ${escapeHtml(x.phone)}: ${escapeHtml(item.phone || "-")}<br>
+          🧑‍💼 ${escapeHtml(x.employee)}: ${escapeHtml(item.employee || "-")}<br>
+          🆔 ${escapeHtml(x.employeeInn)}: ${escapeHtml(item.employeeInn || "-")}<br>
+          🔢 ${escapeHtml(x.employeeSin)}: ${escapeHtml(item.employeeSin || "-")}<br>
+          💵 ${escapeHtml(x.employeeSalary)}: ${escapeHtml(item.employeeSalary || "-")}<br>
+          📆 ${escapeHtml(x.employeeDate)}: ${escapeHtml(item.employeeDate || "-")}<br><br>
 
-          📊 ${escapeHtml(tr.status)}:
+          📊 ${escapeHtml(x.status)}:
           <select onchange="changeStatus(${item.rowIndex}, this.value)">
-            <option value="Новый" ${item.status === "Новый" ? "selected" : ""}>${escapeHtml(tr.status_new)}</option>
-            <option value="В процессе" ${item.status === "В процессе" ? "selected" : ""}>${escapeHtml(tr.status_process)}</option>
-            <option value="Решен" ${item.status === "Решен" ? "selected" : ""}>${escapeHtml(tr.status_done)}</option>
-            <option value="Отменен" ${item.status === "Отменен" ? "selected" : ""}>${escapeHtml(tr.status_cancel)}</option>
+            <option value="Новый" ${item.status === "Новый" ? "selected" : ""}>${escapeHtml(x.status_new)}</option>
+            <option value="В процессе" ${item.status === "В процессе" ? "selected" : ""}>${escapeHtml(x.status_process)}</option>
+            <option value="Решен" ${item.status === "Решен" ? "selected" : ""}>${escapeHtml(x.status_done)}</option>
+            <option value="Отменен" ${item.status === "Отменен" ? "selected" : ""}>${escapeHtml(x.status_cancel)}</option>
           </select>
           <div id="status-message-${item.rowIndex}"></div>
         </div>
       `).join("");
     })
     .catch(() => {
-      applicationsList.innerHTML = `
-        <div style="color:#ef4444;font-weight:bold;">
-          ${escapeHtml(tr.loadError)}
-        </div>
-      `;
+      $("applicationsList").innerHTML = `<div style="color:#ef4444;font-weight:bold;">${escapeHtml(x.loadError)}</div>`;
     });
 }
 
 function changeStatus(rowIndex, status) {
   const token = localStorage.getItem("authToken");
-  const tr = t();
-  const msg = document.getElementById("status-message-" + rowIndex);
+  const x = tr();
+  const msg = $("status-message-" + rowIndex);
 
   if (msg) {
     msg.className = "statusSaved";
@@ -795,14 +729,12 @@ function changeStatus(rowIndex, status) {
     if (res === "ok") {
       if (msg) {
         msg.className = "statusSaved";
-        msg.innerText = "✅ " + tr.saved;
+        msg.innerText = "✅ " + x.saved;
       }
     } else {
       if (msg) {
         msg.className = "statusError";
-        msg.innerText = res || tr.statusError;
-      } else {
-        alert(res || tr.statusError);
+        msg.innerText = res || x.statusError;
       }
       loadApplications();
     }
@@ -810,9 +742,7 @@ function changeStatus(rowIndex, status) {
   .catch(() => {
     if (msg) {
       msg.className = "statusError";
-      msg.innerText = tr.statusError;
-    } else {
-      alert(tr.statusError);
+      msg.innerText = x.statusError;
     }
     loadApplications();
   });
