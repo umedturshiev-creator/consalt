@@ -40,24 +40,6 @@ body {
   margin: 10px auto;
 }
 
-#toggleFormIcon {
-  position: fixed;
-  top: 60px;
-  right: 15px;
-  background: rgba(30,41,59,0.9);
-  padding: 10px;
-  border-radius: 50%;
-  cursor: pointer;
-  z-index: 9996;
-  font-size: 18px;
-  border: 1px solid rgba(255,255,255,0.1);
-  transition: 0.2s;
-}
-
-#toggleFormIcon:hover {
-  background: rgba(34,197,94,0.8);
-}
-  
 @keyframes spin {
   100% { transform: rotate(360deg); }
 }
@@ -248,14 +230,160 @@ button:disabled {
 
 .adminActions button { margin-top: 10px; }
 
- (max-width: 600px) {
-  .dashboardGrid { grid-template-columns: repeat(2, 1fr); }
+#toggleFormIcon {
+  position: fixed;
+  top: 60px;
+  right: 15px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(30,41,59,0.95);
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+  cursor: pointer;
+  z-index: 9996;
+  font-size: 19px;
+  transition: 0.2s;
 }
 
+#toggleFormIcon:hover { background: rgba(34,197,94,0.9); }
+
+.searchMark {
+  background: #fde047;
+  color: #0f172a;
+  padding: 1px 3px;
+  border-radius: 5px;
+  font-weight: 800;
+}
+
+.applicationCard {
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+}
+
+.applicationMain {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.applicationName {
+  font-size: 17px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.statusBadge {
+  white-space: nowrap;
+  background: rgba(34,197,94,0.15);
+  border: 1px solid rgba(34,197,94,0.3);
+  color: #bbf7d0;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.appDetails {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px 12px;
+  font-size: 14px;
+}
+
+.appDetails div {
+  color: #e2e8f0;
+}
+
+.appDetails small {
+  color: #94a3b8;
+  display: block;
+  font-size: 11px;
+}
+
+.statusSelectWrap { margin-top: 12px; }
+
+@media (max-width: 700px) {
+  body {
+    background: #0f172a;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .container {
+    padding: 12px;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  #topLoginBtn {
+    top: 10px;
+    right: 10px;
+    font-size: 13px;
+    padding: 7px 10px;
+  }
+
+  #toggleFormIcon {
+    top: 54px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .langSwitch { margin: 8px 0 10px; }
+  .progressBox { margin: 8px 0; }
+  .header { padding: 12px 0; }
+
+  input, select, button {
+    font-size: 16px;
+    padding: 14px;
+    border-radius: 16px;
+  }
+
+  .card {
+    border-radius: 18px;
+    padding: 14px;
+  }
+
+  .dashboardGrid {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    scroll-snap-type: x mandatory;
+  }
+
+  .dashboardGrid .card {
+    min-width: 135px;
+    scroll-snap-align: start;
+  }
+
+  .dashboardGrid span { font-size: 20px; }
+
+  .adminActions {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  #applicationSearch {
+    position: sticky;
+    top: 8px;
+    z-index: 20;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+  }
+
+  .applicationMain { display: block; }
+  .statusBadge { display: inline-block; margin-top: 6px; }
+  .appDetails { grid-template-columns: 1fr; }
+}
 
 @media print {
   body { background: #fff; color: #000; }
-  #topLoginBtn, #loginScreen, .langSwitch, .progressBox, .header, #inn, #income, #monthLabel, #month, #submitBtn, #refreshBtn, #logoutBtn, #applicationSearch, #exportExcelBtn, #exportPdfBtn, select, #sendingOverlay, #splashScreen { display:none !important; }
+  #topLoginBtn, #loginScreen, .langSwitch, .progressBox, .header, #inn, #income, #monthLabel, #month, #submitBtn, #refreshBtn, #logoutBtn, #applicationSearch, #exportExcelBtn, #exportPdfBtn, #toggleFormIcon, select, #sendingOverlay, #splashScreen { display:none !important; }
   #adminPanel { display:block !important; }
   .card { background:#fff; color:#000; border:1px solid #ccc; box-shadow:none; }
 }
@@ -299,7 +427,7 @@ button:disabled {
   <div class="header">
     <div>
       <span id="title">📝 Портал подачи заявок</span><br>
-      <small id="appVersion" style="color:#94a3b8;font-size:12px;">v1.2.0</small>
+      <small id="appVersion" style="color:#94a3b8;font-size:12px;">v1.3.0</small>
     </div>
     <img src="logo.png" class="logo">
   </div>
@@ -318,8 +446,8 @@ button:disabled {
   </div>
 
   <div id="adminPanel">
-    <div id="toggleFormIcon" onclick="toggleRequestForm()">📝</div>
     <button id="refreshBtn" onclick="loadApplications()">📋 Обновить список заявок</button>
+    <div id="toggleFormIcon" onclick="toggleRequestForm()" title="Показать / скрыть форму заявки">📝</div>
     <button id="logoutBtn" onclick="logout()" style="background:#ef4444;">Выйти</button>
 
     <h3 id="applicationsTitle">📋 Список заявок</h3>
@@ -499,7 +627,6 @@ function setLang(lang) {
   setText("dashDoneLabel", x.dashboardDone);
   setText("exportExcelBtn", x.exportExcel);
   setText("exportPdfBtn", x.exportPdf);
-  setText("toggleFormBtn", x.toggleForm);
   setText("dashTotalLabel", x.dashboardTotal);
   setText("dashUnresolvedLabel", x.dashboardUnresolved);
   localStorage.setItem("lang", lang);
@@ -660,7 +787,6 @@ function send() {
 function toggleRequestForm() {
   const block = $("requestFormBlock");
   const icon = $("toggleFormIcon");
-
   if (!block) return;
 
   if (block.style.display === "none") {
@@ -766,12 +892,18 @@ function loadApplications() {
     });
 }
 
+function getSearchTokens() {
+  const raw = ($("applicationSearch") ? $("applicationSearch").value : "").toLowerCase().trim();
+  return raw.split(/\s+/).filter(Boolean);
+}
+
 function getCurrentFilteredApplications() {
-  const q = ($("applicationSearch") ? $("applicationSearch").value : "").toLowerCase().trim();
-  if (!q) return allApplications;
+  const tokens = getSearchTokens();
+  if (!tokens.length) return allApplications;
+
   return allApplications.filter(item => {
-    return String(item.inn || "").toLowerCase().includes(q) ||
-           String(item.fio || "").toLowerCase().includes(q);
+    const combined = [item.inn, item.fio].map(v => String(v || "").toLowerCase()).join(" ");
+    return tokens.every(token => combined.includes(token));
   });
 }
 
@@ -781,35 +913,22 @@ function filterApplications() {
   updateDashboard(filtered);
 }
 
-function updateDashboard(items) {
-  const today = new Date().toLocaleDateString();
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
 
-  let todayCount = 0;
-  let sum = 0;
-  let done = 0;
-  let total = items.length;
-  let unresolved = 0;
+function highlightMatch(value) {
+  let safe = escapeHtml(value || "-");
+  const tokens = getSearchTokens();
+  if (!tokens.length) return safe;
 
-  items.forEach(item => {
-    const itemDate = String(item.date || "");
-    if (itemDate.includes(today)) todayCount++;
-
-    sum += Number(String(item.income || "0").replace(/\D/g, "")) || 0;
-
-    const status = String(item.status || "").toLowerCase().trim();
-
-    if (status === "решен" || status === "ҳал шуд") {
-      done++;
-    } else {
-      unresolved++;
-    }
+  tokens.forEach(token => {
+    if (!token) return;
+    const regex = new RegExp("(" + escapeRegExp(token) + ")", "gi");
+    safe = safe.replace(regex, '<span class="searchMark">$1</span>');
   });
 
-  $("dashToday").innerText = todayCount;
-  $("dashSum").innerText = sum;
-  $("dashDone").innerText = done;
-  $("dashTotal").innerText = total;
-  $("dashUnresolved").innerText = unresolved;
+  return safe;
 }
 
 function renderApplications(items) {
@@ -821,26 +940,37 @@ function renderApplications(items) {
   }
 
   $("applicationsList").innerHTML = items.map(item => `
-    <div class="card">
-      📅 ${escapeHtml(x.date)}: ${escapeHtml(item.date || "-")}<br>
-      👤 ${escapeHtml(x.fio)}: <b>${escapeHtml(item.fio || "-")}</b><br>
-      🆔 ИНН: ${escapeHtml(item.inn || "-")}<br>
-      💰 ${escapeHtml(x.income)}: ${escapeHtml(item.income || "-")}<br>
-      📍 ${escapeHtml(x.address)}: ${escapeHtml(item.address || "-")}<br>
-      📞 ${escapeHtml(x.phone)}: ${escapeHtml(item.phone || "-")}<br>
-      🧑‍💼 ${escapeHtml(x.employee)}: ${escapeHtml(item.employee || "-")}<br>
-      🆔 ${escapeHtml(x.employeeInn)}: ${escapeHtml(item.employeeInn || "-")}<br>
-      🔢 ${escapeHtml(x.employeeSin)}: ${escapeHtml(item.employeeSin || "-")}<br>
-      💵 ${escapeHtml(x.employeeSalary)}: ${escapeHtml(item.employeeSalary || "-")}<br>
-      📆 ${escapeHtml(x.employeeDate)}: ${escapeHtml(item.employeeDate || "-")}<br><br>
-      📊 ${escapeHtml(x.status)}:
-      <select onchange="changeStatus(${item.rowIndex}, this.value)">
-        <option value="Новый" ${item.status === "Новый" ? "selected" : ""}>${escapeHtml(x.status_new)}</option>
-        <option value="В процессе" ${item.status === "В процессе" ? "selected" : ""}>${escapeHtml(x.status_process)}</option>
-        <option value="Решен" ${item.status === "Решен" ? "selected" : ""}>${escapeHtml(x.status_done)}</option>
-        <option value="Отменен" ${item.status === "Отменен" ? "selected" : ""}>${escapeHtml(x.status_cancel)}</option>
-      </select>
-      <div id="status-message-${item.rowIndex}"></div>
+    <div class="card applicationCard">
+      <div class="applicationMain">
+        <div>
+          <div class="applicationName">👤 ${highlightMatch(item.fio || "-")}</div>
+          <div>🆔 ИНН: <b>${highlightMatch(item.inn || "-")}</b></div>
+        </div>
+        <div class="statusBadge">${escapeHtml(item.status || "-")}</div>
+      </div>
+
+      <div class="appDetails">
+        <div><small>${escapeHtml(x.date)}</small>📅 ${escapeHtml(item.date || "-")}</div>
+        <div><small>${escapeHtml(x.income)}</small>💰 ${escapeHtml(item.income || "-")}</div>
+        <div><small>${escapeHtml(x.phone)}</small>📞 ${escapeHtml(item.phone || "-")}</div>
+        <div><small>${escapeHtml(x.address)}</small>📍 ${escapeHtml(item.address || "-")}</div>
+        <div><small>${escapeHtml(x.employee)}</small>🧑‍💼 ${escapeHtml(item.employee || "-")}</div>
+        <div><small>${escapeHtml(x.employeeInn)}</small>🆔 ${escapeHtml(item.employeeInn || "-")}</div>
+        <div><small>${escapeHtml(x.employeeSin)}</small>🔢 ${escapeHtml(item.employeeSin || "-")}</div>
+        <div><small>${escapeHtml(x.employeeSalary)}</small>💵 ${escapeHtml(item.employeeSalary || "-")}</div>
+        <div><small>${escapeHtml(x.employeeDate)}</small>📆 ${escapeHtml(item.employeeDate || "-")}</div>
+      </div>
+
+      <div class="statusSelectWrap">
+        📊 ${escapeHtml(x.status)}:
+        <select onchange="changeStatus(${item.rowIndex}, this.value)">
+          <option value="Новый" ${item.status === "Новый" ? "selected" : ""}>${escapeHtml(x.status_new)}</option>
+          <option value="В процессе" ${item.status === "В процессе" ? "selected" : ""}>${escapeHtml(x.status_process)}</option>
+          <option value="Решен" ${item.status === "Решен" ? "selected" : ""}>${escapeHtml(x.status_done)}</option>
+          <option value="Отменен" ${item.status === "Отменен" ? "selected" : ""}>${escapeHtml(x.status_cancel)}</option>
+        </select>
+        <div id="status-message-${item.rowIndex}"></div>
+      </div>
     </div>
   `).join("");
 }
@@ -987,7 +1117,7 @@ function exportPdf() {
         </thead>
         <tbody>${rows}</tbody>
       </table>
-      <div class="footer">UZA App â v1.2.0</div>
+      <div class="footer">UZA App â v1.3.0</div>
       <script>
         window.onload = function() { window.print(); };
       <\/script>
