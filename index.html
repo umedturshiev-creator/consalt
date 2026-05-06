@@ -294,7 +294,7 @@
           <h1 data-i18n="title">🚗 Учет поездок</h1>
           <div class="subtitle" data-i18n="subtitle">Smartpay — контроль поездок сотрудников</div>
           <div class="topUser" id="topUser"></div>
-          <div class="version">v. 1.1.0 GPS</div>
+          <div class="version">v. 1.2.0 GPS AutoSave</div>
         </div>
       </div>
 
@@ -456,8 +456,8 @@
   <div id="toast" class="toast"></div>
 
   <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwObYN56dhF2AwhQXi_0RyN_4RIacv_D7HlEXvZJa3WNlHazdHPvgX95DvrqswoMk_7cw/exec';
-    const APP_VERSION = 'v. 1.1.0 GPS';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbynBw-dcbNbRwXqBrBhVvB1aU1_RERiP9d7wZrg3lFGhaOXN64t414-lPtz3PJT_rMM/exec';
+    const APP_VERSION = 'v. 1.2.0 GPS AutoSave';
 
     const I18N = {
       ru: {
@@ -513,6 +513,10 @@ gpsNotSupported:'Ваш телефон не поддерживает GPS-гео�
 gpsWeak:'GPS работает, но точность слабая',
 gpsFinishedToast:'GPS-поездка завершена',
 gpsStopBeforeSave:'Сначала завершите GPS-поездку',
+gpsAutoSaving:'Завершаем и сохраняем поездку...',
+gpsAutoSaved:'GPS-поездка завершена и сохранена',
+gpsStartPlace:'Место начала GPS',
+gpsEndPlace:'Место завершения GPS',
 gpsAccessDenied:'Доступ к геолокации запрещен',
 gpsUnavailable:'Местоположение недоступно',
 gpsTimeout:'Превышено время ожидания GPS',
@@ -570,6 +574,10 @@ gpsNotSupported:'Телефони шумо GPS-геолокатсияро дас
 gpsWeak:'GPS кор мекунад, вале дақиқӣ паст аст',
 gpsFinishedToast:'Сафари GPS анҷом ёфт',
 gpsStopBeforeSave:'Аввал сафари GPS-ро анҷом диҳед',
+gpsAutoSaving:'Сафар анҷом ёфта, сабт шуда истодааст...',
+gpsAutoSaved:'Сафари GPS анҷом ёфт ва сабт шуд',
+gpsStartPlace:'Ҷойи оғози GPS',
+gpsEndPlace:'Ҷойи анҷоми GPS',
 gpsAccessDenied:'Дастрасӣ ба геолокатсия манъ шудааст',
 gpsUnavailable:'Ҷойгиршавӣ дастрас нест',
 gpsTimeout:'Вақти интизории GPS гузашт'
@@ -590,6 +598,9 @@ gpsTimeout:'Вақти интизории GPS гузашт'
     let gpsDistanceKm = 0;
     let gpsTimerInterval = null;
     let gpsIsRunning = false;
+    let gpsStartPoint = null;
+    let gpsEndPoint = null;
+    let gpsWasUsed = false;
 
     let currentUser = localStorage.getItem('smartpay_user') || '';
     let currentRole = localStorage.getItem('smartpay_role') || '';
@@ -995,7 +1006,10 @@ function fillMonths(months) {
         minutes: Number(document.getElementById('minutes').value || 0),
         taxiAmount: Number(document.getElementById('taxiAmount').value || 0),
         roundTrip: document.getElementById('roundTrip').checked,
-        comment: document.getElementById('comment').value.trim()
+        comment: document.getElementById('comment').value.trim(),
+        gpsStartLocation: formatGpsPoint(gpsStartPoint),
+        gpsEndLocation: formatGpsPoint(gpsEndPoint),
+        gpsUsed: gpsWasUsed ? 'Да' : 'Нет'
       };
     }
 
@@ -1020,7 +1034,7 @@ function fillMonths(months) {
       document.getElementById('totalPreview').textContent = total.toFixed(2) + ' сомони';
     }
 
-    async function saveTrip() {
+    async function saveTrip(options = {}) {
       const saveBtn = document.getElementById('saveBtn');
 
       try {
@@ -1050,7 +1064,7 @@ function fillMonths(months) {
         clearForm();
         fillMonths(result.months || []);
         applyMonthFilter();
-        showToast(t(wasEditing ? 'updated' : 'saved'));
+        showToast(options.autoGps ? t('gpsAutoSaved') : t(wasEditing ? 'updated' : 'saved'));
 
         document.getElementById('formCard').classList.add('hidden');
         document.getElementById('formToggleBtn').textContent = t('addTripBtn');
@@ -1095,7 +1109,10 @@ function fillMonths(months) {
 
       gpsStartTime = Date.now();
       gpsLastPoint = null;
+      gpsStartPoint = null;
+      gpsEndPoint = null;
       gpsDistanceKm = 0;
+      gpsWasUsed = true;
       gpsIsRunning = true;
 
       document.getElementById('gpsStatus').textContent = t('gpsRunning');
@@ -1121,6 +1138,9 @@ function fillMonths(months) {
             updateGpsTime();
             return;
           }
+
+          if (!gpsStartPoint) gpsStartPoint = point;
+          gpsEndPoint = point;
 
           if (gpsLastPoint) {
             const meters = getDistanceMeters(
@@ -1156,7 +1176,9 @@ function fillMonths(months) {
       );
     }
 
-    function stopGpsTrip(showMessage = true) {
+    async function stopGpsTrip(showMessage = true, autoSave = true) {
+      const hadGpsTrip = gpsIsRunning || !!gpsStartTime;
+
       if (gpsWatchId !== null) {
         navigator.geolocation.clearWatch(gpsWatchId);
         gpsWatchId = null;
@@ -1171,12 +1193,12 @@ function fillMonths(months) {
         updateGpsTime();
       }
 
-      if (gpsIsRunning || gpsStartTime) {
+      if (hadGpsTrip) {
         document.getElementById('km').value = gpsDistanceKm.toFixed(1);
 
         const commentEl = document.getElementById('comment');
         const gpsComment = t('gpsSavedComment');
-        if (showMessage && commentEl && !commentEl.value.includes(gpsComment)) {
+        if (commentEl && !commentEl.value.includes(gpsComment)) {
           commentEl.value = commentEl.value.trim()
             ? commentEl.value.trim() + '\n' + gpsComment
             : gpsComment;
@@ -1186,7 +1208,7 @@ function fillMonths(months) {
       gpsIsRunning = false;
 
       const status = document.getElementById('gpsStatus');
-      if (status) status.textContent = gpsStartTime ? t('gpsFinished') : t('gpsNotStarted');
+      if (status) status.textContent = hadGpsTrip ? t('gpsFinished') : t('gpsNotStarted');
 
       document.getElementById('startGpsBtn').classList.remove('hidden');
       document.getElementById('stopGpsBtn').classList.add('hidden');
@@ -1194,8 +1216,12 @@ function fillMonths(months) {
 
       updatePreview();
 
-      if (showMessage && gpsStartTime) {
-        showToast(t('gpsFinishedToast'));
+      if (showMessage && hadGpsTrip) {
+        showToast(autoSave ? t('gpsAutoSaving') : t('gpsFinishedToast'));
+      }
+
+      if (hadGpsTrip && autoSave) {
+        await saveTrip({ autoGps: true });
       }
 
       gpsStartTime = null;
@@ -1207,7 +1233,10 @@ function fillMonths(months) {
 
       gpsStartTime = null;
       gpsLastPoint = null;
+      gpsStartPoint = null;
+      gpsEndPoint = null;
       gpsDistanceKm = 0;
+      gpsWasUsed = false;
 
       const status = document.getElementById('gpsStatus');
       const km = document.getElementById('gpsKm');
@@ -1251,6 +1280,12 @@ function fillMonths(months) {
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
       return R * c;
+    }
+
+    function formatGpsPoint(point) {
+      if (!point) return '';
+      const accuracy = point.accuracy ? ` ±${Math.round(point.accuracy)} м` : '';
+      return `${Number(point.lat).toFixed(6)}, ${Number(point.lng).toFixed(6)}${accuracy}`;
     }
 
     function getGpsErrorText(error) {
@@ -1300,6 +1335,8 @@ function fillMonths(months) {
               : `🚗 ${trip.km || 0} км · ${trip.minutes || 0} ${t('minutesShort')}`
             }
             ${trip.roundTrip === 'Да' ? '<br>🔁 ' + t('roundTrip') : ''}
+            ${trip.gpsStartLocation ? `<br>📌 ${t('gpsStartPlace')}: ${escapeHtml(trip.gpsStartLocation)}` : ''}
+            ${trip.gpsEndLocation ? `<br>🏁 ${t('gpsEndPlace')}: ${escapeHtml(trip.gpsEndLocation)}` : ''}
             ${trip.comment ? `<br>💬 ${escapeHtml(trip.comment)}` : ''}
           </div>
 
