@@ -1,4 +1,4 @@
-const CACHE_NAME = 'smartpay-trips-v9-gps-maps';
+const CACHE_NAME = 'smartpay-trips-v10-gps-pause';
 
 // Установка: сразу активируем новый Service Worker
 self.addEventListener('install', event => {
