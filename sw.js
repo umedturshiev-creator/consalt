@@ -1,11 +1,11 @@
-const CACHE_NAME = 'smartpay-trips-v6';
+const CACHE_NAME = 'smartpay-trips-v7-gps';
 
-// Установка (принудительно обновляем)
+// Установка: сразу активируем новый Service Worker
 self.addEventListener('install', event => {
   self.skipWaiting();
 });
 
-// Активация (чистим старый кеш)
+// Активация: очищаем старые версии кеша
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
@@ -27,15 +27,15 @@ self.addEventListener('fetch', event => {
   event.respondWith(
     fetch(event.request, { cache: 'no-store' })
       .then(response => {
-        // Кешируем успешные ответы
         const responseClone = response.clone();
+
         caches.open(CACHE_NAME).then(cache => {
           cache.put(event.request, responseClone);
         });
+
         return response;
       })
       .catch(() => {
-        // Если нет интернета — берем из кеша
         return caches.match(event.request);
       })
   );
