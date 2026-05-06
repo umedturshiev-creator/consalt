@@ -2,17 +2,12 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#073f52" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Smartpay Trips" />
   <link rel="manifest" href="manifest.json" />
-  <link rel="icon" type="image/png" href="icon-192.png">
-  <link rel="apple-touch-icon" href="icon-192.png">
 
   <title>Smartpay — Учет поездок</title>
 
@@ -80,11 +75,6 @@
     .btnRed{background:linear-gradient(135deg,#ef4444,#b91c1c)}
     .btnGhost{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.25);box-shadow:none}
     .btnSmall{padding:10px 12px;border-radius:14px;font-size:13px;min-height:42px}
-    .langMini{display:flex;gap:4px;align-items:center}
-    .langMini button{padding:5px 7px;font-size:11px;min-height:auto;border-radius:9px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);box-shadow:none}
-    .langMini button.active{background:linear-gradient(135deg,#0ea5e9,#2563eb)}
-    .tripActions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
-    .tripActions button{flex:0 0 auto}
 
     .transport button{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.25);box-shadow:none}
     .transport button.active{background:linear-gradient(135deg,#0ea5e9,#2563eb);box-shadow:0 14px 32px rgba(14,165,233,.22)}
@@ -245,15 +235,11 @@
           <h1 data-i18n="title">🚗 Учет поездок</h1>
           <div class="subtitle" data-i18n="subtitle">Smartpay — контроль поездок сотрудников</div>
           <div class="topUser" id="topUser"></div>
-          <div class="version">v. test</div>
+          <div class="version">v. 1.0.1</div>
         </div>
       </div>
 
       <div class="topActions">
-        <div class="langMini">
-          <button id="langMiniRuBtn" type="button" onclick="setLanguage('ru')">RU</button>
-          <button id="langMiniTjBtn" type="button" onclick="setLanguage('tj')">TJ</button>
-        </div>
         <button class="btnGhost btnSmall" onclick="toggleChangePin(true)" data-i18n="changePin">Сменить PIN</button>
         <button class="btnGhost btnSmall" onclick="logout()" data-i18n="logout">Выйти</button>
       </div>
@@ -369,7 +355,6 @@
           <div class="exportActions" id="exportActions">
             <button onclick="exportPDF()">📄 PDF</button>
             <button onclick="exportExcel()">📊 Excel</button>
-            <button id="summaryExportBtn" onclick="exportSummary()" data-i18n="summaryReport">📑 Сводный отчет</button>
           </div>
         </div>
       </div>
@@ -384,9 +369,8 @@
   <div id="toast" class="toast"></div>
 
   <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwNEZ11g1eNxebNCWwzE863DE98Xr0A5doyceEMKEib-0iPu2V2J32re6MDIN2uIMYESQ/exec';
-    const APP_VERSION = 'v. 1.0.1';
-
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxk2gXWCAsfNe6-WIftUF797jkR5bQWF6Mt12AM5Wl1iRAnhfVaxTnMpHIRWb_YvN4W/exec';
+    
     const I18N = {
       ru: {
         loginTitle:'Вход в систему', loginSub:'Введите имя сотрудника и PIN-код', employee:'Сотрудник', pin:'PIN-код', loginBtn:'Войти',
@@ -404,29 +388,8 @@
         month:'Месяц', exportReport:'📤 Экспорт отчета', hideExport:'📤 Скрыть экспорт', tripList:'Список поездок',
         noTrips:'Пока нет поездок', loginLoading:'Входим...', dataLoaded:'Данные обновлены', loading:'Загрузка данных...',
         confirmLogout:'Вы действительно хотите выйти?', pinChanged:'PIN успешно изменен', passwordsNotMatch:'Новые PIN не совпадают',
-        fillPins:'Заполните все поля PIN', saving:'Сохраняем поездку...', saved:'Поездка сохранена', updated:'Поездка обновлена', deleted:'Поездка удалена', edit:'Редактировать', delete:'Удалить', confirmDelete:'Удалить поездку?', editMode:'✏️ Сохранить изменения', routeFromHistory:'Маршрут подставлен из истории',
-        loginAs:'Вход', admin:'админ', user:'сотрудник', edit:'✏️ Редактировать',
-delete:'🗑 Удалить',
-confirmDelete:'Удалить поездку?',
-deleted:'Удалено',
-summaryReport:'📑 Сводный отчет',
-transportExpense:'Транспортные расходы',
-employeeFullName:'ФИО сотрудника',
-signature:'Подпись',
-period:'Период',
-all:'Все',
-pdfTitle:'Отчет Smartpay',
-reportByTrips:'Smartpay — отчет по поездкам',
-date:'Дата',
-route:'Маршрут',
-transport:'Транспорт',
-distance:'Км',
-time:'Мин',
-taxiSum:'Такси',
-finalSum:'Сумма',
-commentText:'Комментарий',
-totalText:'Итого',
-minutesShort:'мин',
+        fillPins:'Заполните все поля PIN', saving:'Сохраняем поездку...', saved:'Поездка сохранена', routeFromHistory:'Маршрут подставлен из истории',
+        loginAs:'Вход', admin:'админ', user:'сотрудник'
       },
       tj: {
         loginTitle:'Воридшавӣ ба система', loginSub:'Номи корманд ва PIN-рамзро ворид кунед', employee:'Корманд', pin:'PIN-рамз', loginBtn:'Ворид шудан',
@@ -444,29 +407,8 @@ minutesShort:'мин',
         month:'Моҳ', exportReport:'📤 Содироти ҳисобот', hideExport:'📤 Пинҳон кардани содирот', tripList:'Рӯйхати сафарҳо',
         noTrips:'Ҳоло сафар нест', loginLoading:'Ворид шуда истодааст...', dataLoaded:'Маълумот нав шуд', loading:'Боркунии маълумот...',
         confirmLogout:'Шумо дар ҳақиқат мехоҳед бароед?', pinChanged:'PIN бомуваффақият иваз шуд', passwordsNotMatch:'PIN-ҳои нав якхела нестанд',
-        fillPins:'Ҳамаи майдонҳои PIN-ро пур кунед', saving:'Сафар сабт шуда истодааст...', saved:'Сафар сабт шуд', updated:'Сафар навсозӣ шуд', deleted:'Сафар нест карда шуд', edit:'Таҳрир', delete:'Нест кардан', confirmDelete:'Сафар нест карда шавад?', editMode:'✏️ Сабт кардани тағйирот', routeFromHistory:'Масир аз таърих гузошта шуд',
-        loginAs:'Ворид шуд', admin:'админ', user:'корманд', edit:'✏️ Таҳрир',
-delete:'🗑 Нест кардан',
-confirmDelete:'Сафарро нест мекунед?',
-deleted:'Нест карда шуд',
-summaryReport:'📑 Ҳисоботи ҷамъбастӣ',
-transportExpense:'Хароҷоти нақлиётӣ',
-employeeFullName:'Ному насаби корманд',
-signature:'Имзо',
-period:'Давра',
-all:'Ҳама',
-pdfTitle:'Ҳисоботи Smartpay',
-reportByTrips:'Smartpay — ҳисобот аз рӯйи сафарҳо',
-date:'Сана',
-route:'Масир',
-transport:'Нақлиёт',
-distance:'Км',
-time:'Дақ.',
-taxiSum:'Таксӣ',
-finalSum:'Маблағ',
-commentText:'Шарҳ',
-totalText:'Ҳамагӣ',
-minutesShort:'дақ'
+        fillPins:'Ҳамаи майдонҳои PIN-ро пур кунед', saving:'Сафар сабт шуда истодааст...', saved:'Сафар сабт шуд', routeFromHistory:'Масир аз таърих гузошта шуд',
+        loginAs:'Ворид шуд', admin:'админ', user:'корманд'
       }
     };
 
@@ -476,9 +418,9 @@ minutesShort:'дақ'
     let currentMonth = '';
     let routePointIndex = 3;
     let pointsCache = [];
-    let editingTripId = null;
 
     let currentUser = localStorage.getItem('smartpay_user') || '';
+    let currentPin = localStorage.getItem('smartpay_pin') || '';
     let currentRole = localStorage.getItem('smartpay_role') || '';
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -503,7 +445,7 @@ minutesShort:'дақ'
       applyLanguage();
       registerPWA();
 
-      if (currentUser) {
+      if (currentUser && currentPin) {
         document.getElementById('loginScreen').style.display = 'none';
         reloadData();
       }
@@ -536,51 +478,31 @@ minutesShort:'дақ'
 
       document.getElementById('langRuBtn').classList.toggle('active', lang === 'ru');
       document.getElementById('langTjBtn').classList.toggle('active', lang === 'tj');
-      const miniRu = document.getElementById('langMiniRuBtn');
-      const miniTj = document.getElementById('langMiniTjBtn');
-      if (miniRu && miniTj) {
-        miniRu.classList.toggle('active', lang === 'ru');
-        miniTj.classList.toggle('active', lang === 'tj');
-      }
 
       updateTopUser();
       updatePreview();
       applyMonthFilter();
-    
-      fillMonths(
-    [...new Set(allTrips.map(item => item.month).filter(Boolean))]
-      .sort()
-      .reverse()
-  );
-}
+    }
 
-    function api(action, params = {}) {
-      return new Promise((resolve, reject) => {
-        const callbackName = 'jsonpCallback_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
-        params.action = action;
-        params.callback = callbackName;
+    // НОВАЯ ФУНКЦИЯ API С ИСПОЛЬЗОВАНИЕМ POST FETCH
+    async function api(action, params = {}) {
+      params.action = action;
+      
+      // Добавляем креды при каждом запросе (кроме логина)
+      if (action !== 'login' && action !== 'changePassword') {
+        params.employee = currentUser;
+        params.pin = currentPin;
+      }
 
-        const query = Object.keys(params)
-          .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(params[key]))
-          .join('&');
-
-        const script = document.createElement('script');
-        script.src = API_URL + '?' + query;
-
-        window[callbackName] = function(data) {
-          delete window[callbackName];
-          if (script.parentNode) document.body.removeChild(script);
-          resolve(data);
-        };
-
-        script.onerror = function() {
-          delete window[callbackName];
-          if (script.parentNode) document.body.removeChild(script);
-          reject(new Error('Ошибка подключения к серверу'));
-        };
-
-        document.body.appendChild(script);
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        // Используем text/plain чтобы избежать сложных CORS Preflight проверок от Google
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(params)
       });
+
+      if (!response.ok) throw new Error('Ошибка подключения к серверу');
+      return await response.json();
     }
 
     async function login() {
@@ -606,9 +528,11 @@ minutesShort:'дақ'
         }
 
         currentUser = res.employee;
+        currentPin = pin;
         currentRole = res.role || 'user';
 
         localStorage.setItem('smartpay_user', currentUser);
+        localStorage.setItem('smartpay_pin', currentPin);
         localStorage.setItem('smartpay_role', currentRole);
         localStorage.setItem('smartpay_last_login', employeeName);
 
@@ -629,9 +553,11 @@ minutesShort:'дақ'
       if (!confirm(t('confirmLogout'))) return;
 
       localStorage.removeItem('smartpay_user');
+      localStorage.removeItem('smartpay_pin');
       localStorage.removeItem('smartpay_role');
 
       currentUser = '';
+      currentPin = '';
       currentRole = '';
       allTrips = [];
 
@@ -676,6 +602,9 @@ minutesShort:'дақ'
           return;
         }
 
+        currentPin = newPin;
+        localStorage.setItem('smartpay_pin', currentPin);
+
         toggleChangePin(false);
         showToast(t('pinChanged'));
       } catch (err) {
@@ -687,12 +616,14 @@ minutesShort:'дақ'
       try {
         showDataLoader(true);
 
-        const data = await api('init', {
-          employee: currentUser,
-          role: currentRole
-        });
+        const data = await api('init');
 
-        if (!data.ok) throw new Error(data.error || 'Ошибка загрузки');
+        if (!data.ok) {
+          if(data.error === 'auth_error') {
+            logout();
+          }
+          throw new Error(data.error || 'Ошибка загрузки');
+        }
 
         allTrips = data.trips || [];
         pointsCache = data.points || [];
@@ -703,7 +634,6 @@ minutesShort:'дақ'
         applyMonthFilter();
         updatePreview();
         updateTopUser();
-        updateAdminControls();
 
         showToast(t('dataLoaded'));
       } catch (err) {
@@ -723,11 +653,6 @@ minutesShort:'дақ'
       document.getElementById('topUser').textContent = currentUser ? `${t('loginAs')}: ${currentUser} · ${roleText}` : '';
     }
 
-    function updateAdminControls() {
-      const summaryBtn = document.getElementById('summaryExportBtn');
-      if (summaryBtn) summaryBtn.classList.toggle('hidden', currentRole !== 'admin');
-    }
-
     function fillPointsDatalist() {
       const list = document.getElementById('pointsList');
       list.innerHTML = '';
@@ -738,21 +663,20 @@ minutesShort:'дақ'
       });
     }
 
-function fillMonths(months) {
-  const select = document.getElementById('monthFilter');
-  const selected = select.value;
+    function fillMonths(months) {
+      const select = document.getElementById('monthFilter');
+      const selected = select.value;
+      select.innerHTML = `<option value="">${t('allMonths')}</option>`;
 
-  select.innerHTML = `<option value="">${t('allMonths')}</option>`;
+      months.forEach(month => {
+        const option = document.createElement('option');
+        option.value = month;
+        option.textContent = formatMonthName(month);
+        select.appendChild(option);
+      });
 
-  months.forEach(month => {
-    const option = document.createElement('option');
-    option.value = month;
-    option.textContent = formatMonthName(month);
-    select.appendChild(option);
-  });
-
-  if (selected) select.value = selected;
-}
+      if (selected) select.value = selected;
+    }
 
     function formatMonthName(month) {
       const namesRu = {'01':'Январь','02':'Февраль','03':'Март','04':'Апрель','05':'Май','06':'Июнь','07':'Июль','08':'Август','09':'Сентябрь','10':'Октябрь','11':'Ноябрь','12':'Декабрь'};
@@ -916,21 +840,15 @@ function fillMonths(months) {
         saveBtn.classList.add('saving');
         saveBtn.textContent = t('saving');
 
-        const wasEditing = !!editingTripId;
-        if (editingTripId) payload.id = editingTripId;
-        payload.requestEmployee = currentUser;
-        payload.requestRole = currentRole;
-
-        const result = await api(wasEditing ? 'updateTrip' : 'addTrip', { payload: JSON.stringify(payload) });
+        const result = await api('addTrip', { payload: JSON.stringify(payload) });
         if (!result.ok) throw new Error(result.error || 'Ошибка сохранения');
 
-        editingTripId = null;
         allTrips = result.trips || [];
 
         clearForm();
         fillMonths(result.months || []);
         applyMonthFilter();
-        showToast(t(wasEditing ? 'updated' : 'saved'));
+        showToast(t('saved'));
 
         document.getElementById('formCard').classList.add('hidden');
         document.getElementById('formToggleBtn').textContent = t('addTripBtn');
@@ -955,8 +873,6 @@ function fillMonths(months) {
       document.querySelectorAll('.extraPointRow').forEach(row => row.remove());
       routePointIndex = 3;
 
-      editingTripId = null;
-      document.getElementById('saveBtn').textContent = t('saveTrip');
       updatePreview();
     }
 
@@ -989,88 +905,22 @@ function fillMonths(months) {
           <div class="tripTop">
             <div>
               <div class="tripTitle">${escapeHtml(trip.employee)}</div>
-              <div class="tripMeta">${escapeHtml(trip.date)} · ${trip.transport === 'Личный автомобиль' ? t('car') : t('taxi')}</div>
+              <div class="tripMeta">${escapeHtml(trip.date)} · ${escapeHtml(trip.transport)}</div>
             </div>
             <div class="tripTotal">${Number(trip.total).toFixed(2)} с.</div>
           </div>
           <div class="tripMeta">
             📍 ${escapeHtml(trip.from)}<br>
             ${trip.transport === 'Такси'
-              ? `🚕 ${t('taxi')}: ${trip.taxiAmount || 0} с.`
-              : `🚗 ${trip.km || 0} км · ${trip.minutes || 0} ${t('minutesShort')}`
+              ? `🚕 Такси: ${trip.taxiAmount || 0} с.`
+              : `🚗 ${trip.km || 0} км · ${trip.minutes || 0} мин`
             }
             ${trip.roundTrip === 'Да' ? '<br>🔁 ' + t('roundTrip') : ''}
             ${trip.comment ? `<br>💬 ${escapeHtml(trip.comment)}` : ''}
           </div>
-
-          ${currentRole !== 'admin' ? `
-            <div style="margin-top:10px; display:flex; gap:8px;">
-              <button class="btnGhost btnSmall" onclick="editTrip('${trip.id}')">${t('edit')}</button>
-              <button class="btnRed btnSmall" onclick="deleteTripConfirm('${trip.id}')">${t('delete')}</button>
-            </div>
-          ` : ''}
-
         </div>
       `).join('');
     }
-
-    function editTrip(id) {
-      const trip = allTrips.find(item => String(item.id) === String(id));
-      if (!trip) return;
-
-      editingTripId = id;
-      const routeParts = String(trip.from || '').split('→').map(item => item.trim()).filter(Boolean);
-      const firstPoint = routeParts.length ? routeParts[0] : trip.from;
-      const lastPoint = routeParts.length > 1 ? routeParts[routeParts.length - 1] : trip.to;
-      const middlePoints = routeParts.length > 2 ? routeParts.slice(1, -1) : [];
-
-      document.getElementById('date').value = trip.date || '';
-      document.getElementById('from').value = firstPoint || '';
-      document.getElementById('to').value = lastPoint || trip.to || '';
-      document.getElementById('comment').value = trip.comment || '';
-      document.getElementById('roundTrip').checked = trip.roundTrip === 'Да';
-
-      document.querySelectorAll('.extraPointRow').forEach(row => row.remove());
-      routePointIndex = 3;
-      middlePoints.forEach(point => {
-        addRoutePoint();
-        const inputs = document.querySelectorAll('.extraPoint');
-        inputs[inputs.length - 1].value = point;
-      });
-
-      if (trip.transport === 'Такси') {
-        setTransport('taxi');
-        document.getElementById('taxiAmount').value = trip.taxiAmount || '';
-        document.getElementById('km').value = '';
-        document.getElementById('minutes').value = '';
-      } else {
-        setTransport('car');
-        document.getElementById('km').value = trip.km || '';
-        document.getElementById('minutes').value = trip.minutes || '';
-        document.getElementById('taxiAmount').value = '';
-      }
-
-      updatePreview();
-      document.getElementById('saveBtn').textContent = t('editMode');
-      const form = document.getElementById('formCard');
-      if (form.classList.contains('hidden')) toggleForm();
-      setTimeout(() => form.scrollIntoView({ behavior:'smooth', block:'start' }), 80);
-    }
-
-    async function deleteTripConfirm(id) {
-      if (!confirm(t('confirmDelete'))) return;
-      try {
-        const res = await api('deleteTrip', { id, employee: currentUser, role: currentRole });
-        if (!res.ok) throw new Error(res.error || 'Ошибка удаления');
-        allTrips = res.trips || [];
-        fillMonths(res.months || []);
-        applyMonthFilter();
-        showToast(t('deleted'));
-      } catch (err) {
-        alert('Ошибка удаления: ' + err.message);
-      }
-    }
-
 
     function renderReport(sourceTrips) {
       const trips = sourceTrips || allTrips;
@@ -1095,164 +945,98 @@ function fillMonths(months) {
       `).join('') || `<div class="employeeReport">${lang === 'tj' ? 'Маълумот нест' : 'Нет данных'}</div>`;
     }
 
-function exportPDF() {
-  const trips = getFilteredTrips();
-  const monthName = currentMonth ? formatMonthName(currentMonth) : t('allMonths');
+    function exportPDF() {
+      const trips = getFilteredTrips();
+      const monthName = currentMonth ? formatMonthName(currentMonth) : t('allMonths');
 
-  let html = `
-    <html>
-    <head>
-      <title>${t('pdfTitle')}</title>
-      <style>
-        body { font-family: Arial; padding: 24px; color:#111827; }
-        h1 { color:#073f52; }
-        table { width:100%; border-collapse:collapse; margin-top:16px; }
-        th,td { border:1px solid #d1d5db; padding:8px; font-size:12px; }
-        th { background:#073f52; color:white; }
-        .total { margin-top:18px; font-size:18px; font-weight:bold; }
-      </style>
-    </head>
-    <body>
-      <h1>${t('reportByTrips')}</h1>
-      <p>${t('period')}: ${monthName}</p>
-      <table>
-        <thead>
+      let html = `
+        <html>
+        <head>
+          <title>Отчет Smartpay</title>
+          <style>
+            body { font-family: Arial; padding: 24px; color:#111827; }
+            h1 { color:#073f52; }
+            table { width:100%; border-collapse:collapse; margin-top:16px; }
+            th,td { border:1px solid #d1d5db; padding:8px; font-size:12px; }
+            th { background:#073f52; color:white; }
+            .total { margin-top:18px; font-size:18px; font-weight:bold; }
+          </style>
+        </head>
+        <body>
+          <h1>Smartpay — отчет по поездкам</h1>
+          <p>Период: ${monthName}</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Дата</th>
+                <th>Сотрудник</th>
+                <th>Маршрут</th>
+                <th>Транспорт</th>
+                <th>Км</th>
+                <th>Мин</th>
+                <th>Сумма</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+
+      trips.forEach(t => {
+        html += `
           <tr>
-            <th>${t('date')}</th>
-            <th>${t('employee')}</th>
-            <th>${t('route')}</th>
-            <th>${t('transport')}</th>
-            <th>${t('distance')}</th>
-            <th>${t('time')}</th>
-            <th>${t('finalSum')}</th>
+            <td>${escapeHtml(t.date)}</td>
+            <td>${escapeHtml(t.employee)}</td>
+            <td>${escapeHtml(t.from)}</td>
+            <td>${escapeHtml(t.transport)}</td>
+            <td>${t.km || ''}</td>
+            <td>${t.minutes || ''}</td>
+            <td>${Number(t.total || 0).toFixed(2)}</td>
           </tr>
-        </thead>
-        <tbody>
-  `;
+        `;
+      });
 
-  trips.forEach(item => {
-    html += `
-      <tr>
-        <td>${escapeHtml(item.date)}</td>
-        <td>${escapeHtml(item.employee)}</td>
-        <td>${escapeHtml(item.from)}</td>
-        <td>${escapeHtml(item.transport)}</td>
-        <td>${item.km || ''}</td>
-        <td>${item.minutes || ''}</td>
-        <td>${Number(item.total || 0).toFixed(2)}</td>
-      </tr>
-    `;
-  });
+      const total = trips.reduce((sum, t) => sum + Number(t.total || 0), 0);
+      html += `
+            </tbody>
+          </table>
+          <div class="total">Итого: ${total.toFixed(2)} сомони</div>
+        </body>
+        </html>
+      `;
 
-  const total = trips.reduce((sum, item) => sum + Number(item.total || 0), 0);
+      const win = window.open('', '_blank');
+      win.document.write(html);
+      win.document.close();
+      win.print();
+    }
 
-  html += `
-        </tbody>
-      </table>
-      <div class="total">${t('totalText')}: ${total.toFixed(2)} сомони</div>
-    </body>
-    </html>
-  `;
+    function exportExcel() {
+      const trips = getFilteredTrips();
+      const monthName = currentMonth ? formatMonthName(currentMonth) : t('allMonths');
 
-  const win = window.open('', '_blank');
-  win.document.write(html);
-  win.document.close();
-  win.print();
-}
+      let csv = '\uFEFF';
+      csv += 'Дата;Сотрудник;Маршрут;Транспорт;Километраж;Время;Такси;Туда и обратно;Сумма;Комментарий\n';
 
-function exportExcel() {
-  const trips = getFilteredTrips();
-  const monthName = currentMonth ? formatMonthName(currentMonth) : t('allMonths');
+      trips.forEach(t => {
+        csv += [
+          t.date,
+          t.employee,
+          t.from,
+          t.transport,
+          t.km || '',
+          t.minutes || '',
+          t.taxiAmount || '',
+          t.roundTrip || '',
+          Number(t.total || 0).toFixed(2),
+          t.comment || ''
+        ].map(v => `"${String(v).replaceAll('"', '""')}"`).join(';') + '\n';
+      });
 
-  let csv = '\uFEFF';
-  csv += `${t('date')};${t('employee')};${t('route')};${t('transport')};${t('distance')};${t('time')};${t('taxiSum')};${t('roundTrip')};${t('finalSum')};${t('commentText')}\n`;
-
-  trips.forEach(item => {
-    csv += [
-      item.date,
-      item.employee,
-      item.from,
-      item.transport,
-      item.km || '',
-      item.minutes || '',
-      item.taxiAmount || '',
-      item.roundTrip || '',
-      Number(item.total || 0).toFixed(2),
-      item.comment || ''
-    ].map(v => `"${String(v).replaceAll('"', '""')}"`).join(';') + '\n';
-  });
-
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = `Smartpay_report_${monthName}.csv`;
-  link.click();
-}
-
-function exportSummary() {
-  const trips = getFilteredTrips();
-
-  const map = {};
-  trips.forEach(item => {
-    if (!map[item.employee]) map[item.employee] = 0;
-    map[item.employee] += Number(item.total || 0);
-  });
-
-  const monthName = currentMonth ? formatMonthName(currentMonth) : t('allMonths');
-
-  let html = `
-    <html>
-    <head>
-      <title>${t('summaryReport')}</title>
-      <style>
-        body { font-family: Arial; padding: 30px; color:#111827; }
-        h2 { text-align:center; color:#073f52; margin-bottom:6px; }
-        .period { text-align:center; margin-bottom:24px; font-size:16px; }
-        table { width:100%; border-collapse:collapse; margin-top:16px; }
-        th,td { border:1px solid #111827; padding:10px; font-size:14px; height:38px; }
-        th { background:#073f52; color:white; }
-        .signature { height:44px; }
-      </style>
-    </head>
-    <body>
-      <h2>${t('transportExpense')}</h2>
-      <div class="period">${t('period')}: ${monthName}</div>
-
-      <table>
-        <thead>
-          <tr>
-            <th>№</th>
-            <th>${t('employeeFullName')}</th>
-            <th>${t('finalSum')}</th>
-            <th>${t('signature')}</th>
-          </tr>
-        </thead>
-        <tbody>
-  `;
-
-  Object.keys(map).forEach((name, index) => {
-    html += `
-      <tr>
-        <td>${index + 1}</td>
-        <td>${escapeHtml(name)}</td>
-        <td>${map[name].toFixed(2)} сомони</td>
-        <td class="signature"></td>
-      </tr>
-    `;
-  });
-
-  html += `
-        </tbody>
-      </table>
-    </body>
-    </html>
-  `;
-
-  const win = window.open('', '_blank');
-  win.document.write(html);
-  win.document.close();
-  win.print();
-}
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `Smartpay_report_${monthName}.csv`;
+      link.click();
+    }
 
     function showToast(text) {
       const toast = document.getElementById('toast');
@@ -1268,10 +1052,6 @@ function exportSummary() {
         .replaceAll('>','&gt;')
         .replaceAll('"','&quot;')
         .replaceAll("'","&#039;");
-    }
-
-    function escapeAttr(text) {
-      return String(text || '').replaceAll("'", "\\'").replaceAll('"', '&quot;');
     }
 
     function registerPWA() {
