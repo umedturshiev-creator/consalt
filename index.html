@@ -373,7 +373,9 @@
             <button type="button" class="btnGhost hidden" id="cancelGpsBtn" onclick="cancelGpsTrip()" data-i18n="cancelGps">❌ Отменить поездку</button>
           </div>
           <div class="gpsManualAction" id="manualEntryBox">
-            <button type="button" onclick="enableManualEntry()" data-i18n="manualEntry">GPS не работает? Ввести вручную</button>
+            <button type="button" class="btnFull btnGhost" id="manualGpsBtn" onclick="enableManualTrip()" data-i18n="gpsManualBtn">
+  GPS не работает? Ввести вручную
+</button>
           </div>
 
           <div class="gpsInfo">
@@ -385,7 +387,7 @@
               </div>
               <div class="gpsStat">
                 <span data-i18n="gpsTime">Время GPS</span>
-                <b><span id="gpsMinutes">0</span> мин</b>
+                <b><span id="gpsMinutes">0</span> <span data-i18n="gpsMinutesUnit">мин</span></b>
               </div>
             </div>
             <div class="hint" id="gpsHint" style="margin:10px 0 0;" data-i18n="gpsHint">Километраж и время считаются автоматически. Изменить их можно только при редактировании заявки.</div>
@@ -560,6 +562,8 @@ gpsZeroStatus:'GPS не посчитал расстояние',
 gpsNotSavedZero:'Километраж 0 км. Поездка не сохранена.',
         gpsUseStartButton:'Для личного автомобиля нажмите «Начать поездку по GPS». Километраж и время считаются автоматически.',
         gpsRoundTripHidden:'GPS считает фактический маршрут. «Туда и обратно» не применяется.',
+        gpsManualBtn: 'GPS не работает? Ввести вручную',
+        gpsMinutesUnit: 'мин',
       },
       tj: {
         loginTitle:'Воридшавӣ ба система', loginSub:'Номи корманд ва PIN-рамзро ворид кунед', employee:'Корманд', pin:'PIN-рамз', loginBtn:'Ворид шудан',
@@ -633,7 +637,9 @@ gpsZeroDistance:'GPS ҳоло масофаро ҳисоб накард. Каме
 gpsZeroStatus:'GPS масофаро ҳисоб накард',
 gpsNotSavedZero:'Масофа 0 км аст. Сафар сабт нашуд.',
         gpsUseStartButton:'Барои мошини худӣ тугмаи «Оғози сафар бо GPS»-ро пахш кунед. Километр ва вақт худкор ҳисоб мешаванд.',
-        gpsRoundTripHidden:'GPS масири воқеиро ҳисоб мекунад. «Рафту баргашт» истифода намешавад.'
+        gpsRoundTripHidden:'GPS масири воқеиро ҳисоб мекунад. «Рафту баргашт» истифода намешавад.',
+        gpsManualBtn: 'GPS кор намекунад? Дастӣ ворид кунед',
+        gpsMinutesUnit: 'дақ.',
       }
     };
 
