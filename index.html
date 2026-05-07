@@ -131,69 +131,6 @@
     .totalBox span{display:block;color:var(--muted);font-size:13px;margin-bottom:6px}
     .totalBox strong{font-size:28px;letter-spacing:-.5px}
 
-
-    .gpsBox{
-      margin:14px 0;
-      padding:14px;
-      border-radius:22px;
-      background:linear-gradient(135deg,rgba(34,197,94,.16),rgba(14,165,233,.12));
-      border:1px solid rgba(34,197,94,.28);
-    }
-    .gpsActions{
-      display:grid;
-      grid-template-columns:1fr 1fr 1fr;
-      gap:10px;
-    }
-    .gpsActions.single{
-      grid-template-columns:1fr;
-    }
-    .gpsManualAction{
-      margin-top:10px;
-    }
-    .gpsManualAction button{
-      width:100%;
-      background:rgba(255,255,255,.12);
-      border:1px dashed rgba(255,255,255,.28);
-      box-shadow:none;
-    }
-    button.gpsDisabled, button:disabled{
-      opacity:.55;
-      cursor:not-allowed;
-      transform:none!important;
-      filter:none!important;
-    }
-    .gpsInfo{
-      margin-top:12px;
-      color:var(--muted);
-      font-size:14px;
-      line-height:1.6;
-    }
-    .gpsInfo strong{
-      color:#ffffff;
-    }
-    .gpsStats{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:8px;
-      margin-top:10px;
-    }
-    .gpsStat{
-      padding:10px;
-      border-radius:16px;
-      background:rgba(255,255,255,.10);
-      border:1px solid rgba(255,255,255,.14);
-    }
-    .gpsStat span{
-      display:block;
-      color:var(--muted);
-      font-size:11px;
-      margin-bottom:4px;
-    }
-    .gpsStat b{
-      font-size:18px;
-      color:#a7f3d0;
-    }
-
     .switchLine{display:flex;align-items:center;gap:10px;margin-bottom:14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:18px;padding:12px}
     .switchLine input{width:22px;height:22px;margin:0}
 
@@ -249,7 +186,6 @@
       .row,.filters,.reportGrid,.exportActions.show{grid-template-columns:1fr;gap:0}
       .transport{grid-template-columns:1fr 1fr;gap:8px}
       .transport button{min-height:42px;font-size:13px;padding:9px 8px;border-radius:14px}
-      .gpsActions{grid-template-columns:1fr}
       input,select,textarea,button{font-size:16px;min-height:50px}
       .tripTop{flex-direction:column}
       .tripTotal{font-size:22px}
@@ -309,7 +245,7 @@
           <h1 data-i18n="title">🚗 Учет поездок</h1>
           <div class="subtitle" data-i18n="subtitle">Smartpay — контроль поездок сотрудников</div>
           <div class="topUser" id="topUser"></div>
-          <div class="version">v. 1.5.0 GPS Pause</div>
+          <div class="version">v. 1.0.1</div>
         </div>
       </div>
 
@@ -364,37 +300,7 @@
           <button id="taxiBtn" onclick="setTransport('taxi')" data-i18n="taxi">🚕 Такси</button>
         </div>
 
-
-        <div id="gpsTripBox" class="gpsBox">
-          <div class="gpsActions single" id="gpsActions">
-            <button type="button" class="btnGreen" id="startGpsBtn" onclick="startGpsTrip()" data-i18n="startGps">▶️ Начать поездку по GPS</button>
-            <button type="button" class="btnRed hidden gpsDisabled" id="stopGpsBtn" onclick="stopGpsTrip()" disabled data-i18n="stopGps">⏹ Завершить поездку</button>
-            <button type="button" class="btnGhost hidden" id="pauseGpsBtn" onclick="toggleGpsPause()" data-i18n="pauseGps">⏸ Пауза</button>
-            <button type="button" class="btnGhost hidden" id="cancelGpsBtn" onclick="cancelGpsTrip()" data-i18n="cancelGps">❌ Отменить поездку</button>
-          </div>
-          <div class="gpsManualAction" id="manualEntryBox">
-            <button type="button" class="btnFull btnGhost" id="manualGpsBtn" onclick="enableManualTrip()" data-i18n="gpsManualBtn">
-  GPS не работает? Ввести вручную
-</button>
-          </div>
-
-          <div class="gpsInfo">
-            <strong id="gpsStatus" data-i18n="gpsNotStarted">GPS не запущен</strong>
-            <div class="gpsStats">
-              <div class="gpsStat">
-                <span data-i18n="gpsDistance">Километраж GPS</span>
-                <b><span id="gpsKm">0.00</span> км</b>
-              </div>
-              <div class="gpsStat">
-                <span data-i18n="gpsTime">Время GPS</span>
-                <b><span id="gpsMinutes">0</span> <span data-i18n="gpsMinutesUnit">мин</span></b>
-              </div>
-            </div>
-            <div class="hint" id="gpsHint" style="margin:10px 0 0;" data-i18n="gpsHint">Километраж и время считаются автоматически. Изменить их можно только при редактировании заявки.</div>
-          </div>
-        </div>
-
-        <div id="carFields" class="row hidden">
+        <div id="carFields" class="row">
           <div>
             <label data-i18n="km">Километраж</label>
             <input type="number" id="km" min="0" step="0.1" data-placeholder-key="kmPlaceholder" placeholder="Например: 12">
@@ -410,7 +316,7 @@
           <input type="number" id="taxiAmount" min="0" step="0.01" data-placeholder-key="taxiPlaceholder" placeholder="Например: 35">
         </div>
 
-        <div class="switchLine" id="roundTripBox">
+        <div class="switchLine">
           <input type="checkbox" id="roundTrip">
           <strong data-i18n="roundTrip">Туда и обратно</strong>
         </div>
@@ -478,8 +384,8 @@
   <div id="toast" class="toast"></div>
 
   <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbx6Os-5oCOq5IWvHp8Van4HHJjA0tNbdPQ40ympmjsBoiPrfTTtnX3fhIP0U9xRgjcJ6A/exec';
-    const APP_VERSION = 'v. 1.5.0 GPS Pause';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbynBw-dcbNbRwXqBrBhVvB1aU1_RERiP9d7wZrg3lFGhaOXN64t414-lPtz3PJT_rMM/exec';
+    const APP_VERSION = 'v. 1.0.1';
 
     const I18N = {
       ru: {
@@ -521,49 +427,6 @@ finalSum:'Сумма',
 commentText:'Комментарий',
 totalText:'Итого',
 minutesShort:'мин',
-startGps:'▶️ Начать поездку по GPS',
-stopGps:'⏹ Завершить поездку',
-cancelGps:'❌ Отменить поездку',
-pauseGps:'⏸ Пауза',
-resumeGps:'▶️ Продолжить',
-gpsPaused:'Поездка на паузе. Время и километраж временно не считаются.',
-gps60Confirm:'Поездка идет уже 60 минут. Завершить?',
-gps120Warning:'Внимание: GPS-поездка длится больше 2 часов. Проверьте, не забыли ли завершить поездку.',
-manualEntry:'GPS не работает? Ввести вручную',
-gpsNotStarted:'GPS не запущен',
-gpsRunning:'GPS запущен, поездка идет...',
-gpsSearching:'Ищем GPS-сигнал... Подождите несколько секунд',
-gpsFirstPoint:'GPS-сигнал найден. Можно завершить поездку после движения.',
-gpsFinished:'Поездка завершена',
-gpsDistance:'Километраж GPS',
-gpsTime:'Время GPS',
-gpsHint:'Километраж и время считаются автоматически. Изменить их можно только при редактировании заявки.',
-gpsSavedComment:'GPS: рассчитано автоматически',
-gpsNeedHttps:'GPS работает только через HTTPS или localhost',
-gpsNotSupported:'Ваш телефон не поддерживает GPS-геолокацию',
-gpsWeak:'GPS работает, но точность слабая',
-gpsFinishedToast:'GPS-поездка завершена',
-gpsStopBeforeSave:'Сначала завершите GPS-поездку',
-gpsAutoSaving:'Завершаем и сохраняем поездку...',
-gpsAutoSaved:'GPS-поездка завершена и сохранена',
-gpsStartPlace:'Место начала GPS',
-gpsEndPlace:'Место завершения GPS',
-gpsStartMapLink:'Ссылка начала GPS',
-gpsEndMapLink:'Ссылка завершения GPS',
-gpsAccessDenied:'Доступ к геолокации запрещен',
-gpsUnavailable:'Местоположение недоступно',
-gpsTimeout:'Превышено время ожидания GPS',
-gpsZeroDistance:'GPS еще не посчитал расстояние. Подождите немного или проедьте дальше.',
-gpsTooShort:'Расстояние меньше 0.1 км. Поездка не сохранена.',
-gpsCanceled:'GPS-поездка отменена',
-manualCreatedComment:'Заявка создана вручную без GPS',
-manualModeTitle:'Ручной ввод включен. Заполните километраж и время.',
-gpsZeroStatus:'GPS не посчитал расстояние',
-gpsNotSavedZero:'Километраж 0 км. Поездка не сохранена.',
-        gpsUseStartButton:'Для личного автомобиля нажмите «Начать поездку по GPS». Километраж и время считаются автоматически.',
-        gpsRoundTripHidden:'GPS считает фактический маршрут. «Туда и обратно» не применяется.',
-        gpsManualBtn: 'GPS не работает? Ввести вручную',
-        gpsMinutesUnit: 'мин',
       },
       tj: {
         loginTitle:'Воридшавӣ ба система', loginSub:'Номи корманд ва PIN-рамзро ворид кунед', employee:'Корманд', pin:'PIN-рамз', loginBtn:'Ворид шудан',
@@ -603,43 +466,7 @@ taxiSum:'Таксӣ',
 finalSum:'Маблағ',
 commentText:'Шарҳ',
 totalText:'Ҳамагӣ',
-minutesShort:'дақ',
-startGps:'▶️ Оғози сафар бо GPS',
-stopGps:'⏹ Анҷоми сафар',
-cancelGps:'❌ Бекор кардани сафар',
-pauseGps:'⏸ Таваққуф',
-resumeGps:'▶️ Давом додан',
-gpsPaused:'Сафар дар таваққуф аст. Вақт ва километр муваққатан ҳисоб намешаванд.',
-gps60Confirm:'Сафар аллакай 60 дақиқа идома дорад. Анҷом диҳем?',
-gps120Warning:'Диққат: сафари GPS зиёда аз 2 соат идома дорад. Санҷед, ки сафарро анҷом надода бошед.',
-gpsNotStarted:'GPS фаъол нест',
-gpsRunning:'GPS фаъол шуд, сафар идома дорад...',
-gpsFinished:'Сафар анҷом ёфт',
-gpsDistance:'Километри GPS',
-gpsTime:'Вақти GPS',
-gpsHint:'Километр ва вақт худкор ҳисоб мешаванд. Онҳоро танҳо ҳангоми таҳрири дархост иваз кардан мумкин аст.',
-gpsSavedComment:'GPS: худкор ҳисоб карда шуд',
-gpsNeedHttps:'GPS танҳо тавассути HTTPS ё localhost кор мекунад',
-gpsNotSupported:'Телефони шумо GPS-геолокатсияро дастгирӣ намекунад',
-gpsWeak:'GPS кор мекунад, вале дақиқӣ паст аст',
-gpsFinishedToast:'Сафари GPS анҷом ёфт',
-gpsStopBeforeSave:'Аввал сафари GPS-ро анҷом диҳед',
-gpsAutoSaving:'Сафар анҷом ёфта, сабт шуда истодааст...',
-gpsAutoSaved:'Сафари GPS анҷом ёфт ва сабт шуд',
-gpsStartPlace:'Ҷойи оғози GPS',
-gpsEndPlace:'Ҷойи анҷоми GPS',
-gpsStartMapLink:'Истиноди оғози GPS',
-gpsEndMapLink:'Истиноди анҷоми GPS',
-gpsAccessDenied:'Дастрасӣ ба геолокатсия манъ шудааст',
-gpsUnavailable:'Ҷойгиршавӣ дастрас нест',
-gpsTimeout:'Вақти интизории GPS гузашт',
-gpsZeroDistance:'GPS ҳоло масофаро ҳисоб накард. Каме интизор шавед ё ҳаракат кунед.',
-gpsZeroStatus:'GPS масофаро ҳисоб накард',
-gpsNotSavedZero:'Масофа 0 км аст. Сафар сабт нашуд.',
-        gpsUseStartButton:'Барои мошини худӣ тугмаи «Оғози сафар бо GPS»-ро пахш кунед. Километр ва вақт худкор ҳисоб мешаванд.',
-        gpsRoundTripHidden:'GPS масири воқеиро ҳисоб мекунад. «Рафту баргашт» истифода намешавад.',
-        gpsManualBtn: 'GPS кор намекунад? Дастӣ ворид кунед',
-        gpsMinutesUnit: 'дақ.',
+minutesShort:'дақ'
       }
     };
 
@@ -650,24 +477,6 @@ gpsNotSavedZero:'Масофа 0 км аст. Сафар сабт нашуд.',
     let routePointIndex = 3;
     let pointsCache = [];
     let editingTripId = null;
-
-    let gpsWatchId = null;
-    let gpsStartTime = null;
-    let gpsLastPoint = null;
-    let gpsDistanceKm = 0;
-    let gpsTimerInterval = null;
-    let gpsIsRunning = false;
-    let gpsStartPoint = null;
-    let gpsEndPoint = null;
-    let gpsWasUsed = false;
-    let gpsHasGoodPoint = false;
-    let gpsIsPaused = false;
-    let gpsPauseStartTime = null;
-    let gpsPausedMs = 0;
-    let gpsWarning60Shown = false;
-    let gpsWarning120Shown = false;
-    let manualEntryMode = false;
-    const MIN_GPS_DISTANCE_KM = 0.1;
 
     let currentUser = localStorage.getItem('smartpay_user') || '';
     let currentRole = localStorage.getItem('smartpay_role') || '';
@@ -692,7 +501,6 @@ gpsNotSavedZero:'Масофа 0 км аст. Сафар сабт нашуд.',
       });
 
       applyLanguage();
-      setTransport('car');
       registerPWA();
 
       if (currentUser) {
@@ -736,7 +544,6 @@ gpsNotSavedZero:'Масофа 0 км аст. Сафар сабт нашуд.',
       }
 
       updateTopUser();
-      updateRoundTripVisibility();
       updatePreview();
       applyMonthFilter();
     
@@ -921,26 +728,6 @@ gpsNotSavedZero:'Масофа 0 км аст. Сафар сабт нашуд.',
       if (summaryBtn) summaryBtn.classList.toggle('hidden', currentRole !== 'admin');
     }
 
-    function updateRoundTripVisibility() {
-      const box = document.getElementById('roundTripBox');
-      const checkbox = document.getElementById('roundTrip');
-      const gpsHint = document.getElementById('gpsHint');
-
-      if (!box || !checkbox) return;
-
-      const isEditing = !!editingTripId;
-      const gpsModeActive = transportType === 'car' && !isEditing && !manualEntryMode;
-
-      box.classList.toggle('hidden', gpsModeActive);
-
-      if (gpsModeActive) {
-        checkbox.checked = false;
-        if (gpsHint) gpsHint.textContent = t('gpsRoundTripHidden');
-      } else if (gpsHint) {
-        gpsHint.textContent = t('gpsHint');
-      }
-    }
-
     function fillPointsDatalist() {
       const list = document.getElementById('pointsList');
       list.innerHTML = '';
@@ -1007,33 +794,14 @@ function fillMonths(months) {
     }
 
     function setTransport(type) {
-      if (type === 'taxi' && gpsIsRunning) {
-        stopGpsTrip(false);
-      }
-
       transportType = type;
-      if (type === 'taxi') manualEntryMode = false;
 
-      const isEditing = !!editingTripId;
-      const isCar = type === 'car';
-      const isTaxi = type === 'taxi';
+      document.getElementById('carBtn').classList.toggle('active', type === 'car');
+      document.getElementById('taxiBtn').classList.toggle('active', type === 'taxi');
 
-      document.getElementById('carBtn').classList.toggle('active', isCar);
-      document.getElementById('taxiBtn').classList.toggle('active', isTaxi);
+      document.getElementById('carFields').classList.toggle('hidden', type !== 'car');
+      document.getElementById('taxiFields').classList.toggle('hidden', type !== 'taxi');
 
-      // Для новой поездки на личном авто по умолчанию работает GPS.
-      // Км/время показываем только при редактировании или при ручном вводе.
-      document.getElementById('carFields').classList.toggle('hidden', !(isCar && (isEditing || manualEntryMode)));
-      document.getElementById('taxiFields').classList.toggle('hidden', !isTaxi);
-      document.getElementById('gpsTripBox').classList.toggle('hidden', !(isCar && !isEditing && !manualEntryMode));
-
-      const saveBtn = document.getElementById('saveBtn');
-      if (saveBtn) {
-        saveBtn.classList.toggle('hidden', isCar && !isEditing && !manualEntryMode);
-        saveBtn.textContent = isEditing ? t('editMode') : t('saveTrip');
-      }
-
-      updateRoundTripVisibility();
       updatePreview();
     }
 
@@ -1108,13 +876,8 @@ function fillMonths(months) {
         km: Number(document.getElementById('km').value || 0),
         minutes: Number(document.getElementById('minutes').value || 0),
         taxiAmount: Number(document.getElementById('taxiAmount').value || 0),
-        roundTrip: (transportType === 'car' && !editingTripId && !manualEntryMode) ? false : document.getElementById('roundTrip').checked,
-        comment: document.getElementById('comment').value.trim(),
-        gpsStartLocation: formatGpsPoint(gpsStartPoint),
-        gpsStartMapLink: formatGpsMapLink(gpsStartPoint),
-        gpsEndLocation: formatGpsPoint(gpsEndPoint),
-        gpsEndMapLink: formatGpsMapLink(gpsEndPoint),
-        gpsUsed: gpsWasUsed ? 'Да' : 'Нет'
+        roundTrip: document.getElementById('roundTrip').checked,
+        comment: document.getElementById('comment').value.trim()
       };
     }
 
@@ -1139,31 +902,16 @@ function fillMonths(months) {
       document.getElementById('totalPreview').textContent = total.toFixed(2) + ' сомони';
     }
 
-    async function saveTrip(options = {}) {
+    async function saveTrip() {
       const saveBtn = document.getElementById('saveBtn');
 
       try {
         const payload = getPayload();
 
-        if (gpsIsRunning) return alert(t('gpsStopBeforeSave'));
-
         if (!payload.date) return alert(lang === 'tj' ? 'Санаро интихоб кунед' : 'Укажите дату');
         if (!payload.employee) return alert(lang === 'tj' ? 'Корманд муайян нашуд. Аз нав ворид шавед.' : 'Не определен сотрудник. Выйдите и войдите заново.');
         if (!payload.from) return alert(lang === 'tj' ? 'Нуқтаи А-ро ворид кунед' : 'Укажите точку А');
         if (!payload.to) return alert(lang === 'tj' ? 'Нуқтаи охиринро ворид кунед' : 'Укажите конечную точку');
-
-        if (!editingTripId && payload.transportType === 'car' && !options.autoGps && !manualEntryMode) {
-          return alert(t('gpsUseStartButton'));
-        }
-
-        if (!editingTripId && payload.transportType === 'car' && manualEntryMode && !options.autoGps) {
-          const manualComment = t('manualCreatedComment');
-          if (!payload.comment.includes(manualComment)) {
-            payload.comment = payload.comment ? payload.comment + '\n' + manualComment : manualComment;
-            const commentEl = document.getElementById('comment');
-            if (commentEl) commentEl.value = payload.comment;
-          }
-        }
 
         saveBtn.classList.add('saving');
         saveBtn.textContent = t('saving');
@@ -1182,7 +930,7 @@ function fillMonths(months) {
         clearForm();
         fillMonths(result.months || []);
         applyMonthFilter();
-        showToast(options.autoGps ? t('gpsAutoSaved') : t(wasEditing ? 'updated' : 'saved'));
+        showToast(t(wasEditing ? 'updated' : 'saved'));
 
         document.getElementById('formCard').classList.add('hidden');
         document.getElementById('formToggleBtn').textContent = t('addTripBtn');
@@ -1208,389 +956,8 @@ function fillMonths(months) {
       routePointIndex = 3;
 
       editingTripId = null;
-      manualEntryMode = false;
       document.getElementById('saveBtn').textContent = t('saveTrip');
-      setTransport('car');
-      resetGpsTripView();
       updatePreview();
-    }
-
-
-    function startGpsTrip() {
-      if (!window.isSecureContext) {
-        alert(t('gpsNeedHttps'));
-        return;
-      }
-
-      if (!navigator.geolocation) {
-        alert(t('gpsNotSupported'));
-        return;
-      }
-
-      gpsStartTime = Date.now();
-      gpsLastPoint = null;
-      gpsStartPoint = null;
-      gpsEndPoint = null;
-      gpsDistanceKm = 0;
-      gpsWasUsed = true;
-      gpsHasGoodPoint = false;
-      gpsIsPaused = false;
-      gpsPauseStartTime = null;
-      gpsPausedMs = 0;
-      gpsWarning60Shown = false;
-      gpsWarning120Shown = false;
-      gpsIsRunning = true;
-      document.getElementById('roundTrip').checked = false;
-      updateRoundTripVisibility();
-
-      document.getElementById('gpsStatus').textContent = t('gpsSearching');
-      document.getElementById('gpsKm').textContent = '0.00';
-      document.getElementById('gpsMinutes').textContent = '0';
-      document.getElementById('km').value = '';
-      document.getElementById('minutes').value = '';
-      updateGpsButtons('running-waiting');
-
-      gpsTimerInterval = setInterval(updateGpsTime, 1000);
-
-      gpsWatchId = navigator.geolocation.watchPosition(
-        position => {
-          const point = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-            accuracy: position.coords.accuracy || 999
-          };
-
-          if (point.accuracy > 80) {
-            document.getElementById('gpsStatus').textContent =
-              `${t('gpsWeak')}: ±${Math.round(point.accuracy)} м`;
-            updateGpsButtons('running-waiting');
-            updateGpsTime();
-            return;
-          }
-
-          if (gpsIsPaused) {
-            gpsLastPoint = point;
-            gpsEndPoint = point;
-            updateGpsTime();
-            return;
-          }
-
-          if (!gpsStartPoint) gpsStartPoint = point;
-          if (!gpsHasGoodPoint) {
-            gpsHasGoodPoint = true;
-            updateGpsButtons('running-ready');
-            document.getElementById('gpsStatus').textContent = `${t('gpsFirstPoint')} ±${Math.round(point.accuracy)} м`;
-          }
-          gpsEndPoint = point;
-
-          if (gpsLastPoint) {
-            const meters = getDistanceMeters(
-              gpsLastPoint.lat,
-              gpsLastPoint.lng,
-              point.lat,
-              point.lng
-            );
-
-            if (meters >= 3 && meters <= 500) {
-              gpsDistanceKm += meters / 1000;
-            }
-          }
-
-          gpsLastPoint = point;
-
-          if (gpsDistanceKm >= MIN_GPS_DISTANCE_KM) {
-            document.getElementById('gpsStatus').textContent = t('gpsRunning');
-          }
-          document.getElementById('gpsKm').textContent = gpsDistanceKm.toFixed(2);
-          document.getElementById('km').value = gpsDistanceKm.toFixed(1);
-
-          updateGpsTime();
-          updatePreview();
-        },
-        error => {
-          alert('GPS: ' + getGpsErrorText(error));
-          cancelGpsTrip(false);
-        },
-        {
-          enableHighAccuracy: true,
-          maximumAge: 1000,
-          timeout: 15000
-        }
-      );
-    }
-
-    async function stopGpsTrip(showMessage = true, autoSave = true) {
-      const hadGpsTrip = gpsIsRunning || !!gpsStartTime;
-
-      if (gpsWatchId !== null) {
-        navigator.geolocation.clearWatch(gpsWatchId);
-        gpsWatchId = null;
-      }
-
-      if (gpsTimerInterval) {
-        clearInterval(gpsTimerInterval);
-        gpsTimerInterval = null;
-      }
-
-      if (gpsIsPaused && gpsPauseStartTime) {
-        gpsPausedMs += Date.now() - gpsPauseStartTime;
-      }
-      gpsIsPaused = false;
-      gpsPauseStartTime = null;
-
-      if (gpsStartTime) {
-        updateGpsTime();
-      }
-
-      if (hadGpsTrip) {
-        document.getElementById('km').value = gpsDistanceKm.toFixed(1);
-
-        const commentEl = document.getElementById('comment');
-        const gpsComment = t('gpsSavedComment');
-        if (commentEl && !commentEl.value.includes(gpsComment)) {
-          commentEl.value = commentEl.value.trim()
-            ? commentEl.value.trim() + '\n' + gpsComment
-            : gpsComment;
-        }
-      }
-
-      gpsIsRunning = false;
-
-      const status = document.getElementById('gpsStatus');
-      if (status) status.textContent = hadGpsTrip ? t('gpsFinished') : t('gpsNotStarted');
-
-      updateGpsButtons('stopped');
-
-      updatePreview();
-
-      if (hadGpsTrip && autoSave) {
-        const finalKm = Number(document.getElementById('km').value || 0);
-
-        if (!gpsHasGoodPoint || finalKm <= 0) {
-          if (status) status.textContent = t('gpsZeroStatus');
-          showToast(t('gpsNotSavedZero'));
-          alert(t('gpsZeroDistance'));
-          gpsStartTime = null;
-          gpsLastPoint = null;
-          return;
-        }
-
-        if (finalKm < MIN_GPS_DISTANCE_KM) {
-          if (status) status.textContent = t('gpsZeroStatus');
-          showToast(t('gpsTooShort'));
-          alert(t('gpsTooShort'));
-          gpsStartTime = null;
-          gpsLastPoint = null;
-          return;
-        }
-      }
-
-      if (showMessage && hadGpsTrip) {
-        showToast(autoSave ? t('gpsAutoSaving') : t('gpsFinishedToast'));
-      }
-
-      if (hadGpsTrip && autoSave) {
-        await saveTrip({ autoGps: true });
-      }
-
-      gpsStartTime = null;
-      gpsLastPoint = null;
-    }
-
-    function resetGpsTripView() {
-      if (gpsIsRunning) return;
-
-      gpsStartTime = null;
-      gpsLastPoint = null;
-      gpsStartPoint = null;
-      gpsEndPoint = null;
-      gpsDistanceKm = 0;
-      gpsWasUsed = false;
-      gpsHasGoodPoint = false;
-      gpsIsPaused = false;
-      gpsPauseStartTime = null;
-      gpsPausedMs = 0;
-      gpsWarning60Shown = false;
-      gpsWarning120Shown = false;
-
-      const status = document.getElementById('gpsStatus');
-      const km = document.getElementById('gpsKm');
-      const minutes = document.getElementById('gpsMinutes');
-
-      if (status) status.textContent = t('gpsNotStarted');
-      if (km) km.textContent = '0.00';
-      if (minutes) minutes.textContent = '0';
-
-      updateGpsButtons('idle');
-    }
-
-    function updateGpsButtons(state) {
-      const startBtn = document.getElementById('startGpsBtn');
-      const stopBtn = document.getElementById('stopGpsBtn');
-      const cancelBtn = document.getElementById('cancelGpsBtn');
-      const pauseBtn = document.getElementById('pauseGpsBtn');
-      const actions = document.getElementById('gpsActions');
-      const manualBox = document.getElementById('manualEntryBox');
-
-      if (!startBtn || !stopBtn || !cancelBtn || !pauseBtn || !actions) return;
-
-      const running = state === 'running-waiting' || state === 'running-ready' || state === 'paused';
-      startBtn.classList.toggle('hidden', running);
-      stopBtn.classList.toggle('hidden', !running);
-      cancelBtn.classList.toggle('hidden', !running);
-      pauseBtn.classList.toggle('hidden', !running);
-      pauseBtn.textContent = state === 'paused' ? t('resumeGps') : t('pauseGps');
-      actions.classList.toggle('single', !running);
-
-      const canStop = state === 'running-ready' || state === 'paused';
-      stopBtn.disabled = !canStop;
-      stopBtn.classList.toggle('gpsDisabled', !canStop);
-
-      if (manualBox) manualBox.classList.toggle('hidden', running);
-    }
-
-    function toggleGpsPause() {
-      if (!gpsIsRunning || !gpsStartTime) return;
-
-      const status = document.getElementById('gpsStatus');
-
-      if (!gpsIsPaused) {
-        gpsIsPaused = true;
-        gpsPauseStartTime = Date.now();
-        updateGpsButtons('paused');
-        if (status) status.textContent = t('gpsPaused');
-        showToast(t('gpsPaused'));
-        return;
-      }
-
-      gpsIsPaused = false;
-      if (gpsPauseStartTime) {
-        gpsPausedMs += Date.now() - gpsPauseStartTime;
-      }
-      gpsPauseStartTime = null;
-      gpsLastPoint = null;
-      updateGpsButtons(gpsHasGoodPoint ? 'running-ready' : 'running-waiting');
-      if (status) status.textContent = gpsHasGoodPoint ? t('gpsRunning') : t('gpsSearching');
-      updateGpsTime();
-    }
-
-    function cancelGpsTrip(showMessage = true) {
-      if (gpsWatchId !== null) {
-        navigator.geolocation.clearWatch(gpsWatchId);
-        gpsWatchId = null;
-      }
-
-      if (gpsTimerInterval) {
-        clearInterval(gpsTimerInterval);
-        gpsTimerInterval = null;
-      }
-
-      gpsIsRunning = false;
-      gpsStartTime = null;
-      gpsLastPoint = null;
-      gpsStartPoint = null;
-      gpsEndPoint = null;
-      gpsDistanceKm = 0;
-      gpsWasUsed = false;
-      gpsHasGoodPoint = false;
-      gpsIsPaused = false;
-      gpsPauseStartTime = null;
-      gpsPausedMs = 0;
-      gpsWarning60Shown = false;
-      gpsWarning120Shown = false;
-
-      document.getElementById('km').value = '';
-      document.getElementById('minutes').value = '';
-      document.getElementById('gpsKm').textContent = '0.00';
-      document.getElementById('gpsMinutes').textContent = '0';
-      document.getElementById('gpsStatus').textContent = t('gpsNotStarted');
-      updateGpsButtons('idle');
-      updateRoundTripVisibility();
-      updatePreview();
-
-      if (showMessage) showToast(t('gpsCanceled'));
-    }
-
-    function enableManualEntry() {
-      if (gpsIsRunning) cancelGpsTrip(false);
-
-      manualEntryMode = true;
-      gpsWasUsed = false;
-      gpsHasGoodPoint = false;
-      document.getElementById('km').value = '';
-      document.getElementById('minutes').value = '';
-      document.getElementById('gpsStatus').textContent = t('manualModeTitle');
-      setTransport('car');
-      showToast(t('manualModeTitle'));
-    }
-
-    function updateGpsTime() {
-      if (!gpsStartTime) return;
-
-      const currentPauseMs = gpsIsPaused && gpsPauseStartTime ? Date.now() - gpsPauseStartTime : 0;
-      const diffMs = Math.max(0, Date.now() - gpsStartTime - gpsPausedMs - currentPauseMs);
-      const minutes = Math.max(1, Math.round(diffMs / 60000));
-
-      document.getElementById('gpsMinutes').textContent = minutes;
-      document.getElementById('minutes').value = minutes;
-
-      checkLongGpsTripWarnings(minutes);
-      updatePreview();
-    }
-
-    function checkLongGpsTripWarnings(minutes) {
-      if (!gpsIsRunning || gpsIsPaused) return;
-
-      if (minutes >= 120 && !gpsWarning120Shown) {
-        gpsWarning120Shown = true;
-        alert(t('gps120Warning'));
-        return;
-      }
-
-      if (minutes >= 60 && !gpsWarning60Shown) {
-        gpsWarning60Shown = true;
-        const shouldStop = confirm(t('gps60Confirm'));
-        if (shouldStop) {
-          stopGpsTrip(true, true);
-        }
-      }
-    }
-
-    function getDistanceMeters(lat1, lon1, lat2, lon2) {
-      const R = 6371000;
-      const toRad = value => value * Math.PI / 180;
-
-      const dLat = toRad(lat2 - lat1);
-      const dLon = toRad(lon2 - lon1);
-
-      const a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(toRad(lat1)) *
-        Math.cos(toRad(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-      return R * c;
-    }
-
-    function formatGpsPoint(point) {
-      if (!point) return '';
-      const accuracy = point.accuracy ? ` ±${Math.round(point.accuracy)} м` : '';
-      return `${Number(point.lat).toFixed(6)}, ${Number(point.lng).toFixed(6)}${accuracy}`;
-    }
-
-    function formatGpsMapLink(point) {
-      if (!point) return '';
-      return `https://maps.google.com/?q=${Number(point.lat).toFixed(6)},${Number(point.lng).toFixed(6)}`;
-    }
-
-    function getGpsErrorText(error) {
-      if (error.code === 1) return t('gpsAccessDenied');
-      if (error.code === 2) return t('gpsUnavailable');
-      if (error.code === 3) return t('gpsTimeout');
-      return 'Неизвестная ошибка';
     }
 
     function applyMonthFilter() {
@@ -1624,7 +991,7 @@ function fillMonths(months) {
               <div class="tripTitle">${escapeHtml(trip.employee)}</div>
               <div class="tripMeta">${escapeHtml(trip.date)} · ${trip.transport === 'Личный автомобиль' ? t('car') : t('taxi')}</div>
             </div>
-            <div class="tripTotal">${Number(trip.total).toFixed(2)} с.</div>
+            <div class="tripTotal">${Number(trip.total || 0).toFixed(2)} с.</div>
           </div>
           <div class="tripMeta">
             📍 ${escapeHtml(trip.from)}<br>
@@ -1633,10 +1000,6 @@ function fillMonths(months) {
               : `🚗 ${trip.km || 0} км · ${trip.minutes || 0} ${t('minutesShort')}`
             }
             ${trip.roundTrip === 'Да' ? '<br>🔁 ' + t('roundTrip') : ''}
-            ${trip.gpsStartLocation ? `<br>📌 ${t('gpsStartPlace')}: ${escapeHtml(trip.gpsStartLocation)}` : ''}
-            ${trip.gpsStartMapLink ? `<br>🟢 <a href="${escapeHtml(trip.gpsStartMapLink)}" target="_blank" rel="noopener" style="color:#a7f3d0;font-weight:800;">${t('gpsStartMapLink')}</a>` : ''}
-            ${trip.gpsEndLocation ? `<br>🏁 ${t('gpsEndPlace')}: ${escapeHtml(trip.gpsEndLocation)}` : ''}
-            ${trip.gpsEndMapLink ? `<br>🔴 <a href="${escapeHtml(trip.gpsEndMapLink)}" target="_blank" rel="noopener" style="color:#fecaca;font-weight:800;">${t('gpsEndMapLink')}</a>` : ''}
             ${trip.comment ? `<br>💬 ${escapeHtml(trip.comment)}` : ''}
           </div>
 
@@ -1656,7 +1019,6 @@ function fillMonths(months) {
       if (!trip) return;
 
       editingTripId = id;
-      manualEntryMode = false;
       const routeParts = String(trip.from || '').split('→').map(item => item.trim()).filter(Boolean);
       const firstPoint = routeParts.length ? routeParts[0] : trip.from;
       const lastPoint = routeParts.length > 1 ? routeParts[routeParts.length - 1] : trip.to;
